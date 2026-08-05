@@ -13,7 +13,7 @@ This research prototype implements diabetes-risk prediction, patient-specific SH
 
 ## Hosted Vercel dashboard
 
-The interactive Flask dashboard is deployed at <https://digitaltwinstest-aa-49s-projects.vercel.app>.
+The interactive Flask dashboard is deployed at <https://digitaltwinstest.vercel.app>.
 
 Vercel runs the same patient selection, prediction, SHAP explanation, manual
 scenario comparison, and temporary Stage 4 graph routes as the local Flask

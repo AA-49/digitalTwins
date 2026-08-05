@@ -73,7 +73,6 @@
       elements: [...nodeElements, ...edgeElements],
       minZoom: 0.18,
       maxZoom: 2.5,
-      wheelSensitivity: 0.22,
       boxSelectionEnabled: false,
       style: [
         {
@@ -96,7 +95,7 @@
           },
         },
         { selector: "node.patientsnapshot", style: { "background-color": "#172133", "border-color": "#172133", "color": "#ffffff", "font-size": 11, "font-weight": 800, "height": 65, "width": 135 } },
-        { selector: "node.domain", style: { "background-color": "#dcebf5", "border-color": "#1769aa", "font-weight": 750, "height": 46, "width": 110 } },
+        { selector: "node.domain", style: { "background-color": "#dcebf5", "border-color": "#1769aa", "font-weight": 700, "height": 46, "width": 110 } },
         { selector: "node.observation", style: { "background-color": "#edf7fd", "border-color": "#1769aa" } },
         { selector: "node.attributedefinition", style: { "background-color": "#ffffff", "border-style": "dashed", "border-color": "#6f8292" } },
         { selector: "node.state", style: { "background-color": "#fff4de", "border-color": "#d8894b" } },
