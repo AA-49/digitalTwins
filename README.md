@@ -113,25 +113,39 @@ Stop JupyterLab with the other services:
 
 ```bat
 docker compose down
-````
+```
 
 ### 5. Start the local dashboard
 
-Run:
+Build the dashboard image with detailed progress:
 
 ```bat
-docker compose up -d --build dashboard
+docker compose --progress plain build dashboard
+```
+
+The first build can take a while because it installs the machine-learning and notebook dependencies. Do not continue if the build ends with `ERROR` or `failed to solve`.
+
+After the build reports `Built`, start the dashboard and Neo4j:
+
+```bat
+docker compose up -d dashboard
 docker compose ps
 ```
 
-The first build can take a while because it installs the machine-learning and notebook dependencies. For detailed build output, use:
+`docker compose ps` must show both of these conditions:
+
+- `neo4j` is `Up` and `healthy`.
+- `dashboard` is `Up` with `127.0.0.1:5000->5000/tcp`.
+
+An empty table means nothing is running. Do not open the browser yet; inspect the terminal error and logs.
+
+Wait for an actual dashboard response:
 
 ```bat
-docker compose build --progress=plain dashboard
-docker compose up -d dashboard
+curl.exe --fail --retry 30 --retry-delay 2 --retry-connrefused --head http://127.0.0.1:5000/
 ```
 
-Wait until `neo4j` is healthy and `dashboard` is running. Then open:
+Open the dashboard only after the command returns an HTTP `200` response:
 
 - Dashboard: <http://127.0.0.1:5000>
 - Neo4j Browser: <http://127.0.0.1:7474>
@@ -197,8 +211,6 @@ docker compose up -d --build dashboard
 7. Compare baseline and scenario probabilities and, when available, their separate 3D twins.
 
 The selected one-based patient number always maps to the same row in the active cleaned dataset. Imported CSV data remains in memory only and resets when the application restarts. Patient observations, predictions, SHAP values, and patient graph nodes are not persisted in Neo4j.
-
-```
 
 ## Optional SMPL 3D setup
 
@@ -279,10 +291,21 @@ docker compose restart dashboard
 Show every build step:
 
 ```bat
-docker compose build --progress=plain dashboard
+docker compose --progress plain build dashboard
 ```
 
 Keep Docker Desktop open. Initial dependency installation is much slower than later cached builds.
+
+### Build fails with `invalid file request .tmp-cytoscape`
+
+This means an old generated npm cache entered Docker's build context. The current `.dockerignore` excludes it. Update the clone and rebuild without using the failed context:
+
+```bat
+git pull
+docker compose --progress plain build dashboard
+```
+
+If the clone has local changes that prevent `git pull`, save or commit those changes first. Do not continue to the browser until the build reports success.
 
 ### Port 5000 is already in use
 
@@ -293,16 +316,37 @@ docker compose down
 docker compose up -d dashboard
 ```
 
+### Port 8888 is already allocated
+
+This affects the optional JupyterLab service, not the dashboard. Find the container already using the port:
+
+```bat
+docker ps --filter publish=8888
+```
+
+Stop that Jupyter container from the project that started it, or keep it running and skip `docker compose up -d jupyter`. The non-interactive `train-notebook` service does not publish port 8888.
+
 ### Dashboard does not open
 
-Run:
+`ERR_CONNECTION_REFUSED` means no process is accepting connections on port 5000. It is not a browser-cache problem. Run:
 
 ```bat
 docker compose ps
 docker compose logs --tail 100 neo4j dashboard
 ```
 
-The dashboard waits for Neo4j to become healthy before it starts.
+Interpret the result:
+
+- Empty `docker compose ps`: the build or `up` command failed; return to the first terminal error.
+- `dashboard` is `Exited`: inspect the dashboard logs for the Python startup error.
+- Only `neo4j` is running: wait for it to become healthy, then run `docker compose up -d dashboard`.
+- Port `5000` is absent: the dashboard is not published and the browser will refuse the connection.
+
+When the service is running, verify it before opening the browser:
+
+```bat
+curl.exe --fail --retry 30 --retry-delay 2 --retry-connrefused --head http://127.0.0.1:5000/
+```
 
 ### Local guidance is unavailable
 

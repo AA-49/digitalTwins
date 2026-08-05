@@ -71,54 +71,54 @@
   },
   "top_global_features": [
     {
-      "feature": "BMI",
-      "importance_mean": 0.030875197391025688,
-      "importance_std": 0.004738679158594805
+      "feature": "GenHlth",
+      "importance_mean": 0.04575607731403297,
+      "importance_std": 0.01171528501943055
     },
     {
-      "feature": "GenHlth",
-      "importance_mean": 0.021647799407290065,
-      "importance_std": 0.004774030251248307
+      "feature": "BMI",
+      "importance_mean": 0.041490900615168136,
+      "importance_std": 0.010033548736687553
     },
     {
       "feature": "HighBP",
-      "importance_mean": 0.01727144570088846,
-      "importance_std": 0.00350369475654051
-    },
-    {
-      "feature": "HighChol",
-      "importance_mean": 0.010655097485989428,
-      "importance_std": 0.0021191404307235122
+      "importance_mean": 0.0307185063708497,
+      "importance_std": 0.006750081668356291
     },
     {
       "feature": "Age",
-      "importance_mean": 0.008711159971026023,
-      "importance_std": 0.004601125711945329
+      "importance_mean": 0.025920089990076278,
+      "importance_std": 0.0042305505948572256
+    },
+    {
+      "feature": "HighChol",
+      "importance_mean": 0.012903225032745788,
+      "importance_std": 0.005720337330436598
     },
     {
       "feature": "HeartDiseaseorAttack",
-      "importance_mean": 0.0039801697666868915,
-      "importance_std": 0.000959529268527287
+      "importance_mean": 0.010015661264440682,
+      "importance_std": 0.0016653984352305404
     },
     {
       "feature": "HvyAlcoholConsump",
-      "importance_mean": 0.0024840603939090488,
-      "importance_std": 0.0014245860373249463
+      "importance_mean": 0.004971215230473021,
+      "importance_std": 0.0022570141622207636
+    },
+    {
+      "feature": "MentHlth",
+      "importance_mean": 0.001481585763518219,
+      "importance_std": 0.000742000057919466
+    },
+    {
+      "feature": "AnyHealthcare",
+      "importance_mean": 0.0014115420920326842,
+      "importance_std": 0.0011755906083825748
     },
     {
       "feature": "CholCheck",
-      "importance_mean": 0.0013269068559676133,
-      "importance_std": 0.0007170886472913173
-    },
-    {
-      "feature": "Stroke",
-      "importance_mean": -0.0001631499380770396,
-      "importance_std": 0.0007051462954616263
-    },
-    {
-      "feature": "NoDocbcCost",
-      "importance_mean": -0.0011810773662931263,
-      "importance_std": 0.0009722617424806395
+      "importance_mean": 0.0012703999316414083,
+      "importance_std": 0.0023928599349956653
     }
   ]
 }
