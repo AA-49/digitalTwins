@@ -112,6 +112,7 @@ def _deterministic_evidence_summary(
     patient_number: int,
     prediction: dict[str, Any],
     knowledge_graph: dict[str, Any],
+    intro: str | None = None,
 ) -> str:
     probabilities = prediction["probabilities"]
     probability_text = ", ".join(
@@ -130,9 +131,12 @@ def _deterministic_evidence_summary(
         ) or "no factors"
 
     warning = knowledge_graph.get("warning") or "Model results are research outputs."
-    return (
+    summary_intro = intro or (
         "The local model draft did not pass the research-safety checks, so this deterministic "
-        f"evidence summary is shown instead. For Patient #{patient_number}, the research model "
+    )
+    return (
+        summary_intro
+        + f"evidence summary is shown instead. For Patient #{patient_number}, the research model "
         f"predicted {prediction['label']}. Its estimated probabilities were {probability_text}. "
         "These are model estimates, not a diagnosis.\n\n"
         f"The largest positive SHAP contributions were {describe(supports)}. The largest negative "
@@ -214,7 +218,12 @@ def deterministic_evidence_summary(
     knowledge_graph: dict[str, Any],
 ) -> str:
     """Return the safety-checked fallback for hosts that cannot reach Ollama."""
-    return _deterministic_evidence_summary(patient_number, prediction, knowledge_graph)
+    return _deterministic_evidence_summary(
+        patient_number,
+        prediction,
+        knowledge_graph,
+        intro="This hosted deployment uses a deterministic, safety-checked ",
+    )
 
 
 def guidance_error_message(exc: Exception) -> str:

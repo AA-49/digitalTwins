@@ -10,6 +10,7 @@ from unittest.mock import patch
 from ollama_recommendations import (
     OllamaRecommendationError,
     build_recommendation_input,
+    deterministic_evidence_summary,
     generate_local_guidance,
 )
 
@@ -103,6 +104,13 @@ class OllamaRecommendationTests(unittest.TestCase):
         self.assertIn("Low 20.0%, Medium 10.0%, High 70.0%", result)
         self.assertIn("not medical advice", result)
         self.assertNotIn("protective effect", result)
+
+    def test_hosted_summary_does_not_claim_ollama_failed(self):
+        prediction, graph, _twin = evidence()
+        result = deterministic_evidence_summary(7, prediction, graph)
+        self.assertIn("hosted deployment uses a deterministic", result)
+        self.assertNotIn("local model draft did not pass", result)
+        self.assertIn("not medical advice", result)
 
     def test_dashboard_renders_local_guidance(self):
         import app as dashboard
