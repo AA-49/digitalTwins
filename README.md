@@ -113,6 +113,7 @@ Stop JupyterLab with the other services:
 
 ```bat
 docker compose down
+````
 
 ### 5. Start the local dashboard
 
