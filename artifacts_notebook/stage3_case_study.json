@@ -4,7 +4,7 @@
     "bmi": 41.0,
     "gender": "female",
     "smpl_beta_0": 9.5,
-    "risk_percent": 52.560952111871785,
+    "risk_percent": 56.68684075054083,
     "risk_band": "Moderate",
     "risk_colour": "#FFA500"
   },
@@ -13,9 +13,9 @@
     "bmi": 36.0,
     "gender": "female",
     "smpl_beta_0": 7.0,
-    "risk_percent": 42.090620231964444,
-    "risk_band": "Moderate",
-    "risk_colour": "#FFA500"
+    "risk_percent": 37.67893936335058,
+    "risk_band": "Low",
+    "risk_colour": "#2ECC71"
   },
   "edited_features": [
     {

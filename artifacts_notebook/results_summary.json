@@ -29,42 +29,42 @@
     "High (diabetes)": 35346
   },
   "metrics": {
-    "accuracy": 0.819575843582466,
-    "balanced_accuracy": 0.45090048576525366,
-    "macro_f1": 0.44344337170200737,
-    "weighted_f1": 0.8158245737388298,
-    "macro_ovr_roc_auc": 0.7582394335088004
+    "accuracy": 0.8196349731945758,
+    "balanced_accuracy": 0.4506070142054485,
+    "macro_f1": 0.4437493364732065,
+    "weighted_f1": 0.8158189914048523,
+    "macro_ovr_roc_auc": 0.7581523256193027
   },
   "classification_report": {
     "precision": {
-      "Low": 0.8958133887500875,
-      "Medium (prediabetes)": 0.0,
-      "High (diabetes)": 0.41408160638434804,
-      "accuracy": 0.819575843582466,
-      "macro avg": 0.4366316650448119,
-      "weighted avg": 0.8123443496550465
+      "Low": 0.8956296520988404,
+      "Medium (prediabetes)": 0.006578947368421052,
+      "High (diabetes)": 0.41413226349165266,
+      "accuracy": 0.8196349731945758,
+      "macro avg": 0.43878028765297133,
+      "weighted avg": 0.8123166989167887
     },
     "recall": {
-      "Low": 0.8976158723473948,
-      "Medium (prediabetes)": 0.0,
-      "High (diabetes)": 0.4550855849483661,
-      "accuracy": 0.819575843582466,
-      "macro avg": 0.45090048576525366,
-      "weighted avg": 0.819575843582466
+      "Low": 0.8980604103787933,
+      "Medium (prediabetes)": 0.0010799136069114472,
+      "High (diabetes)": 0.4526807186306408,
+      "accuracy": 0.8196349731945758,
+      "macro avg": 0.4506070142054485,
+      "weighted avg": 0.8196349731945758
     },
     "f1-score": {
-      "Low": 0.8967137247569185,
-      "Medium (prediabetes)": 0.0,
-      "High (diabetes)": 0.43361639034910365,
-      "accuracy": 0.819575843582466,
-      "macro avg": 0.44344337170200737,
-      "weighted avg": 0.8158245737388298
+      "Low": 0.8968433841912195,
+      "Medium (prediabetes)": 0.0018552875695732839,
+      "High (diabetes)": 0.4325493376588267,
+      "accuracy": 0.8196349731945758,
+      "macro avg": 0.4437493364732065,
+      "weighted avg": 0.8158189914048523
     },
     "support": {
       "Low": 42741.0,
       "Medium (prediabetes)": 926.0,
       "High (diabetes)": 7069.0,
-      "accuracy": 0.819575843582466,
+      "accuracy": 0.8196349731945758,
       "macro avg": 50736.0,
       "weighted avg": 50736.0
     }
@@ -72,53 +72,53 @@
   "top_global_features": [
     {
       "feature": "BMI",
-      "importance_mean": 0.03429780459417324,
-      "importance_std": 0.004960275672330207
+      "importance_mean": 0.030875197391025688,
+      "importance_std": 0.004738679158594805
     },
     {
       "feature": "GenHlth",
-      "importance_mean": 0.025216710411019715,
-      "importance_std": 0.0035897428196586235
+      "importance_mean": 0.021647799407290065,
+      "importance_std": 0.004774030251248307
     },
     {
       "feature": "HighBP",
-      "importance_mean": 0.020347575574621378,
-      "importance_std": 0.003264660085686948
+      "importance_mean": 0.01727144570088846,
+      "importance_std": 0.00350369475654051
     },
     {
       "feature": "HighChol",
-      "importance_mean": 0.01354007162044502,
-      "importance_std": 0.0019113341039377909
+      "importance_mean": 0.010655097485989428,
+      "importance_std": 0.0021191404307235122
     },
     {
       "feature": "Age",
-      "importance_mean": 0.012206138689186541,
-      "importance_std": 0.004298869027458098
+      "importance_mean": 0.008711159971026023,
+      "importance_std": 0.004601125711945329
     },
     {
       "feature": "HeartDiseaseorAttack",
-      "importance_mean": 0.004068258839373761,
-      "importance_std": 0.0013514913594705467
+      "importance_mean": 0.0039801697666868915,
+      "importance_std": 0.000959529268527287
     },
     {
       "feature": "HvyAlcoholConsump",
-      "importance_mean": 0.0029650801407214654,
-      "importance_std": 0.001110759836938926
-    },
-    {
-      "feature": "DiffWalk",
-      "importance_mean": 0.001892643821034623,
-      "importance_std": 0.0017434778613386822
-    },
-    {
-      "feature": "Stroke",
-      "importance_mean": 0.001548935135971058,
-      "importance_std": 0.0007013932476982031
+      "importance_mean": 0.0024840603939090488,
+      "importance_std": 0.0014245860373249463
     },
     {
       "feature": "CholCheck",
-      "importance_mean": 0.001437510130883357,
-      "importance_std": 0.0005835952424522054
+      "importance_mean": 0.0013269068559676133,
+      "importance_std": 0.0007170886472913173
+    },
+    {
+      "feature": "Stroke",
+      "importance_mean": -0.0001631499380770396,
+      "importance_std": 0.0007051462954616263
+    },
+    {
+      "feature": "NoDocbcCost",
+      "importance_mean": -0.0011810773662931263,
+      "importance_std": 0.0009722617424806395
     }
   ]
 }
