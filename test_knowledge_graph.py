@@ -171,7 +171,8 @@ class KnowledgeGraphTests(unittest.TestCase):
         self.assertFalse(result["connected"])
         self.assertEqual(21, len(result["attributes"]))
         self.assertIn("database stopped", result["message"])
-        self.assertEqual([], result["nodes"])
+        self.assertEqual(98, len(result["nodes"]))
+        self.assertEqual(135, len(result["edges"]))
 
 
 if __name__ == "__main__":

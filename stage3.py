@@ -7,6 +7,7 @@ one or more survey variables.
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any
 
@@ -17,8 +18,15 @@ import pandas as pd
 from diabetes_risk import FEATURES
 
 
-MODEL_CANDIDATES = (
-    Path("artifacts_notebook/diabetes_risk_random_forest.joblib"),
+MODEL_CANDIDATES = tuple(
+    path
+    for path in (
+        Path(os.environ["DIABETES_MODEL_PATH"])
+        if os.environ.get("DIABETES_MODEL_PATH")
+        else None,
+        Path("artifacts_notebook/diabetes_risk_random_forest.joblib"),
+    )
+    if path is not None
 )
 RISK_LABELS = {0: "Low", 1: "Medium (prediabetes)", 2: "High (diabetes)"}
 SMPL_MODELS_DIR = Path("models/smpl")

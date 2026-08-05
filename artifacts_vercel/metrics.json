@@ -1,0 +1,44 @@
+{
+  "deployment_variant": "Vercel 75-tree subset of the checked 400-tree model",
+  "source_model": "diabetes_risk_random_forest.joblib",
+  "n_estimators": 75,
+  "n_rows": 253680,
+  "n_test": 50736,
+  "accuracy": 0.8176836959949543,
+  "balanced_accuracy": 0.44987225149505744,
+  "macro_f1": 0.44271966413026886,
+  "macro_ovr_roc_auc": 0.7527621858155387,
+  "classification_report": {
+    "Low": {
+      "precision": 0.8953004442366145,
+      "recall": 0.895907910437285,
+      "f1-score": 0.8956040743296184,
+      "support": 42741.0
+    },
+    "Medium (prediabetes)": {
+      "precision": 0.013513513513513514,
+      "recall": 0.0021598272138228943,
+      "f1-score": 0.0037243947858473,
+      "support": 926.0
+    },
+    "High (diabetes)": {
+      "precision": 0.40828856485034537,
+      "recall": 0.45154901683406423,
+      "f1-score": 0.4288305232753409,
+      "support": 7069.0
+    },
+    "accuracy": 0.8176836959949543,
+    "macro avg": {
+      "precision": 0.4390341742001578,
+      "recall": 0.44987225149505744,
+      "f1-score": 0.44271966413026886,
+      "support": 50736.0
+    },
+    "weighted avg": {
+      "precision": 0.8113517357607565,
+      "recall": 0.8176836959949543,
+      "f1-score": 0.8142909472470692,
+      "support": 50736.0
+    }
+  }
+}

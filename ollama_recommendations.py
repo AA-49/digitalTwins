@@ -208,6 +208,15 @@ def generate_local_guidance(
     return guidance
 
 
+def deterministic_evidence_summary(
+    patient_number: int,
+    prediction: dict[str, Any],
+    knowledge_graph: dict[str, Any],
+) -> str:
+    """Return the safety-checked fallback for hosts that cannot reach Ollama."""
+    return _deterministic_evidence_summary(patient_number, prediction, knowledge_graph)
+
+
 def guidance_error_message(exc: Exception) -> str:
     if isinstance(exc, OllamaRecommendationError):
         return exc.public_message

@@ -393,14 +393,39 @@ class PatientKnowledgeGraph:
                 ],
             }
         except Exception as exc:
+            definitions = {
+                item["key"]: {
+                    "key": item["key"],
+                    "label": item["label"],
+                    "kind": item["kind"],
+                    "domainKey": item["domain"],
+                    "domainLabel": next(
+                        domain["label"]
+                        for domain in DOMAIN_DEFINITIONS
+                        if domain["key"] == item["domain"]
+                    ),
+                }
+                for item in ATTRIBUTE_DEFINITIONS
+            }
+            nodes, edges = self._build_graph(
+                profile, prediction, contributions, twin, model_name, definitions
+            )
             return {
                 "connected": False,
-                "message": f"Knowledge graph unavailable: {exc}",
+                "message": (
+                    "Neo4j is unavailable, so reusable embedded definitions are shown. "
+                    f"The patient graph remains temporary and was not stored. ({exc})"
+                ),
                 "warning": self._model_warning(),
                 "attributes": fallback_attributes,
-                "nodes": [],
-                "edges": [],
-                "legend": [],
+                "nodes": nodes,
+                "edges": edges,
+                "legend": [
+                    {"key": "profile", "label": "Profile meaning", "color": "#1769aa"},
+                    {"key": "supports", "label": "Supports prediction", "color": "#087f5b"},
+                    {"key": "opposes", "label": "Opposes prediction", "color": "#c92a3a"},
+                    {"key": "twin", "label": "Digital Twin", "color": "#6f42c1"},
+                ],
             }
 
     def _model_warning(self) -> str:
@@ -409,8 +434,12 @@ class PatientKnowledgeGraph:
             .get("Medium (prediabetes)", {})
             .get("recall")
         )
-        if medium == 0:
-            return "Model limitation: Medium (prediabetes) recall is 0.0 in the checked test metrics. Do not interpret this prototype as a clinical screening system."
+        if medium is not None and float(medium) < 0.10:
+            return (
+                "Model limitation: Medium (prediabetes) recall is "
+                f"{float(medium):.2%} in the checked test metrics. Do not interpret "
+                "this prototype as a clinical screening system."
+            )
         return "Model results are research outputs, not clinical diagnoses."
 
     def _attributes(

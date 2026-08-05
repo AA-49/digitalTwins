@@ -11,6 +11,38 @@ This research prototype implements diabetes-risk prediction, patient-specific SH
 
 > **Research only:** BRFSS is a cross-sectional survey dataset. These outputs are not diagnoses, treatment recommendations, causal forecasts, or clinical decision support. The checked model has 0.0 recall for the Medium/prediabetes class, so accuracy must not be interpreted as reliable screening performance.
 
+## Hosted Vercel dashboard
+
+The interactive Flask dashboard is deployed at <https://digitaltwinstest-aa-49s-projects.vercel.app>.
+
+Vercel runs the same patient selection, prediction, SHAP explanation, manual
+scenario comparison, and temporary Stage 4 graph routes as the local Flask
+application. The serverless deployment uses a reproducible 75-tree subset of
+the checked 400-tree Random Forest so the model can be stored in GitHub and
+loaded within serverless memory. Its checked test metrics are 81.77% accuracy,
+44.99% balanced accuracy, 44.27% macro-F1, and 0.22% Medium/prediabetes recall.
+The hosted page displays this separate limitation explicitly.
+
+Services tied to the local computer use truthful hosted fallbacks:
+
+- When Neo4j is unavailable, the complete temporary 98-node/135-edge patient
+  graph is assembled from the same embedded reusable definitions. No patient
+  node is persisted.
+- Vercel cannot reach Ollama at `host.docker.internal`, so the hosted guidance
+  button returns the deterministic research-safe evidence summary. Local Docker
+  continues to use the configured Ollama model.
+- Licensed SMPL weights and live mesh generation remain local. Checked GLB
+  assets can still be served when their metadata matches the selected profile.
+
+Regenerate the hosted model from the checked local artifact with:
+
+```powershell
+.\.venv-stage3\Scripts\python.exe scripts\create_vercel_model.py
+```
+
+The full local Docker/Jupyter workflow below remains the authoritative training
+and research environment.
+
 ## Required software
 
 - Docker Desktop for Windows with the Linux container engine running.

@@ -15,8 +15,8 @@ RUN python -m pip install --upgrade pip setuptools wheel
 RUN pip install --index-url https://download.pytorch.org/whl/cpu torch==2.2.2+cpu
 
 # Install dependencies before project code so source-only edits retain Docker's cache.
-COPY requirements.txt /app/requirements.txt
-RUN pip install -r requirements.txt
+COPY requirements.txt requirements-dev.txt /app/
+RUN pip install -r requirements-dev.txt
 
 # The licensed basicModel_*.pkl files are legacy SMPL assets serialized with
 # Chumpy. Chumpy's legacy build metadata requires installation without pip's

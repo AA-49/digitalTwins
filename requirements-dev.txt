@@ -1,0 +1,11 @@
+-r requirements.txt
+
+matplotlib>=3.7
+seaborn>=0.13
+imbalanced-learn>=0.12
+jupyterlab>=4.0
+streamlit>=1.36
+torch>=2.2
+smplx==0.1.28
+trimesh>=3.21
+pyvista>=0.43
