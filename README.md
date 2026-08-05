@@ -99,6 +99,21 @@ Confirm the result:
 dir artifacts_notebook\diabetes_risk_random_forest.joblib
 ```
 
+## Optional interactive JupyterLab
+
+Start JupyterLab:
+
+```bat
+docker compose up -d jupyter
+```
+
+Open <http://127.0.0.1:8888>. The combined training and experiment notebook is `diabetes_risk_stages_1_2.ipynb`.
+
+Stop JupyterLab with the other services:
+
+```bat
+docker compose down
+
 ### 5. Start the local dashboard
 
 Run:
@@ -182,20 +197,6 @@ docker compose up -d --build dashboard
 
 The selected one-based patient number always maps to the same row in the active cleaned dataset. Imported CSV data remains in memory only and resets when the application restarts. Patient observations, predictions, SHAP values, and patient graph nodes are not persisted in Neo4j.
 
-## Optional interactive JupyterLab
-
-Start JupyterLab:
-
-```bat
-docker compose up -d jupyter
-```
-
-Open <http://127.0.0.1:8888>. The combined training and experiment notebook is `diabetes_risk_stages_1_2.ipynb`.
-
-Stop JupyterLab with the other services:
-
-```bat
-docker compose down
 ```
 
 ## Optional SMPL 3D setup
