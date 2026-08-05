@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Dataset-backed, explainable diabetes-risk Digital Twin research showcase.">
+  <title>Explainable Diabetes-Risk Digital Twin</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav shell" aria-label="Primary navigation">
+      <a class="brand" href="#top"><span class="brand-mark">DT</span><span>Digital Twin Lab</span></a>
+      <div class="nav-links">
+        <a href="#workflow">Workflow</a>
+        <a href="#twins">3D twins</a>
+        <a href="#evidence">Evidence</a>
+        <a class="button button-small" href="https://github.com/AA-49/digitalTwins">View GitHub</a>
+      </div>
+    </nav>
+
+    <div id="top" class="hero-grid shell">
+      <section>
+        <p class="eyebrow">BRFSS 2015 · 253,680 survey records</p>
+        <h1>Explainable diabetes-risk research through a patient-specific Digital Twin.</h1>
+        <p class="lede">A browser-visible showcase of the trained model evaluation, SHAP evidence, manual what-if simulation, separate 3D twins, and patient-centric knowledge-graph design.</p>
+        <div class="hero-actions">
+          <a class="button" href="#workflow">Explore the workflow</a>
+          <a class="text-link" href="https://github.com/AA-49/digitalTwins#readme">Run the full Docker system <span aria-hidden="true">→</span></a>
+        </div>
+        <p class="research-note"><strong>Research only.</strong> This is not a diagnosis, treatment recommendation, causal forecast, or clinical decision-support tool.</p>
+      </section>
+
+      <aside class="hero-card" aria-label="Model snapshot">
+        <div class="risk-ring" style="--risk:52.56">
+          <div><strong>52.6%</strong><span>High-class probability</span></div>
+        </div>
+        <div class="snapshot-row"><span>Case-study band</span><strong class="moderate">Moderate</strong></div>
+        <div class="snapshot-row"><span>Model</span><strong>Random Forest</strong></div>
+        <div class="snapshot-row"><span>Features</span><strong>21 BRFSS indicators</strong></div>
+        <p>Dataset patient #104917 · current profile</p>
+      </aside>
+    </div>
+  </header>
+
+  <main>
+    <section class="metrics shell" aria-label="Evaluation summary">
+      <article><span>Accuracy</span><strong>81.96%</strong><small>Must be read with imbalance-aware metrics</small></article>
+      <article><span>Balanced accuracy</span><strong>45.09%</strong><small>Average recall across all three classes</small></article>
+      <article><span>Macro F1</span><strong>44.34%</strong><small>Equal weighting across classes</small></article>
+      <article class="warning-card"><span>Medium-class recall</span><strong>0.00%</strong><small>Important limitation: unreliable prediabetes detection</small></article>
+    </section>
+
+    <section id="workflow" class="section shell">
+      <div class="section-heading">
+        <p class="eyebrow">Four-stage workflow</p>
+        <h2>From survey row to an evidence-rich Digital Twin</h2>
+        <p>The hosted page presents checked model artifacts. The repository contains the reproducible Docker, Jupyter, Flask, Neo4j, SHAP, SMPL, and local Ollama workflow.</p>
+      </div>
+      <div class="stages">
+        <article><span class="stage-number">01</span><h3>Predict</h3><p>Estimate Low, Medium, and High class probabilities from 21 decoded BRFSS observations.</p></article>
+        <article><span class="stage-number">02</span><h3>Explain</h3><p>Rank patient-specific SHAP contributions alongside global permutation importance.</p></article>
+        <article><span class="stage-number">03</span><h3>Simulate</h3><p>Re-run the model after explicit manual edits and generate separate current and scenario twins.</p></article>
+        <article><span class="stage-number">04</span><h3>Connect evidence</h3><p>Assemble a temporary patient graph while Neo4j stores reusable definitions only.</p></article>
+      </div>
+    </section>
+
+    <section id="twins" class="section section-tint">
+      <div class="shell">
+        <div class="section-heading compact">
+          <p class="eyebrow">Manual comparison</p>
+          <h2>Current and scenario profiles remain distinct</h2>
+          <p>Patient #104917 changes BMI from 41 to 36 and physical activity from 0 to 1. The probability change is model-derived and non-causal.</p>
+        </div>
+        <div class="twin-grid">
+          <article class="twin-card">
+            <div class="twin-title"><div><span>Current profile</span><h3>BMI 41 · 52.6%</h3></div><span class="pill">Moderate</span></div>
+            <model-viewer src="assets/digital_twin.glb" camera-controls auto-rotate shadow-intensity="1" alt="Current patient Digital Twin model"></model-viewer>
+          </article>
+          <article class="twin-card">
+            <div class="twin-title"><div><span>Comparison scenario</span><h3>BMI 36 · 42.1%</h3></div><span class="pill">Moderate</span></div>
+            <model-viewer src="assets/digital_twin_scenario.glb" camera-controls auto-rotate shadow-intensity="1" alt="Scenario Digital Twin model"></model-viewer>
+          </article>
+        </div>
+        <p class="limitation-banner"><strong>Interpretation boundary:</strong> this is a model re-prediction after manual input edits—not an estimated treatment benefit or causal effect.</p>
+      </div>
+    </section>
+
+    <section id="evidence" class="section shell">
+      <div class="section-heading">
+        <p class="eyebrow">Model evidence</p>
+        <h2>Performance and explanations stay visible together</h2>
+      </div>
+      <div class="evidence-grid">
+        <figure class="figure-card">
+          <div><span>Patient explanation</span><h3>SHAP contribution waterfall</h3></div>
+          <img src="assets/patient_shap_waterfall.png" alt="Patient SHAP waterfall chart">
+          <figcaption>Positive and negative contributions for the checked case-study patient.</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <div><span>Global evaluation</span><h3>Confusion matrix</h3></div>
+          <img src="assets/confusion_matrix.png" alt="Three-class confusion matrix">
+          <figcaption>The class-imbalance failure for Medium/prediabetes remains explicit.</figcaption>
+        </figure>
+      </div>
+
+      <div class="shap-panel">
+        <div>
+          <p class="eyebrow">Top patient-specific factors</p>
+          <h3>Contribution magnitude</h3>
+          <p>Bars show absolute SHAP magnitude; the sign labels show direction within the model explanation.</p>
+        </div>
+        <div class="bars" aria-label="Top SHAP contribution magnitudes">
+          <div><span>BMI <em>+0.119</em></span><i style="--width:100%"></i></div>
+          <div><span>High blood pressure <em>−0.086</em></span><i style="--width:72%"></i></div>
+          <div><span>General health <em>+0.084</em></span><i style="--width:71%"></i></div>
+          <div><span>Difficulty walking <em>+0.053</em></span><i style="--width:45%"></i></div>
+          <div><span>High cholesterol <em>−0.047</em></span><i style="--width:39%"></i></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section graph-section">
+      <div class="shell graph-grid">
+        <div>
+          <p class="eyebrow">Stage 4 evidence contract</p>
+          <h2>A complete, temporary patient graph</h2>
+          <p>The full local system combines every selected-patient observation and explanation with reusable Neo4j definitions. It does not persist patient nodes or invent direct causal risk edges.</p>
+          <a class="button button-light" href="https://github.com/AA-49/digitalTwins/blob/main/README.md">Read implementation details</a>
+        </div>
+        <div class="graph-stats">
+          <article><strong>21</strong><span>decoded observations</span></article>
+          <article><strong>21</strong><span>SHAP contributions</span></article>
+          <article><strong>3</strong><span>class probabilities</span></article>
+          <article><strong>0</strong><span>patient nodes persisted</span></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-grid">
+      <div><strong>Explainable Diabetes-Risk Digital Twin</strong><p>Research prototype · Swinburne University project</p></div>
+      <p>Source and reproducible local workflow: <a href="https://github.com/AA-49/digitalTwins">AA-49/digitalTwins</a></p>
+    </div>
+  </footer>
+</body>
+</html>

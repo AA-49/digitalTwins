@@ -9,3 +9,6 @@ file delete/
 models/smpl/*.pkl
 patient.csv
 .env
+
+.vercel
+.env*
