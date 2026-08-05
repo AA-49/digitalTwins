@@ -1,206 +1,199 @@
-# Explainable Diabetes Risk Digital Twin — Docker Workflow
+# Explainable Diabetes Risk Digital Twin
 
-This research prototype implements diabetes-risk prediction, patient-specific SHAP explanation, manual Digital Twin simulation, 3D SMPL visualisation, and a patient-centric Neo4j knowledge graph using the CDC BRFSS 2015 diabetes health indicators dataset.
+An interactive research prototype that connects a numbered CDC BRFSS 2015 patient record to diabetes-risk prediction, patient-specific SHAP explanation, a manual what-if Digital Twin, a temporary patient-centric knowledge graph, and research-safe explanatory guidance.
+
+## Live dashboard
+
+Open the hosted application at **[digitaltwinstest.vercel.app](https://digitaltwinstest.vercel.app)**.
+
+The Vercel deployment supports patient selection, three-class prediction, SHAP evidence, scenario comparison, the complete temporary Stage 4 graph, and deterministic hosted guidance. The complete local research environment uses Docker, Neo4j, Jupyter, Ollama, and optional licensed SMPL assets.
+
+> **Research only:** This project is not a medical diagnosis, treatment recommendation, causal forecast, or clinical decision-support system. BRFSS is cross-sectional survey data. A changed prediction after editing a scenario does not prove that the change caused or prevented diabetes.
+
+## System stages
 
 | Stage | Output |
 | --- | --- |
-| 1 — Prediction | Low, Medium, or High model category with three class probabilities |
-| 2 — Explanation | Global feature importance and patient-specific SHAP evidence |
-| 3 — Digital Twin | Current-versus-scenario model comparison and separate 3D twins |
-| 4 — Knowledge graph and local guidance | All 21 observations, decoded states, SHAP contributions, probabilities, model evaluation, current twin, and optional Ollama explanation |
+| 1 - Prediction | Low, Medium (prediabetes), or High (diabetes), with all three probabilities |
+| 2 - Explanation | Patient-specific SHAP contributions showing model support or opposition |
+| 3 - Digital Twin | Current-versus-scenario prediction and optional patient-specific SMPL meshes |
+| 4 - Knowledge graph | All 21 observations, decoded states, 21 SHAP contributions, three probabilities, model evaluation, and current twin |
+| Guidance | Local Ollama explanation or deterministic hosted evidence summary with safety checks |
 
-> **Research only:** BRFSS is a cross-sectional survey dataset. These outputs are not diagnoses, treatment recommendations, causal forecasts, or clinical decision support. The checked model has 0.0 recall for the Medium/prediabetes class, so accuracy must not be interpreted as reliable screening performance.
+The selected one-based patient number always maps to the same row in the active cleaned dataset. The server reloads that row for prediction and scenario baselines instead of trusting browser-submitted baseline values.
 
-## Hosted Vercel dashboard
+## Model limitations
 
-The interactive Flask dashboard is deployed at <https://digitaltwinstest.vercel.app>.
+The default dataset contains 253,680 records and is highly imbalanced. Accuracy must never be reported alone.
 
-Vercel runs the same patient selection, prediction, SHAP explanation, manual
-scenario comparison, and temporary Stage 4 graph routes as the local Flask
-application. The serverless deployment uses a reproducible 75-tree subset of
-the checked 400-tree Random Forest so the model can be stored in GitHub and
-loaded within serverless memory. Its checked test metrics are 81.77% accuracy,
-44.99% balanced accuracy, 44.27% macro-F1, and 0.22% Medium/prediabetes recall.
-The hosted page displays this separate limitation explicitly.
+| Deployment | Trees | Accuracy | Balanced accuracy | Macro-F1 | Medium recall |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Local Docker model | 400 | 81.96% | 45.09% | 44.34% | 0.00% |
+| Vercel model | 75 | 81.77% | 44.99% | 44.27% | 0.22% |
 
-Services tied to the local computer use truthful hosted fallbacks:
+The hosted model is a reproducible subset of 75 already-trained trees from the checked 400-tree Random Forest. It is smaller so it can load within the Vercel serverless package and memory boundary. Neither result demonstrates reliable Medium/prediabetes screening performance.
 
-- When Neo4j is unavailable, the complete temporary 98-node/135-edge patient
-  graph is assembled from the same embedded reusable definitions. No patient
-  node is persisted.
-- Vercel cannot reach Ollama at `host.docker.internal`, so the hosted guidance
-  button returns the deterministic research-safe evidence summary. Local Docker
-  continues to use the configured Ollama model.
-- Licensed SMPL weights and live mesh generation remain local. Checked GLB
-  assets can still be served when their metadata matches the selected profile.
+## Run locally with Docker
 
-Regenerate the hosted model from the checked local artifact with:
+### Requirements
 
-```powershell
-.\.venv-stage3\Scripts\python.exe scripts\create_vercel_model.py
-```
+- Docker Desktop using Linux containers
+- A web browser
+- Ollama for optional local guidance
+- Official licensed SMPL model files for live 3D mesh generation
 
-The full local Docker/Jupyter workflow below remains the authoritative training
-and research environment.
+### Start the application
 
-## Required software
-
-- Docker Desktop for Windows with the Linux container engine running.
-- Ollama for Windows running locally with `qwen2.5-coder:1.5b` installed.
-- A web browser.
-- Optional licensed SMPL `.pkl` files under `models/smpl/` for 3D mesh generation.
-
-Python and project packages are installed inside the Docker image. A host virtual environment is not required for the normal workflow.
-
-## Start the complete system
-
-1. Open Docker Desktop and wait until it reports that the engine is running.
-2. Open PowerShell in this project directory.
-3. Confirm that Docker is ready:
+1. Start Docker Desktop and wait for the engine to become ready.
+2. Start Ollama and install the configured local model:
 
    ```powershell
-   docker info
-   ```
-
-4. Confirm that Ollama is running and the configured model is installed:
-
-   ```powershell
-   ollama list
    ollama pull qwen2.5-coder:1.5b
+   ollama list
    ```
 
-5. Build and start the dashboard and Neo4j:
+3. From this project directory, build and start the dashboard with Neo4j:
 
    ```powershell
    docker compose up -d --build dashboard
-   ```
-
-   The dashboard service depends on a healthy Neo4j service, so Compose starts both in the correct order.
-
-6. Check both containers:
-
-   ```powershell
    docker compose ps
-   docker compose logs --tail 100 dashboard neo4j
    ```
 
-7. Open:
+4. Open:
 
    - Dashboard: <http://127.0.0.1:5000>
    - Neo4j Browser: <http://127.0.0.1:7474>
 
-The default local Neo4j login is `neo4j` / `training3graph`. Values in `.env` override the default local credentials.
+5. Check logs when needed:
 
-The dashboard container reaches the Windows Ollama service through `http://host.docker.internal:11434`. The defaults can be changed in `.env` with `OLLAMA_BASE_URL`, `OLLAMA_MODEL`, and `OLLAMA_TIMEOUT_SECONDS`.
+   ```powershell
+   docker compose logs --tail 100 dashboard neo4j
+   ```
 
-## Important: do not run Flask on the host
+The dashboard container connects to Neo4j at `bolt://neo4j:7687` and reaches Windows Ollama at `http://host.docker.internal:11434`. Local defaults can be overridden in `.env`.
 
-Do not run:
+Do not start the normal workflow with `python app.py`. A host process uses different networking, may fail to reach the Compose Neo4j service, and can conflict with the dashboard container on port 5000.
+
+### Stop or restart
 
 ```powershell
-python app.py
+docker compose restart dashboard neo4j
+docker compose down
 ```
 
-A host-run Flask process uses `127.0.0.1:7687` for Neo4j and may attempt to call the Docker API for 3D export. If Docker Desktop or Neo4j is unavailable, this produces the “Knowledge graph unavailable” and Docker named-pipe errors. The Compose dashboard instead uses the internal address `bolt://neo4j:7687` and runs the 3D exporter directly inside its container.
-
-If a previous host Flask process is still running, return to that terminal and press `Ctrl+C` before starting Compose. Only the Compose dashboard should own port 5000.
+`docker compose down` preserves the Neo4j volume. Do not add `-v` unless deleting that volume is intentional.
 
 ## Use the dashboard
 
-1. Select a numbered patient from the active BRFSS dataset or import a compatible CSV.
+1. Enter a patient number and choose **Load patient**, or choose **Use** in the patient table.
 2. Review the Stage 1 category and all three probabilities.
-3. Review Stage 2 SHAP evidence; SHAP describes model support, not medical causation.
-4. Explore Stage 4 and confirm the graph reports that reusable definitions were loaded from Neo4j.
-5. Choose **Generate local research guidance** to ask Ollama for a simple-language explanation of the complete temporary Stage 4 evidence.
-6. Inspect the current patient’s 3D twin.
-7. Edit the permitted Stage 3 scenario fields and compare the current and scenario predictions and twins.
+3. Review the Stage 2 SHAP factors. They explain this model output; they do not establish medical causes.
+4. Explore the Stage 4 graph, filters, keyboard selector, connected evidence, and model limitations.
+5. Choose **Generate local research guidance** locally or **Generate hosted evidence summary** on Vercel.
+6. Inspect the Stage 3 current twin when a matching SMPL mesh is available.
+7. Edit the permitted scenario fields and choose **Compare scenario**.
+8. Review the baseline and scenario probabilities, exact edited values, and separate twins.
 
-The selected dataset row remains the server-side source of truth. Patient observations, predictions, SHAP values, and Digital Twin nodes are temporary and are never persisted in Neo4j. Local guidance sends this temporary evidence only to Ollama on this computer; it does not call an external AI API. Every Ollama draft must pass checks for the research boundary, model limitation, paragraph-only format, and prohibited causal or treatment-like claims. A rejected draft is replaced with a deterministic summary of the verified probabilities and SHAP evidence.
+A compatible imported CSV must contain all 21 model input columns. `Diabetes_012` is optional. Imported data remains in memory only and resets when the application restarts.
 
-## Run Jupyter entirely in Docker
+Patient observations, predictions, SHAP values, and Digital Twin graph nodes are temporary and are not persisted in Neo4j. The reusable definition schema may be stored there, but the selected patient's data is assembled for the current request only.
 
-Start JupyterLab:
+## Train and reproduce artifacts
+
+Start JupyterLab in Docker:
 
 ```powershell
 docker compose up -d jupyter
 ```
 
-Open <http://127.0.0.1:8888>. The notebook `diabetes_risk_stages_1_2.ipynb` is the single training path.
+Open <http://127.0.0.1:8888>. The notebook `diabetes_risk_stages_1_2.ipynb` is the combined training and experiment path.
 
-To execute every notebook cell non-interactively and save the executed notebook:
+Execute it non-interactively:
 
 ```powershell
 docker compose --profile training run --rm train-notebook
 ```
 
-Training reads `diabetes_012_health_indicators_BRFSS2015.csv` and updates `artifacts_notebook/`. The full 400-tree workflow and permutation importance can take several minutes.
+This reads `diabetes_012_health_indicators_BRFSS2015.csv` and updates the local evidence under `artifacts_notebook/`.
 
-## Container management
+Regenerate the smaller hosted model from the checked local model:
 
 ```powershell
-# Show service health
-docker compose ps
-
-# Follow dashboard and Neo4j logs
-docker compose logs -f dashboard neo4j
-
-# Restart the application stack
-docker compose restart dashboard neo4j
-
-# Stop containers while preserving Neo4j data
-docker compose down
+.\.venv-stage3\Scripts\python.exe scripts\create_vercel_model.py
 ```
 
-Do not use `docker compose down -v` unless you intentionally want to delete the Neo4j volume.
+The hosted artifact and its separate metrics are stored under `artifacts_vercel/`.
+
+## Optional SMPL 3D setup
+
+SMPL weights are licensed and are not included in this repository. Obtain them from the official SMPL provider and place the appropriate files in `models/smpl/`, for example:
+
+```text
+models/smpl/basicModel_f_lbs_10_207_0_v1.0.0.pkl
+models/smpl/basicModel_m_lbs_10_207_0_v1.0.0.pkl
+```
+
+Never commit or redistribute these files.
+
+Export the default mesh:
+
+```powershell
+docker compose --profile smpl run --rm smpl-export
+```
+
+Export a chosen profile:
+
+```powershell
+docker compose --profile smpl run --rm smpl-export python -m src.export_smpl --bmi 27 --risk 35 --gender female --out artifacts_notebook/digital_twin.glb
+```
+
+The prototype maps BMI to the first SMPL shape coefficient and maps predicted High probability to mesh colour. This visualization rule is not an anatomically validated clinical model. When weights or matching metadata are unavailable, the dashboard hides stale meshes instead of displaying an incorrect patient twin.
+
+## Hosted architecture
+
+Vercel runs the Flask entry point in `app.py` using the configuration in `vercel.json`.
+
+- The 75-tree model is loaded from `artifacts_vercel/`.
+- When Vercel cannot reach a local Neo4j instance, the same complete 98-node/135-edge temporary graph is assembled from embedded reusable definitions.
+- Vercel cannot access `host.docker.internal` on the user's computer, so hosted guidance is deterministic and safety-checked rather than Ollama-generated.
+- Licensed SMPL weights remain local; the hosted page truthfully reports when live mesh generation is unavailable.
+
+## Tests
+
+Run the automated checks with the project virtual environment:
+
+```powershell
+.\.venv-stage3\Scripts\python.exe -m unittest discover -v
+node --check static/js/knowledge_graph.js
+docker compose config --quiet
+```
+
+The Python suite checks the complete patient graph, categorical decoding, temporary fallback behavior, Ollama evidence boundary, hosted summary, and research-safety fallback.
 
 ## Troubleshooting
 
-### Docker named-pipe or daemon error
+### Docker daemon or named-pipe error
 
-Example: `failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine`.
-
-Docker Desktop is not ready. Start Docker Desktop, wait for the engine, run `docker info`, and then rerun:
+Start Docker Desktop, wait until the engine is ready, verify with `docker info`, and rerun:
 
 ```powershell
 docker compose up -d --build dashboard
 ```
 
-### Knowledge graph tries 127.0.0.1:7687
-
-The dashboard was started with `python app.py` instead of Compose, or Neo4j is stopped. Stop the host Flask process with `Ctrl+C` and start the Compose dashboard. Inside Compose, the configured address is `bolt://neo4j:7687`.
-
 ### Port 5000 is already in use
 
-Stop the terminal running `python app.py`, then run:
+Stop any host Flask process with `Ctrl+C`, then restart the Compose dashboard.
 
-```powershell
-docker compose up -d dashboard
-```
-
-### Knowledge graph fallback remains visible
-
-Check Neo4j health and dashboard logs:
+### Knowledge graph shows fallback mode locally
 
 ```powershell
 docker compose ps
 docker compose logs --tail 100 neo4j dashboard
 ```
 
-The page intentionally keeps all 21 accessible patient attributes visible when Neo4j is unavailable.
+Even in fallback mode, the page keeps all 21 patient observations and their complete Stage 4 evidence available.
 
-### 3D twin is unavailable
-
-Confirm that licensed SMPL weights exist under `models/smpl/`, then restart the dashboard:
-
-```powershell
-docker compose restart dashboard
-```
-
-The dashboard container runs `src.export_smpl` directly. It does not need access to the host Docker socket.
-
-### Local Ollama guidance is unavailable
-
-Confirm Ollama is running on Windows and that the configured model exists:
+### Local guidance is unavailable
 
 ```powershell
 ollama list
@@ -208,13 +201,39 @@ Invoke-RestMethod http://127.0.0.1:11434/api/tags
 docker compose exec -T dashboard python -c "import json, urllib.request; print(json.load(urllib.request.urlopen('http://host.docker.internal:11434/api/tags')))"
 ```
 
-The first generation can be slow while Ollama loads the model. The dashboard waits up to 180 seconds by default. After changing the model or connection settings in `.env`, recreate the dashboard container with `docker compose up -d --force-recreate dashboard`.
+The first response can take one or two minutes while Ollama loads the model. Unsafe or incomplete drafts are replaced with a deterministic evidence summary.
+
+### 3D twin is unavailable
+
+Confirm that the licensed SMPL files exist under `models/smpl/`, then restart the dashboard:
+
+```powershell
+docker compose restart dashboard
+```
 
 ## Research and sharing boundaries
 
+- The current dataset is BRFSS survey data, not longitudinal ShanghaiT2DM clinical records.
+- BRFSS does not provide HbA1c or MeanCGM, so the application must not invent those measurements.
+- SHAP is model explanation, not causal evidence.
+- Manual scenarios are model re-predictions, not intervention effects.
 - Report balanced accuracy, macro-F1, confusion matrix, and per-class recall alongside accuracy.
-- The dataset does not contain HbA1c or MeanCGM, so the system must not invent those measurements.
-- The graph contains no direct causal edges from observations to diabetes risk.
-- Ollama output is generated text from a small code-oriented model. It can be incomplete or inaccurate and remains research-only, non-causal, and not medical advice.
-- Do not share raw survey data, patient-identifiable data, `.venv` folders, model binaries, licensed SMPL files, secrets, or the recoverable `delete/` folder.
-- Use `SUPERVISOR_HANDOFF.md` when preparing a supervisor demonstration or project archive.
+- Do not publish secrets, raw patient-identifiable data, virtual environments, licensed SMPL files, the full local model, or the recoverable `delete/` archive.
+
+## Key files
+
+| Path | Purpose |
+| --- | --- |
+| `app.py` | Flask routes and dashboard orchestration |
+| `stage3.py` | Dataset, prediction, SHAP, scenario, and twin helpers |
+| `knowledge_graph.py` | Reusable Neo4j schema and temporary patient graph assembly |
+| `ollama_recommendations.py` | Local evidence prompt, safety checks, and deterministic fallback |
+| `diabetes_risk_stages_1_2.ipynb` | Reproducible training and experiment notebook |
+| `docker-compose.yml` | Dashboard, Neo4j, Jupyter, training, and SMPL services |
+| `vercel.json` | Hosted Flask function packaging |
+| `artifacts_notebook/` | Local model and research evidence |
+| `artifacts_vercel/` | Smaller hosted model and hosted metrics |
+
+## License and data
+
+The repository does not grant permission to redistribute the BRFSS-derived data, trained artifacts, or SMPL assets. Confirm the terms of each upstream dataset, model, and dependency before public redistribution.
