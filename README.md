@@ -65,42 +65,6 @@ artifacts_notebook\diabetes_risk_random_forest.joblib
 
 The trained file is approximately 405 MB and is deliberately excluded from normal Git history. A fresh clone therefore needs one of these options before patient prediction will work:
 
-#### Option A: receive the checked model from the project owner
-
-Copy the separately supplied model to:
-
-```text
-digitalTwins\artifacts_notebook\diabetes_risk_random_forest.joblib
-```
-
-Verify it from the repository directory:
-
-```bat
-dir artifacts_notebook\diabetes_risk_random_forest.joblib
-```
-
-Only accept model files from a trusted source. Python `joblib`/pickle files can execute code when loaded.
-
-#### Option B: reproduce the model locally in Docker
-
-Run the checked notebook non-interactively:
-
-```bat
-docker compose --profile training run --rm train-notebook
-```
-
-This builds the project image when necessary, reads `diabetes_012_health_indicators_BRFSS2015.csv`, executes `diabetes_risk_stages_1_2.ipynb`, and writes the model and evaluation artifacts under `artifacts_notebook\`.
-
-Training a 400-tree model on the full dataset is CPU-, memory-, and time-intensive. Keep Docker Desktop running. If the job is terminated because of memory pressure, increase the resources available to Docker Desktop and retry.
-
-Confirm the result:
-
-```bat
-dir artifacts_notebook\diabetes_risk_random_forest.joblib
-```
-
-## Optional interactive JupyterLab
-
 Start JupyterLab:
 
 ```bat
