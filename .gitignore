@@ -1,0 +1,11 @@
+.venv/
+.venv-stage3/
+__pycache__/
+.ipynb_checkpoints/
+dist/
+delete/
+file delete/
+*.joblib
+models/smpl/*.pkl
+patient.csv
+.env

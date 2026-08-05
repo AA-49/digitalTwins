@@ -1,0 +1,33 @@
+{
+  "projectRoot": "C:\\Users\\user\\OneDrive\\Desktop\\Swinb\\Research\\training3",
+  "sourceFilePaths": [
+    ".dockerignore",
+    ".env.example",
+    "Dockerfile",
+    "README.md",
+    "SMPL_SETUP.md",
+    "SUPERVISOR_HANDOFF.md",
+    "SYSTEM_USER_GUIDE.md",
+    "WEBSITE_REVIEW.md",
+    "app.py",
+    "diabetes_risk.py",
+    "diabetes_risk_stages_1_2.ipynb",
+    "docker-compose.yml",
+    "knowledge_graph.py",
+    "models/smpl/README.md",
+    "ollama_recommendations.py",
+    "plan.md",
+    "requirements.txt",
+    "research-question-card.md",
+    "share_supervisor.ps1",
+    "src/export_smpl.py",
+    "src/twin_generator.py",
+    "stage3.py",
+    "static/js/knowledge_graph.js",
+    "static/style.css",
+    "templates/index.html",
+    "test_knowledge_graph.py",
+    "test_ollama_recommendations.py"
+  ],
+  "gitCommitHash": "unavailable-not-a-git-repository"
+}

@@ -1,0 +1,1143 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "unavailable-not-a-git-repository",
+  "generatedAt": "2026-08-05T02:34:18.011Z",
+  "files": {
+    ".dockerignore": {
+      "filePath": ".dockerignore",
+      "contentHash": "715c9bde0bed4b727c308be679f374d9bf5e7c6da1d3dd7e99315a0e2000c01f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 15,
+      "hasStructuralAnalysis": false
+    },
+    ".env.example": {
+      "filePath": ".env.example",
+      "contentHash": "07d8ee08eeef1d455f7944978fa044e32d45049bef8ca2dba5e2726e034e7729",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": true
+    },
+    "Dockerfile": {
+      "filePath": "Dockerfile",
+      "contentHash": "136ace3641010a2a79bae091df00debd9441ed2bb08ef3c3d5f1881c513dfe14",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 38,
+      "hasStructuralAnalysis": true
+    },
+    "README.md": {
+      "filePath": "README.md",
+      "contentHash": "2689cf8dcb94d3db5936ea3e5d76fe280ca9c7d9ce74fbeaf84201594fa18b75",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 189,
+      "hasStructuralAnalysis": true
+    },
+    "SMPL_SETUP.md": {
+      "filePath": "SMPL_SETUP.md",
+      "contentHash": "c269e3c40686b3befba6def7dddd18a1df3892d335fdd9a28282d21dee748f40",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 53,
+      "hasStructuralAnalysis": true
+    },
+    "SUPERVISOR_HANDOFF.md": {
+      "filePath": "SUPERVISOR_HANDOFF.md",
+      "contentHash": "295af4257e5e7022655caf75a4edb6f0a0287a5632b6179c082e760523ee30fa",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 52,
+      "hasStructuralAnalysis": true
+    },
+    "SYSTEM_USER_GUIDE.md": {
+      "filePath": "SYSTEM_USER_GUIDE.md",
+      "contentHash": "49db00b78d17f6e4a2d5d22705932affb5d73ef4391e4636320c3dedcfe7387b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 71,
+      "hasStructuralAnalysis": true
+    },
+    "WEBSITE_REVIEW.md": {
+      "filePath": "WEBSITE_REVIEW.md",
+      "contentHash": "06320500745f1262226117cf77e331bed3da5ca41a0c3ac1bfa5fded3faa5a4f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 37,
+      "hasStructuralAnalysis": true
+    },
+    "app.py": {
+      "filePath": "app.py",
+      "contentHash": "455e80ce14a301a30c191ee038e57e4e1f590bbdc60185b8cd82315314e21e4a",
+      "functions": [
+        {
+          "name": "get_patient_dataset",
+          "params": [],
+          "returnType": "PatientDataset",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "get_twin",
+          "params": [],
+          "returnType": "DiabetesDigitalTwin",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "twin_metadata",
+          "params": [
+            "glb_path"
+          ],
+          "returnType": "dict | None",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "digital_twin_asset",
+          "params": [],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "scenario_digital_twin_asset",
+          "params": [],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "refresh_smpl_twin",
+          "params": [
+            "values",
+            "prediction",
+            "glb_path",
+            "profile_name"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 86
+        },
+        {
+          "name": "index",
+          "params": [],
+          "exported": true,
+          "lineCount": 110
+        }
+      ],
+      "classes": [
+        {
+          "name": "PatientDataset",
+          "methods": [
+            "__init__",
+            "from_path",
+            "from_upload",
+            "patient",
+            "actual_label",
+            "patient_window"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 76
+        }
+      ],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "shutil",
+          "specifiers": [
+            "shutil"
+          ]
+        },
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "pandas",
+          "specifiers": [
+            "pd"
+          ]
+        },
+        {
+          "source": "flask",
+          "specifiers": [
+            "Flask",
+            "abort",
+            "render_template",
+            "request",
+            "send_file"
+          ]
+        },
+        {
+          "source": "diabetes_risk",
+          "specifiers": [
+            "FEATURES"
+          ]
+        },
+        {
+          "source": "knowledge_graph",
+          "specifiers": [
+            "PatientKnowledgeGraph"
+          ]
+        },
+        {
+          "source": "ollama_recommendations",
+          "specifiers": [
+            "configured_model",
+            "generate_local_guidance",
+            "guidance_error_message"
+          ]
+        },
+        {
+          "source": "stage3",
+          "specifiers": [
+            "DiabetesDigitalTwin",
+            "RISK_LABELS",
+            "smpl_twin_descriptor"
+          ]
+        }
+      ],
+      "exports": [
+        "PatientDataset",
+        "get_patient_dataset",
+        "get_twin",
+        "twin_metadata",
+        "digital_twin_asset",
+        "scenario_digital_twin_asset",
+        "refresh_smpl_twin",
+        "index"
+      ],
+      "totalLines": 394,
+      "hasStructuralAnalysis": true
+    },
+    "diabetes_risk.py": {
+      "filePath": "diabetes_risk.py",
+      "contentHash": "40e3b56343826cbeb2b4f82537313c13b7e9ac5f9af77739e7b946bab13d3832",
+      "functions": [
+        {
+          "name": "load_dataset",
+          "params": [
+            "path"
+          ],
+          "returnType": "tuple[pd.DataFrame, pd.Series]",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "validate_patient",
+          "params": [
+            "frame"
+          ],
+          "returnType": "pd.DataFrame",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "save_json",
+          "params": [
+            "value",
+            "path"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "load_model",
+          "params": [
+            "path"
+          ],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "joblib",
+          "specifiers": [
+            "joblib"
+          ]
+        },
+        {
+          "source": "numpy",
+          "specifiers": [
+            "np"
+          ]
+        },
+        {
+          "source": "pandas",
+          "specifiers": [
+            "pd"
+          ]
+        }
+      ],
+      "exports": [
+        "load_dataset",
+        "validate_patient",
+        "save_json",
+        "load_model"
+      ],
+      "totalLines": 61,
+      "hasStructuralAnalysis": true
+    },
+    "diabetes_risk_stages_1_2.ipynb": {
+      "filePath": "diabetes_risk_stages_1_2.ipynb",
+      "contentHash": "51607d04d4495ef7d74821ffe4616b8fc2693d4f553ca5907cead32ecccbe95e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1762,
+      "hasStructuralAnalysis": false
+    },
+    "docker-compose.yml": {
+      "filePath": "docker-compose.yml",
+      "contentHash": "cc46d80906ab015617572de61242fe2f046548eee0ee743bd7f09a5f5d93989f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 78,
+      "hasStructuralAnalysis": true
+    },
+    "knowledge_graph.py": {
+      "filePath": "knowledge_graph.py",
+      "contentHash": "727314f7c83b455e4800d8ca4f86fdb14fea7d79303f9a842aa528223e83d8a0",
+      "functions": [
+        {
+          "name": "classify_bmi",
+          "params": [
+            "bmi"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "_integer_code",
+          "params": [
+            "value"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "decode_feature",
+          "params": [
+            "feature",
+            "value"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "_format_value",
+          "params": [
+            "value"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "_safe_id",
+          "params": [
+            "value"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [
+        {
+          "name": "PatientKnowledgeGraph",
+          "methods": [
+            "__init__",
+            "_load_metrics",
+            "_load_importance",
+            "_get_driver",
+            "initialize",
+            "_ensure_model",
+            "explain",
+            "_model_warning",
+            "_attributes",
+            "_local_attributes",
+            "_build_graph",
+            "close"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 439
+        }
+      ],
+      "imports": [
+        {
+          "source": "csv",
+          "specifiers": [
+            "csv"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "Lock"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "diabetes_risk",
+          "specifiers": [
+            "FEATURES"
+          ]
+        }
+      ],
+      "exports": [
+        "classify_bmi",
+        "_integer_code",
+        "decode_feature",
+        "_format_value",
+        "_safe_id",
+        "PatientKnowledgeGraph"
+      ],
+      "totalLines": 624,
+      "hasStructuralAnalysis": true
+    },
+    "models/smpl/README.md": {
+      "filePath": "models/smpl/README.md",
+      "contentHash": "73aae4b7f3ed1a891cef134c8be0c7a7dbe575b4d2f0bb2297474255fe00b74e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 10,
+      "hasStructuralAnalysis": true
+    },
+    "ollama_recommendations.py": {
+      "filePath": "ollama_recommendations.py",
+      "contentHash": "c428742a609d4c3ea2f757ef731782ea81cf6cffc1f8073ae006220dd2c3993e",
+      "functions": [
+        {
+          "name": "configured_model",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "build_recommendation_input",
+          "params": [
+            "patient_number",
+            "prediction",
+            "knowledge_graph",
+            "twin"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 32
+        },
+        {
+          "name": "_passes_research_safety_checks",
+          "params": [
+            "text"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "_deterministic_evidence_summary",
+          "params": [
+            "patient_number",
+            "prediction",
+            "knowledge_graph"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 36
+        },
+        {
+          "name": "generate_local_guidance",
+          "params": [
+            "patient_number",
+            "prediction",
+            "knowledge_graph",
+            "twin"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 60
+        },
+        {
+          "name": "guidance_error_message",
+          "params": [
+            "exc"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [
+        {
+          "name": "OllamaRecommendationError",
+          "methods": [
+            "__init__"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "re",
+          "specifiers": [
+            "re"
+          ]
+        },
+        {
+          "source": "socket",
+          "specifiers": [
+            "socket"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "urllib.error",
+          "specifiers": [
+            "HTTPError",
+            "URLError"
+          ]
+        },
+        {
+          "source": "urllib.request",
+          "specifiers": [
+            "Request",
+            "urlopen"
+          ]
+        }
+      ],
+      "exports": [
+        "OllamaRecommendationError",
+        "configured_model",
+        "build_recommendation_input",
+        "_passes_research_safety_checks",
+        "_deterministic_evidence_summary",
+        "generate_local_guidance",
+        "guidance_error_message"
+      ],
+      "totalLines": 215,
+      "hasStructuralAnalysis": true
+    },
+    "plan.md": {
+      "filePath": "plan.md",
+      "contentHash": "5a64a5ddf4c436b7ac67a57b247b206b738d391a3c8005c19cbbcaca9d8e4ef3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 68,
+      "hasStructuralAnalysis": true
+    },
+    "requirements.txt": {
+      "filePath": "requirements.txt",
+      "contentHash": "565cd7199d6f59ab4a9af2c39f61b8e05e419965beaf63d46c24d8ccbc9e324e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 19,
+      "hasStructuralAnalysis": false
+    },
+    "research-question-card.md": {
+      "filePath": "research-question-card.md",
+      "contentHash": "de1d57800aa52b9aa462ed1731abcda8f0c20960dcff63917d516d53ce764ef9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 40,
+      "hasStructuralAnalysis": true
+    },
+    "share_supervisor.ps1": {
+      "filePath": "share_supervisor.ps1",
+      "contentHash": "321848ad6206934284bcbda8852878f38f0d721b0a86f0e5fa18d25d264a24fc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 62,
+      "hasStructuralAnalysis": false
+    },
+    "src/export_smpl.py": {
+      "filePath": "src/export_smpl.py",
+      "contentHash": "194a0ece6af87d29880049da0325371a6e94209cf5b71f855a3fd2e2feaa1fc5",
+      "functions": [
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 29
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "argparse",
+          "specifiers": [
+            "argparse"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "numpy",
+          "specifiers": [
+            "np"
+          ]
+        },
+        {
+          "source": "src.twin_generator",
+          "specifiers": [
+            "TwinGenerator",
+            "risk_to_color"
+          ]
+        }
+      ],
+      "exports": [
+        "main"
+      ],
+      "totalLines": 52,
+      "hasStructuralAnalysis": true
+    },
+    "src/twin_generator.py": {
+      "filePath": "src/twin_generator.py",
+      "contentHash": "d38daa631e6e4753669b0105b12375a9c636291a254d2c26b85847417bdbf2ea",
+      "functions": [
+        {
+          "name": "bmi_to_beta0",
+          "params": [
+            "bmi"
+          ],
+          "returnType": "float",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "risk_to_color",
+          "params": [
+            "prob"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "display_demo",
+          "params": [
+            "bmi",
+            "risk_prob",
+            "gender"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [
+        {
+          "name": "TwinGenerator",
+          "methods": [
+            "__init__",
+            "_load_model",
+            "generate",
+            "mesh_with_color"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 92
+        }
+      ],
+      "imports": [
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Tuple"
+          ]
+        },
+        {
+          "source": "inspect",
+          "specifiers": [
+            "inspect"
+          ]
+        },
+        {
+          "source": "numpy",
+          "specifiers": [
+            "np"
+          ]
+        }
+      ],
+      "exports": [
+        "bmi_to_beta0",
+        "risk_to_color",
+        "TwinGenerator",
+        "display_demo"
+      ],
+      "totalLines": 165,
+      "hasStructuralAnalysis": true
+    },
+    "stage3.py": {
+      "filePath": "stage3.py",
+      "contentHash": "a850968a0a7525c98d1230a99cac71c5173aea40b0ff63a733c09d07026d570d",
+      "functions": [
+        {
+          "name": "find_model_path",
+          "params": [],
+          "returnType": "Path",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "smpl_twin_descriptor",
+          "params": [
+            "bmi",
+            "high_risk_probability"
+          ],
+          "returnType": "dict[str, Any]",
+          "exported": true,
+          "lineCount": 23
+        }
+      ],
+      "classes": [
+        {
+          "name": "DiabetesDigitalTwin",
+          "methods": [
+            "__init__",
+            "patient_frame",
+            "predict",
+            "explain",
+            "simulate"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 90
+        }
+      ],
+      "imports": [
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "joblib",
+          "specifiers": [
+            "joblib"
+          ]
+        },
+        {
+          "source": "numpy",
+          "specifiers": [
+            "np"
+          ]
+        },
+        {
+          "source": "pandas",
+          "specifiers": [
+            "pd"
+          ]
+        },
+        {
+          "source": "diabetes_risk",
+          "specifiers": [
+            "FEATURES"
+          ]
+        }
+      ],
+      "exports": [
+        "find_model_path",
+        "DiabetesDigitalTwin",
+        "smpl_twin_descriptor"
+      ],
+      "totalLines": 151,
+      "hasStructuralAnalysis": true
+    },
+    "static/js/knowledge_graph.js": {
+      "filePath": "static/js/knowledge_graph.js",
+      "contentHash": "8f9b07423fa0105974797ee4c9692d2727fcc1de76aa9dc12af61d107245cb3c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 265,
+      "hasStructuralAnalysis": true
+    },
+    "static/style.css": {
+      "filePath": "static/style.css",
+      "contentHash": "74275d97ee69fd06deba140919cc33ea5e61f6c200b97d584f605b11ac6af6e4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 106,
+      "hasStructuralAnalysis": false
+    },
+    "templates/index.html": {
+      "filePath": "templates/index.html",
+      "contentHash": "6c5bd955597f5b4fddb21a67a3206c420421ee42bb4d2be0c145a50d55cb013d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 290,
+      "hasStructuralAnalysis": false
+    },
+    "test_knowledge_graph.py": {
+      "filePath": "test_knowledge_graph.py",
+      "contentHash": "b7eab5feb53028b5ab46318c62433cd59a70ce454c90d530766974338a26ab90",
+      "functions": [
+        {
+          "name": "example_profile",
+          "params": [
+            "bmi"
+          ],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "example_prediction",
+          "params": [],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "example_contributions",
+          "params": [],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "explain",
+          "params": [
+            "graph"
+          ],
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "classes": [
+        {
+          "name": "FakeResult",
+          "methods": [
+            "__init__",
+            "__iter__",
+            "consume"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "FakeSession",
+          "methods": [
+            "__init__",
+            "__enter__",
+            "__exit__",
+            "run"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 23
+        },
+        {
+          "name": "FakeDriver",
+          "methods": [
+            "__init__",
+            "session",
+            "close"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "KnowledgeGraphTests",
+          "methods": [
+            "test_stage3_model_candidates_remain_iterable",
+            "test_reusable_schema_covers_every_feature_and_domain",
+            "test_bmi_boundaries",
+            "test_every_categorical_code_decodes",
+            "test_graph_contains_complete_temporary_patient_model",
+            "test_shap_sign_probabilities_and_twin_are_preserved",
+            "test_initialization_is_idempotent_and_removes_old_mechanism_nodes",
+            "test_unavailable_database_keeps_all_attributes_visible"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 76
+        }
+      ],
+      "imports": [
+        {
+          "source": "unittest",
+          "specifiers": [
+            "unittest"
+          ]
+        },
+        {
+          "source": "diabetes_risk",
+          "specifiers": [
+            "FEATURES"
+          ]
+        },
+        {
+          "source": "knowledge_graph",
+          "specifiers": [
+            "ATTRIBUTE_DEFINITIONS",
+            "BMI_CATEGORIES",
+            "DOMAIN_DEFINITIONS",
+            "VALUE_MAPS",
+            "PatientKnowledgeGraph",
+            "classify_bmi",
+            "decode_feature"
+          ]
+        },
+        {
+          "source": "stage3",
+          "specifiers": [
+            "MODEL_CANDIDATES"
+          ]
+        }
+      ],
+      "exports": [
+        "FakeResult",
+        "FakeSession",
+        "FakeDriver",
+        "example_profile",
+        "example_prediction",
+        "example_contributions",
+        "explain",
+        "KnowledgeGraphTests"
+      ],
+      "totalLines": 179,
+      "hasStructuralAnalysis": true
+    },
+    "test_ollama_recommendations.py": {
+      "filePath": "test_ollama_recommendations.py",
+      "contentHash": "b68f3ed787149a68b429c91a717a6b31a44bf06dd841c10c97025e0f5d8c4f29",
+      "functions": [
+        {
+          "name": "evidence",
+          "params": [],
+          "exported": true,
+          "lineCount": 24
+        }
+      ],
+      "classes": [
+        {
+          "name": "FakeResponse",
+          "methods": [
+            "__enter__",
+            "__exit__",
+            "read"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "UnsafeResponse",
+          "methods": [
+            "read"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "OllamaRecommendationTests",
+          "methods": [
+            "test_payload_preserves_complete_patient_evidence",
+            "test_incomplete_evidence_is_rejected",
+            "test_generate_uses_local_non_streaming_api",
+            "test_unsafe_draft_is_replaced_with_deterministic_summary",
+            "test_dashboard_renders_local_guidance"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 83
+        }
+      ],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "unittest",
+          "specifiers": [
+            "unittest"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "types",
+          "specifiers": [
+            "SimpleNamespace"
+          ]
+        },
+        {
+          "source": "unittest.mock",
+          "specifiers": [
+            "patch"
+          ]
+        },
+        {
+          "source": "ollama_recommendations",
+          "specifiers": [
+            "OllamaRecommendationError",
+            "build_recommendation_input",
+            "generate_local_guidance"
+          ]
+        }
+      ],
+      "exports": [
+        "evidence",
+        "FakeResponse",
+        "UnsafeResponse",
+        "OllamaRecommendationTests"
+      ],
+      "totalLines": 153,
+      "hasStructuralAnalysis": true
+    }
+  }
+}

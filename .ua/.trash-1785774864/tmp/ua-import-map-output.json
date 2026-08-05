@@ -1,0 +1,55 @@
+{
+  "scriptCompleted": true,
+  "stats": {
+    "filesScanned": 27,
+    "filesWithImports": 7,
+    "totalEdges": 11
+  },
+  "importMap": {
+    ".dockerignore": [],
+    ".env.example": [],
+    "Dockerfile": [],
+    "README.md": [],
+    "SMPL_SETUP.md": [],
+    "SUPERVISOR_HANDOFF.md": [],
+    "SYSTEM_USER_GUIDE.md": [],
+    "WEBSITE_REVIEW.md": [],
+    "app.py": [
+      "diabetes_risk.py",
+      "knowledge_graph.py",
+      "stage3.py"
+    ],
+    "diabetes_risk.py": [],
+    "diabetes_risk_stages_1_2.ipynb": [],
+    "docker-compose.yml": [],
+    "explain_patient.py": [
+      "diabetes_risk.py"
+    ],
+    "knowledge_graph.py": [
+      "diabetes_risk.py"
+    ],
+    "models/smpl/README.md": [],
+    "plan.md": [],
+    "requirements.txt": [],
+    "research-question-card.md": [],
+    "share_supervisor.ps1": [],
+    "src/export_smpl.py": [
+      "src/twin_generator.py"
+    ],
+    "src/twin_generator.py": [],
+    "stage3.py": [
+      "diabetes_risk.py"
+    ],
+    "static/js/knowledge_graph.js": [],
+    "static/style.css": [],
+    "templates/index.html": [],
+    "test_knowledge_graph.py": [
+      "diabetes_risk.py",
+      "knowledge_graph.py",
+      "stage3.py"
+    ],
+    "train.py": [
+      "diabetes_risk.py"
+    ]
+  }
+}

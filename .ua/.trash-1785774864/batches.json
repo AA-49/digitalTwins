@@ -1,0 +1,417 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "louvain",
+  "totalFiles": 27,
+  "totalBatches": 5,
+  "exportsByPath": {
+    "app.py": [
+      "PatientDataset",
+      "get_patient_dataset",
+      "get_twin",
+      "twin_metadata",
+      "digital_twin_asset",
+      "scenario_digital_twin_asset",
+      "refresh_smpl_twin",
+      "index"
+    ],
+    "diabetes_risk.py": [
+      "load_dataset",
+      "validate_patient",
+      "save_json",
+      "load_model"
+    ],
+    "diabetes_risk_stages_1_2.ipynb": [],
+    "explain_patient.py": [
+      "parse_args",
+      "main"
+    ],
+    "knowledge_graph.py": [
+      "classify_bmi",
+      "_integer_code",
+      "decode_feature",
+      "_format_value",
+      "_safe_id",
+      "PatientKnowledgeGraph"
+    ],
+    "src/export_smpl.py": [
+      "main"
+    ],
+    "src/twin_generator.py": [
+      "bmi_to_beta0",
+      "risk_to_color",
+      "TwinGenerator",
+      "display_demo"
+    ],
+    "stage3.py": [
+      "find_model_path",
+      "DiabetesDigitalTwin",
+      "smpl_twin_descriptor"
+    ],
+    "static/js/knowledge_graph.js": [],
+    "test_knowledge_graph.py": [
+      "FakeResult",
+      "FakeSession",
+      "FakeDriver",
+      "example_profile",
+      "example_prediction",
+      "example_contributions",
+      "explain",
+      "KnowledgeGraphTests"
+    ],
+    "train.py": [
+      "parse_args",
+      "save_roc_curve",
+      "main"
+    ]
+  },
+  "batches": [
+    {
+      "batchIndex": 1,
+      "files": [
+        {
+          "path": "app.py",
+          "language": "python",
+          "sizeLines": 381,
+          "fileCategory": "code"
+        },
+        {
+          "path": "knowledge_graph.py",
+          "language": "python",
+          "sizeLines": 623,
+          "fileCategory": "code"
+        },
+        {
+          "path": "stage3.py",
+          "language": "python",
+          "sizeLines": 150,
+          "fileCategory": "code"
+        },
+        {
+          "path": "test_knowledge_graph.py",
+          "language": "python",
+          "sizeLines": 178,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "app.py": [
+          "diabetes_risk.py",
+          "knowledge_graph.py",
+          "stage3.py"
+        ],
+        "knowledge_graph.py": [
+          "diabetes_risk.py"
+        ],
+        "stage3.py": [
+          "diabetes_risk.py"
+        ],
+        "test_knowledge_graph.py": [
+          "diabetes_risk.py",
+          "knowledge_graph.py",
+          "stage3.py"
+        ]
+      },
+      "neighborMap": {
+        "app.py": [
+          {
+            "path": "diabetes_risk.py",
+            "batchIndex": 2,
+            "symbols": [
+              "load_dataset",
+              "validate_patient",
+              "save_json",
+              "load_model"
+            ]
+          }
+        ],
+        "knowledge_graph.py": [
+          {
+            "path": "diabetes_risk.py",
+            "batchIndex": 2,
+            "symbols": [
+              "load_dataset",
+              "validate_patient",
+              "save_json",
+              "load_model"
+            ]
+          }
+        ],
+        "stage3.py": [
+          {
+            "path": "diabetes_risk.py",
+            "batchIndex": 2,
+            "symbols": [
+              "load_dataset",
+              "validate_patient",
+              "save_json",
+              "load_model"
+            ]
+          }
+        ],
+        "test_knowledge_graph.py": [
+          {
+            "path": "diabetes_risk.py",
+            "batchIndex": 2,
+            "symbols": [
+              "load_dataset",
+              "validate_patient",
+              "save_json",
+              "load_model"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 2,
+      "files": [
+        {
+          "path": "diabetes_risk.py",
+          "language": "python",
+          "sizeLines": 60,
+          "fileCategory": "code"
+        },
+        {
+          "path": "explain_patient.py",
+          "language": "python",
+          "sizeLines": 70,
+          "fileCategory": "code"
+        },
+        {
+          "path": "train.py",
+          "language": "python",
+          "sizeLines": 99,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "diabetes_risk.py": [],
+        "explain_patient.py": [
+          "diabetes_risk.py"
+        ],
+        "train.py": [
+          "diabetes_risk.py"
+        ]
+      },
+      "neighborMap": {
+        "diabetes_risk.py": [
+          {
+            "path": "app.py",
+            "batchIndex": 1,
+            "symbols": [
+              "PatientDataset",
+              "get_patient_dataset",
+              "get_twin",
+              "twin_metadata",
+              "digital_twin_asset",
+              "scenario_digital_twin_asset",
+              "refresh_smpl_twin",
+              "index"
+            ]
+          },
+          {
+            "path": "knowledge_graph.py",
+            "batchIndex": 1,
+            "symbols": [
+              "classify_bmi",
+              "_integer_code",
+              "decode_feature",
+              "_format_value",
+              "_safe_id",
+              "PatientKnowledgeGraph"
+            ]
+          },
+          {
+            "path": "stage3.py",
+            "batchIndex": 1,
+            "symbols": [
+              "find_model_path",
+              "DiabetesDigitalTwin",
+              "smpl_twin_descriptor"
+            ]
+          },
+          {
+            "path": "test_knowledge_graph.py",
+            "batchIndex": 1,
+            "symbols": [
+              "FakeResult",
+              "FakeSession",
+              "FakeDriver",
+              "example_profile",
+              "example_prediction",
+              "example_contributions",
+              "explain",
+              "KnowledgeGraphTests"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 3,
+      "files": [
+        {
+          "path": ".dockerignore",
+          "language": "unknown",
+          "sizeLines": 14,
+          "fileCategory": "infra"
+        },
+        {
+          "path": "Dockerfile",
+          "language": "dockerfile",
+          "sizeLines": 37,
+          "fileCategory": "infra"
+        },
+        {
+          "path": "docker-compose.yml",
+          "language": "yaml",
+          "sizeLines": 72,
+          "fileCategory": "infra"
+        }
+      ],
+      "batchImportData": {
+        ".dockerignore": [],
+        "Dockerfile": [],
+        "docker-compose.yml": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 4,
+      "files": [
+        {
+          "path": ".env.example",
+          "language": "config",
+          "sizeLines": 7,
+          "fileCategory": "config"
+        },
+        {
+          "path": "README.md",
+          "language": "markdown",
+          "sizeLines": 126,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "SMPL_SETUP.md",
+          "language": "markdown",
+          "sizeLines": 52,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "SUPERVISOR_HANDOFF.md",
+          "language": "markdown",
+          "sizeLines": 51,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "SYSTEM_USER_GUIDE.md",
+          "language": "markdown",
+          "sizeLines": 66,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "WEBSITE_REVIEW.md",
+          "language": "markdown",
+          "sizeLines": 36,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "plan.md",
+          "language": "markdown",
+          "sizeLines": 67,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "requirements.txt",
+          "language": "txt",
+          "sizeLines": 18,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "research-question-card.md",
+          "language": "markdown",
+          "sizeLines": 39,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "share_supervisor.ps1",
+          "language": "powershell",
+          "sizeLines": 61,
+          "fileCategory": "script"
+        }
+      ],
+      "batchImportData": {
+        ".env.example": [],
+        "README.md": [],
+        "SMPL_SETUP.md": [],
+        "SUPERVISOR_HANDOFF.md": [],
+        "SYSTEM_USER_GUIDE.md": [],
+        "WEBSITE_REVIEW.md": [],
+        "plan.md": [],
+        "requirements.txt": [],
+        "research-question-card.md": [],
+        "share_supervisor.ps1": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 5,
+      "files": [
+        {
+          "path": "diabetes_risk_stages_1_2.ipynb",
+          "language": "ipynb",
+          "sizeLines": 1761,
+          "fileCategory": "code"
+        },
+        {
+          "path": "models/smpl/README.md",
+          "language": "markdown",
+          "sizeLines": 9,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "src/export_smpl.py",
+          "language": "python",
+          "sizeLines": 51,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/twin_generator.py",
+          "language": "python",
+          "sizeLines": 164,
+          "fileCategory": "code"
+        },
+        {
+          "path": "static/js/knowledge_graph.js",
+          "language": "javascript",
+          "sizeLines": 264,
+          "fileCategory": "code"
+        },
+        {
+          "path": "static/style.css",
+          "language": "css",
+          "sizeLines": 98,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "templates/index.html",
+          "language": "html",
+          "sizeLines": 268,
+          "fileCategory": "markup"
+        }
+      ],
+      "batchImportData": {
+        "diabetes_risk_stages_1_2.ipynb": [],
+        "models/smpl/README.md": [],
+        "src/export_smpl.py": [
+          "src/twin_generator.py"
+        ],
+        "src/twin_generator.py": [],
+        "static/js/knowledge_graph.js": [],
+        "static/style.css": [],
+        "templates/index.html": []
+      },
+      "neighborMap": {}
+    }
+  ]
+}

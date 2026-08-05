@@ -1,0 +1,43 @@
+{
+  "projectRoot": "C:\\Users\\user\\OneDrive\\Desktop\\Swinb\\Research\\training3",
+  "batchFiles": [
+    {"path": "diabetes_risk_stages_1_2.ipynb", "language": "ipynb", "sizeLines": 1761, "fileCategory": "code"},
+    {"path": "models/smpl/README.md", "language": "markdown", "sizeLines": 9, "fileCategory": "docs"},
+    {"path": "ollama_recommendations.py", "language": "python", "sizeLines": 214, "fileCategory": "code"},
+    {"path": "src/export_smpl.py", "language": "python", "sizeLines": 51, "fileCategory": "code"},
+    {"path": "src/twin_generator.py", "language": "python", "sizeLines": 164, "fileCategory": "code"},
+    {"path": "static/js/knowledge_graph.js", "language": "javascript", "sizeLines": 264, "fileCategory": "code"},
+    {"path": "static/style.css", "language": "css", "sizeLines": 105, "fileCategory": "markup"},
+    {"path": "templates/index.html", "language": "html", "sizeLines": 289, "fileCategory": "markup"},
+    {"path": "test_ollama_recommendations.py", "language": "python", "sizeLines": 152, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "diabetes_risk_stages_1_2.ipynb": [],
+    "models/smpl/README.md": [],
+    "ollama_recommendations.py": [],
+    "src/export_smpl.py": ["src/twin_generator.py"],
+    "src/twin_generator.py": [],
+    "static/js/knowledge_graph.js": [],
+    "static/style.css": [],
+    "templates/index.html": [],
+    "test_ollama_recommendations.py": ["ollama_recommendations.py"]
+  },
+  "neighborMap": {
+    "ollama_recommendations.py": [
+      {
+        "path": "app.py",
+        "batchIndex": 1,
+        "symbols": [
+          "PatientDataset",
+          "get_patient_dataset",
+          "get_twin",
+          "twin_metadata",
+          "digital_twin_asset",
+          "scenario_digital_twin_asset",
+          "refresh_smpl_twin",
+          "index"
+        ]
+      }
+    ]
+  }
+}

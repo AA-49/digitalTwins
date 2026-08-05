@@ -1,0 +1,145 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 2,
+  "filesSkipped": [
+    ".dockerignore"
+  ],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 2,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 0,
+      "failed": 0,
+      "skipped": 2
+    }
+  },
+  "results": [
+    {
+      "path": "Dockerfile",
+      "language": "dockerfile",
+      "fileCategory": "infra",
+      "totalLines": 37,
+      "nonEmptyLines": 26,
+      "services": [
+        {
+          "name": "python",
+          "image": "python:3.11-slim",
+          "ports": [
+            5000,
+            8888
+          ],
+          "startLine": 2,
+          "endLine": 38
+        }
+      ],
+      "steps": [
+        {
+          "name": "FROM python:3.11-slim",
+          "startLine": 2,
+          "endLine": 2
+        },
+        {
+          "name": "RUN apt-get update && apt-get install -y --no-install-recommends",
+          "startLine": 5,
+          "endLine": 5
+        },
+        {
+          "name": "WORKDIR /app",
+          "startLine": 9,
+          "endLine": 9
+        },
+        {
+          "name": "RUN python -m pip install --upgrade pip setuptools wheel",
+          "startLine": 12,
+          "endLine": 12
+        },
+        {
+          "name": "RUN pip install --index-url https://download.pytorch.org/whl/cpu",
+          "startLine": 15,
+          "endLine": 15
+        },
+        {
+          "name": "COPY requirements.txt /app/requirements.txt",
+          "startLine": 18,
+          "endLine": 18
+        },
+        {
+          "name": "RUN pip install -r requirements.txt",
+          "startLine": 19,
+          "endLine": 19
+        },
+        {
+          "name": "RUN pip install --no-build-isolation chumpy==0.70",
+          "startLine": 24,
+          "endLine": 24
+        },
+        {
+          "name": "COPY . /app",
+          "startLine": 27,
+          "endLine": 27
+        },
+        {
+          "name": "RUN useradd -m appuser || true",
+          "startLine": 30,
+          "endLine": 30
+        },
+        {
+          "name": "USER appuser",
+          "startLine": 31,
+          "endLine": 31
+        },
+        {
+          "name": "ENV PATH=\"/home/appuser/.local/bin:${PATH}\"",
+          "startLine": 33,
+          "endLine": 33
+        },
+        {
+          "name": "EXPOSE 5000 8888",
+          "startLine": 35,
+          "endLine": 35
+        },
+        {
+          "name": "CMD [\"python\", \"app.py\"]",
+          "startLine": 37,
+          "endLine": 37
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "serviceCount": 1,
+        "stepCount": 14
+      }
+    },
+    {
+      "path": "docker-compose.yml",
+      "language": "yaml",
+      "fileCategory": "infra",
+      "totalLines": 72,
+      "nonEmptyLines": 67,
+      "sections": [
+        {
+          "heading": "services",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "volumes",
+          "level": 1,
+          "line": 71
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    }
+  ]
+}

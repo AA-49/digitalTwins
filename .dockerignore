@@ -1,0 +1,14 @@
+.git
+.venv
+.venv-stage3
+__pycache__
+.ipynb_checkpoints
+artifacts
+artifacts_notebook
+dist
+delete
+file delete
+models/smpl/*.pkl
+*.joblib
+*.pyc
+notebook_execution.*.log

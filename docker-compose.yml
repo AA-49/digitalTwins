@@ -1,0 +1,77 @@
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    ports:
+      - "127.0.0.1:7474:7474"
+      - "127.0.0.1:7687:7687"
+    environment:
+      NEO4J_AUTH: "${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-training3graph}"
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u '${NEO4J_USER:-neo4j}' -p '${NEO4J_PASSWORD:-training3graph}' 'RETURN 1'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  dashboard:
+    build: .
+    image: training3-dashboard:latest
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - ./:/app
+    working_dir: /app
+    environment:
+      FLASK_HOST: 0.0.0.0
+      NEO4J_URI: "${NEO4J_URI:-bolt://neo4j:7687}"
+      NEO4J_USER: "${NEO4J_USER:-neo4j}"
+      NEO4J_PASSWORD: "${NEO4J_PASSWORD:-training3graph}"
+      OLLAMA_BASE_URL: "${OLLAMA_BASE_URL:-http://host.docker.internal:11434}"
+      OLLAMA_MODEL: "${OLLAMA_MODEL:-qwen2.5-coder:1.5b}"
+      OLLAMA_TIMEOUT_SECONDS: "${OLLAMA_TIMEOUT_SECONDS:-180}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    command: python app.py
+
+  jupyter:
+    build: .
+    image: training3-dashboard:latest
+    ports:
+      - "127.0.0.1:8888:8888"
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: >-
+      jupyter lab --ip=0.0.0.0 --port=8888 --no-browser
+      --ServerApp.token='' --ServerApp.password=''
+
+  train-notebook:
+    build: .
+    image: training3-dashboard:latest
+    profiles: ["training"]
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: >-
+      jupyter nbconvert --to notebook --execute
+      --ExecutePreprocessor.timeout=0
+      --output diabetes_risk_stages_1_2_executed.ipynb
+      diabetes_risk_stages_1_2.ipynb
+
+  smpl-export:
+    build: .
+    image: training3-dashboard:latest
+    profiles: ["smpl"]
+    volumes:
+      - ./:/app
+      - ./models/smpl:/app/models/smpl:ro
+    working_dir: /app
+    command: python -m src.export_smpl --bmi 30 --risk 65 --out artifacts_notebook/digital_twin.glb
+
+volumes:
+  neo4j_data:

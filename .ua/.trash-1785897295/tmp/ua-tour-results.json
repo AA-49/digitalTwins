@@ -1,0 +1,850 @@
+{
+  "scriptCompleted": true,
+  "entryPointCandidates": [
+    {
+      "id": "document:README.md",
+      "score": 5,
+      "name": "README.md",
+      "summary": "Primary operating guide for the explainable diabetes-risk Digital Twin, covering its four research stages, Docker workflow, notebook-only training, troubleshooting, and non-clinical boundaries."
+    },
+    {
+      "id": "file:app.py",
+      "score": 5,
+      "name": "app.py",
+      "summary": "Flask entry point for the four-stage diabetes-risk dashboard, coordinating dataset selection, prediction, SHAP explanation, manual scenarios, SMPL exports, the temporary knowledge graph, and local Ollama guidance."
+    },
+    {
+      "id": "file:share_supervisor.ps1",
+      "score": 3,
+      "name": "share_supervisor.ps1",
+      "summary": "Builds a timestamped supervisor ZIP containing source, documentation, notebook, UI assets, and small evidence files while excluding raw data, model binaries, caches, and licensed SMPL assets."
+    },
+    {
+      "id": "file:test_ollama_recommendations.py",
+      "score": 3,
+      "name": "test_ollama_recommendations.py",
+      "summary": "Unit and Flask integration tests that verify complete temporary evidence, local non-streaming Ollama requests, rejection of incomplete inputs, deterministic replacement of unsafe drafts, and dashboard rendering of safe guidance."
+    },
+    {
+      "id": "document:plan.md",
+      "score": 2,
+      "name": "plan.md",
+      "summary": "Original Stage 3 implementation plan for mapping BMI and predicted risk into an SMPL virtual patient, exporting meshes, and integrating what-if controls with the prediction pipeline."
+    }
+  ],
+  "fanInRanking": [
+    {
+      "id": "file:stage3.py",
+      "fanIn": 10,
+      "name": "stage3.py"
+    },
+    {
+      "id": "file:app.py",
+      "fanIn": 8,
+      "name": "app.py"
+    },
+    {
+      "id": "file:src/twin_generator.py",
+      "fanIn": 8,
+      "name": "twin_generator.py"
+    },
+    {
+      "id": "service:Dockerfile",
+      "fanIn": 8,
+      "name": "Dockerfile"
+    },
+    {
+      "id": "file:knowledge_graph.py",
+      "fanIn": 6,
+      "name": "knowledge_graph.py"
+    },
+    {
+      "id": "class:ollama_recommendations.py:OllamaRecommendationError",
+      "fanIn": 5,
+      "name": "OllamaRecommendationError"
+    },
+    {
+      "id": "file:diabetes_risk_stages_1_2.ipynb",
+      "fanIn": 5,
+      "name": "diabetes_risk_stages_1_2.ipynb"
+    },
+    {
+      "id": "file:diabetes_risk.py",
+      "fanIn": 5,
+      "name": "diabetes_risk.py"
+    },
+    {
+      "id": "service:docker-compose.yml",
+      "fanIn": 5,
+      "name": "docker-compose.yml"
+    },
+    {
+      "id": "class:src/twin_generator.py:TwinGenerator",
+      "fanIn": 4,
+      "name": "TwinGenerator"
+    },
+    {
+      "id": "class:test_ollama_recommendations.py:FakeResponse",
+      "fanIn": 4,
+      "name": "FakeResponse"
+    },
+    {
+      "id": "function:ollama_recommendations.py:build_recommendation_input",
+      "fanIn": 4,
+      "name": "build_recommendation_input"
+    },
+    {
+      "id": "function:ollama_recommendations.py:configured_model",
+      "fanIn": 4,
+      "name": "configured_model"
+    },
+    {
+      "id": "function:ollama_recommendations.py:generate_local_guidance",
+      "fanIn": 4,
+      "name": "generate_local_guidance"
+    },
+    {
+      "id": "function:src/twin_generator.py:risk_to_color",
+      "fanIn": 4,
+      "name": "risk_to_color"
+    },
+    {
+      "id": "class:stage3.py:DiabetesDigitalTwin",
+      "fanIn": 3,
+      "name": "DiabetesDigitalTwin"
+    },
+    {
+      "id": "class:test_ollama_recommendations.py:UnsafeResponse",
+      "fanIn": 3,
+      "name": "UnsafeResponse"
+    },
+    {
+      "id": "file:ollama_recommendations.py",
+      "fanIn": 3,
+      "name": "ollama_recommendations.py"
+    },
+    {
+      "id": "file:test_knowledge_graph.py",
+      "fanIn": 3,
+      "name": "test_knowledge_graph.py"
+    },
+    {
+      "id": "function:ollama_recommendations.py:_deterministic_evidence_summary",
+      "fanIn": 3,
+      "name": "_deterministic_evidence_summary"
+    }
+  ],
+  "fanOutRanking": [
+    {
+      "id": "file:app.py",
+      "fanOut": 20,
+      "name": "app.py"
+    },
+    {
+      "id": "file:test_knowledge_graph.py",
+      "fanOut": 19,
+      "name": "test_knowledge_graph.py"
+    },
+    {
+      "id": "file:ollama_recommendations.py",
+      "fanOut": 15,
+      "name": "ollama_recommendations.py"
+    },
+    {
+      "id": "file:knowledge_graph.py",
+      "fanOut": 14,
+      "name": "knowledge_graph.py"
+    },
+    {
+      "id": "file:share_supervisor.ps1",
+      "fanOut": 12,
+      "name": "share_supervisor.ps1"
+    },
+    {
+      "id": "file:diabetes_risk.py",
+      "fanOut": 9,
+      "name": "diabetes_risk.py"
+    },
+    {
+      "id": "file:test_ollama_recommendations.py",
+      "fanOut": 9,
+      "name": "test_ollama_recommendations.py"
+    },
+    {
+      "id": "document:README.md",
+      "fanOut": 8,
+      "name": "README.md"
+    },
+    {
+      "id": "file:src/twin_generator.py",
+      "fanOut": 8,
+      "name": "twin_generator.py"
+    },
+    {
+      "id": "file:stage3.py",
+      "fanOut": 8,
+      "name": "stage3.py"
+    },
+    {
+      "id": "class:test_ollama_recommendations.py:OllamaRecommendationTests",
+      "fanOut": 6,
+      "name": "OllamaRecommendationTests"
+    },
+    {
+      "id": "service:docker-compose.yml",
+      "fanOut": 6,
+      "name": "docker-compose.yml"
+    },
+    {
+      "id": "document:requirements.txt",
+      "fanOut": 5,
+      "name": "requirements.txt"
+    },
+    {
+      "id": "document:SYSTEM_USER_GUIDE.md",
+      "fanOut": 5,
+      "name": "SYSTEM_USER_GUIDE.md"
+    },
+    {
+      "id": "function:ollama_recommendations.py:generate_local_guidance",
+      "fanOut": 5,
+      "name": "generate_local_guidance"
+    },
+    {
+      "id": "document:plan.md",
+      "fanOut": 4,
+      "name": "plan.md"
+    },
+    {
+      "id": "document:research-question-card.md",
+      "fanOut": 4,
+      "name": "research-question-card.md"
+    },
+    {
+      "id": "document:SUPERVISOR_HANDOFF.md",
+      "fanOut": 4,
+      "name": "SUPERVISOR_HANDOFF.md"
+    },
+    {
+      "id": "document:WEBSITE_REVIEW.md",
+      "fanOut": 4,
+      "name": "WEBSITE_REVIEW.md"
+    },
+    {
+      "id": "document:SMPL_SETUP.md",
+      "fanOut": 3,
+      "name": "SMPL_SETUP.md"
+    }
+  ],
+  "bfsTraversal": {
+    "startNode": "file:app.py",
+    "order": [
+      "file:app.py",
+      "file:diabetes_risk.py",
+      "file:knowledge_graph.py",
+      "file:ollama_recommendations.py",
+      "file:stage3.py"
+    ],
+    "depthMap": {
+      "file:app.py": 0,
+      "file:diabetes_risk.py": 1,
+      "file:knowledge_graph.py": 1,
+      "file:ollama_recommendations.py": 1,
+      "file:stage3.py": 1
+    },
+    "byDepth": {
+      "0": [
+        "file:app.py"
+      ],
+      "1": [
+        "file:diabetes_risk.py",
+        "file:knowledge_graph.py",
+        "file:ollama_recommendations.py",
+        "file:stage3.py"
+      ]
+    }
+  },
+  "nonCodeFiles": {
+    "documentation": [
+      {
+        "id": "document:README.md",
+        "name": "README.md",
+        "type": "document",
+        "summary": "Primary operating guide for the explainable diabetes-risk Digital Twin, covering its four research stages, Docker workflow, notebook-only training, troubleshooting, and non-clinical boundaries."
+      },
+      {
+        "id": "document:SMPL_SETUP.md",
+        "name": "SMPL_SETUP.md",
+        "type": "document",
+        "summary": "Explains the Stage 3 SMPL shape and risk-colour mapping, licensed model requirement, and Docker commands for exporting patient-specific GLB or OBJ twins."
+      },
+      {
+        "id": "document:SUPERVISOR_HANDOFF.md",
+        "name": "SUPERVISOR_HANDOFF.md",
+        "type": "document",
+        "summary": "Provides a supervisor-sharing checklist, short demonstration script, research limitations, and a sample hand-off email for the prototype."
+      },
+      {
+        "id": "document:SYSTEM_USER_GUIDE.md",
+        "name": "SYSTEM_USER_GUIDE.md",
+        "type": "document",
+        "summary": "Step-by-step user guide for starting the Docker services, selecting or importing patients, interpreting Stages 1-4, running what-if comparisons, and managing the stack."
+      },
+      {
+        "id": "document:WEBSITE_REVIEW.md",
+        "name": "WEBSITE_REVIEW.md",
+        "type": "document",
+        "summary": "Reviews patient-row traceability across prediction, SHAP, simulation, and 3D output while recording proposal alignment, unresolved research gaps, and validation criteria."
+      },
+      {
+        "id": "document:plan.md",
+        "name": "plan.md",
+        "type": "document",
+        "summary": "Original Stage 3 implementation plan for mapping BMI and predicted risk into an SMPL virtual patient, exporting meshes, and integrating what-if controls with the prediction pipeline."
+      },
+      {
+        "id": "document:requirements.txt",
+        "name": "requirements.txt",
+        "type": "document",
+        "summary": "Pins and constrains the Python dependencies for data processing, Random Forest and SHAP analysis, Flask and Neo4j integration, notebooks, and SMPL mesh generation."
+      },
+      {
+        "id": "document:research-question-card.md",
+        "name": "research-question-card.md",
+        "type": "document",
+        "summary": "Frames the applied research question around consistent use of one dataset-linked patient across prediction, explanation, 3D representation, and manual simulation, with evidence and falsification criteria."
+      },
+      {
+        "id": "document:models/smpl/README.md",
+        "name": "README.md",
+        "type": "document",
+        "summary": "Documents where licensed female or male SMPL pickle files must be placed and explains that twin_generator.py expects models/smpl as its default model directory."
+      }
+    ],
+    "infrastructure": [
+      {
+        "id": "service:Dockerfile",
+        "name": "Dockerfile",
+        "type": "service",
+        "summary": "Builds the shared Python 3.11 CPU image used for notebook training, the Flask dashboard, and SMPL mesh export, including CPU-only PyTorch and legacy Chumpy support. The image runs as a non-root user and defaults to starting app.py."
+      },
+      {
+        "id": "service:Dockerfile:python",
+        "name": "python",
+        "type": "service",
+        "summary": "Single Python 3.11 Slim build stage that installs system and Python dependencies, copies the project, exposes dashboard and Jupyter ports, and launches the Flask application by default."
+      },
+      {
+        "id": "service:docker-compose.yml",
+        "name": "docker-compose.yml",
+        "type": "service",
+        "summary": "Orchestrates Neo4j, the browser dashboard, JupyterLab, notebook execution, and SMPL export using a shared project image and bind-mounted workspace. Optional profiles isolate training and mesh-export jobs from the default services."
+      },
+      {
+        "id": "service:docker-compose.yml:neo4j",
+        "name": "neo4j",
+        "type": "service",
+        "summary": "Runs Neo4j 5.26 Community with loopback-only browser and Bolt ports, persistent database storage, environment-based credentials, and a Cypher health check."
+      },
+      {
+        "id": "service:docker-compose.yml:dashboard",
+        "name": "dashboard",
+        "type": "service",
+        "summary": "Builds and runs the Flask research dashboard on loopback port 5000, connects it to Neo4j and the host Ollama endpoint, and delays startup until Neo4j is healthy."
+      },
+      {
+        "id": "service:docker-compose.yml:jupyter",
+        "name": "jupyter",
+        "type": "service",
+        "summary": "Starts token-free JupyterLab on loopback port 8888 against the bind-mounted project workspace for interactive model development and training."
+      },
+      {
+        "id": "service:docker-compose.yml:train-notebook",
+        "name": "train-notebook",
+        "type": "service",
+        "summary": "Executes the diabetes-risk training notebook non-interactively through nbconvert with no cell timeout and writes a separate executed notebook artifact under the training profile."
+      },
+      {
+        "id": "service:docker-compose.yml:smpl-export",
+        "name": "smpl-export",
+        "type": "service",
+        "summary": "Runs the headless SMPL exporter with a sample BMI and risk score, mounting licensed SMPL assets read-only and writing a GLB into notebook artifacts under the smpl profile."
+      }
+    ],
+    "data": [],
+    "config": [
+      {
+        "id": "config:.dockerignore",
+        "name": ".dockerignore",
+        "type": "config",
+        "summary": "Controls the Docker build context by excluding virtual environments, generated artifacts, retired files, licensed SMPL model assets, and Python or notebook caches."
+      },
+      {
+        "id": "config:.env.example",
+        "name": ".env.example",
+        "type": "config",
+        "summary": "Defines local Docker-oriented Neo4j connection defaults for the dashboard and documents the different Bolt address used by host-run processes."
+      }
+    ]
+  },
+  "clusters": [],
+  "layers": {
+    "count": 7,
+    "list": [
+      {
+        "id": "layer:api",
+        "name": "Application and API Orchestration",
+        "description": "Coordinates the Flask dashboard across patient selection, model inference, SHAP, scenarios, Digital Twin exports, Stage 4 graph delivery, and local Ollama guidance."
+      },
+      {
+        "id": "layer:data",
+        "name": "Model and Data Workflow",
+        "description": "Defines the authoritative BRFSS feature contract and retains the notebook-only path for training, evaluation, SHAP analysis, and dataset-linked scenarios."
+      },
+      {
+        "id": "layer:service",
+        "name": "Digital Twin and Explanation Services",
+        "description": "Implements model-backed simulation, temporary patient graph assembly, validated local-LLM explanations, and patient-specific SMPL mesh generation and export."
+      },
+      {
+        "id": "layer:ui",
+        "name": "Browser UI Layer",
+        "description": "Renders the Flask/Jinja dashboard and supplies responsive styling and accessible Cytoscape interactions for the four research stages."
+      },
+      {
+        "id": "layer:test",
+        "name": "Validation and Test Layer",
+        "description": "Verifies Stage 4 graph completeness and privacy boundaries together with Ollama evidence validation, safe fallbacks, and Flask integration behavior."
+      },
+      {
+        "id": "layer:infrastructure",
+        "name": "Infrastructure and Configuration",
+        "description": "Packages and orchestrates Flask, Jupyter, Neo4j, notebook training, and SMPL export while managing dependencies, environment defaults, build exclusions, and private-safe handoff automation."
+      },
+      {
+        "id": "layer:documentation",
+        "name": "Research and User Documentation",
+        "description": "Documents setup, operation, SMPL assets, research framing, validation evidence, limitations, and safe supervisor handoff for the prototype."
+      }
+    ]
+  },
+  "nodeSummaryIndex": {
+    "file:app.py": {
+      "name": "app.py",
+      "type": "file",
+      "summary": "Flask entry point for the four-stage diabetes-risk dashboard, coordinating dataset selection, prediction, SHAP explanation, manual scenarios, SMPL exports, the temporary knowledge graph, and local Ollama guidance."
+    },
+    "class:app.py:PatientDataset": {
+      "name": "PatientDataset",
+      "type": "class",
+      "summary": "Validates the complete 21-feature BRFSS schema, maintains stable one-based patient numbering, and exposes patient profiles, labels, and nearby rows to every dashboard stage."
+    },
+    "function:app.py:get_patient_dataset": {
+      "name": "get_patient_dataset",
+      "type": "function",
+      "summary": "Lazily loads and caches the default BRFSS patient dataset for dashboard requests."
+    },
+    "function:app.py:get_twin": {
+      "name": "get_twin",
+      "type": "function",
+      "summary": "Lazily constructs the model-backed DiabetesDigitalTwin only when a prediction is requested."
+    },
+    "function:app.py:twin_metadata": {
+      "name": "twin_metadata",
+      "type": "function",
+      "summary": "Reads GLB sidecar metadata and adds a file-version timestamp, with safe fallbacks for missing or malformed metadata."
+    },
+    "function:app.py:digital_twin_asset": {
+      "name": "digital_twin_asset",
+      "type": "function",
+      "summary": "Serves the current-patient GLB asset through the Flask dashboard or returns a 404 when unavailable."
+    },
+    "function:app.py:scenario_digital_twin_asset": {
+      "name": "scenario_digital_twin_asset",
+      "type": "function",
+      "summary": "Serves the separately generated scenario GLB asset for current-versus-scenario comparison."
+    },
+    "function:app.py:refresh_smpl_twin": {
+      "name": "refresh_smpl_twin",
+      "type": "function",
+      "summary": "Regenerates a profile-specific SMPL GLB with the local exporter, detects already matching output, and falls back to Docker when host dependencies are unavailable."
+    },
+    "function:app.py:index": {
+      "name": "index",
+      "type": "function",
+      "summary": "Handles the main GET/POST workflow for dataset import, patient prediction, SHAP explanation, scenario simulation, SMPL twins, Stage 4 graph construction, and optional local guidance."
+    },
+    "file:diabetes_risk.py": {
+      "name": "diabetes_risk.py",
+      "type": "file",
+      "summary": "Defines the authoritative BRFSS target, ordered 21-feature model schema, risk labels, and shared dataset, patient, JSON, and model-loading utilities."
+    },
+    "function:diabetes_risk.py:load_dataset": {
+      "name": "load_dataset",
+      "type": "function",
+      "summary": "Loads a BRFSS CSV, enforces the expected feature and target columns, removes incomplete rows, and validates the three target classes."
+    },
+    "function:diabetes_risk.py:validate_patient": {
+      "name": "validate_patient",
+      "type": "function",
+      "summary": "Ensures a patient frame has exactly one complete row and the model's 21 features in canonical order."
+    },
+    "function:diabetes_risk.py:save_json": {
+      "name": "save_json",
+      "type": "function",
+      "summary": "Serializes dictionaries to formatted JSON while converting NumPy scalar values to native Python values."
+    },
+    "function:diabetes_risk.py:load_model": {
+      "name": "load_model",
+      "type": "function",
+      "summary": "Loads a Joblib model artifact from a caller-supplied or legacy default path."
+    },
+    "file:knowledge_graph.py": {
+      "name": "knowledge_graph.py",
+      "type": "file",
+      "summary": "Implements the Stage 4 patient-centric explanation graph: reusable feature definitions and evaluation metadata are stored in Neo4j, while patient observations, SHAP values, probabilities, and twin data remain request-local."
+    },
+    "function:knowledge_graph.py:classify_bmi": {
+      "name": "classify_bmi",
+      "type": "function",
+      "summary": "Maps a numeric BMI to one of the prototype's configured adult BMI categories using half-open ranges."
+    },
+    "function:knowledge_graph.py:_integer_code": {
+      "name": "_integer_code",
+      "type": "function",
+      "summary": "Validates that a categorical model value is whole-number encoded and returns it as an integer."
+    },
+    "function:knowledge_graph.py:decode_feature": {
+      "name": "decode_feature",
+      "type": "function",
+      "summary": "Decodes BRFSS feature values into dataset-grounded human-readable states without adding causal medical severity claims."
+    },
+    "function:knowledge_graph.py:_format_value": {
+      "name": "_format_value",
+      "type": "function",
+      "summary": "Formats numeric feature values compactly while preserving non-integer precision."
+    },
+    "function:knowledge_graph.py:_safe_id": {
+      "name": "_safe_id",
+      "type": "function",
+      "summary": "Normalizes arbitrary labels into lowercase hyphenated identifiers for temporary graph nodes."
+    },
+    "class:knowledge_graph.py:PatientKnowledgeGraph": {
+      "name": "PatientKnowledgeGraph",
+      "type": "class",
+      "summary": "Manages reusable Neo4j definitions and assembles Cytoscape-ready, non-persisted patient explanation graphs containing all model inputs, SHAP contributions, class probabilities, evaluation warnings, and Digital Twin evidence."
+    },
+    "file:stage3.py": {
+      "name": "stage3.py",
+      "type": "file",
+      "summary": "Provides runtime loading of the notebook-trained Random Forest, ordered patient prediction, SHAP explanation, manual what-if comparison, and a compact SMPL visual descriptor."
+    },
+    "function:stage3.py:find_model_path": {
+      "name": "find_model_path",
+      "type": "function",
+      "summary": "Returns the first available notebook-trained model artifact or reports every expected path when none exists."
+    },
+    "class:stage3.py:DiabetesDigitalTwin": {
+      "name": "DiabetesDigitalTwin",
+      "type": "class",
+      "summary": "Wraps the trained classifier with feature-order validation, three-class probabilities, version-tolerant SHAP extraction, and baseline-versus-scenario prediction comparison."
+    },
+    "function:stage3.py:smpl_twin_descriptor": {
+      "name": "smpl_twin_descriptor",
+      "type": "function",
+      "summary": "Converts BMI and model-estimated high-risk probability into SMPL body-shape, color-band, and model-weight availability metadata."
+    },
+    "file:test_knowledge_graph.py": {
+      "name": "test_knowledge_graph.py",
+      "type": "file",
+      "summary": "Focused unit tests verify the complete temporary Stage 4 patient graph, all reusable definitions and decodings, SHAP sign preservation, three probabilities, twin evidence, idempotent Neo4j initialization, and disconnected fallback behavior."
+    },
+    "class:test_knowledge_graph.py:FakeResult": {
+      "name": "FakeResult",
+      "type": "class",
+      "summary": "Minimal iterable Neo4j result double supporting row iteration and result consumption in tests."
+    },
+    "class:test_knowledge_graph.py:FakeSession": {
+      "name": "FakeSession",
+      "type": "class",
+      "summary": "Context-managed Neo4j session double that records Cypher calls and returns the complete reusable attribute definition set for graph tests."
+    },
+    "class:test_knowledge_graph.py:FakeDriver": {
+      "name": "FakeDriver",
+      "type": "class",
+      "summary": "Neo4j driver double exposing a stable FakeSession and a no-op close method."
+    },
+    "function:test_knowledge_graph.py:example_profile": {
+      "name": "example_profile",
+      "type": "function",
+      "summary": "Builds a complete deterministic 21-feature patient profile fixture with selected categorical values."
+    },
+    "function:test_knowledge_graph.py:example_prediction": {
+      "name": "example_prediction",
+      "type": "function",
+      "summary": "Returns a deterministic high-risk prediction fixture with all three class probabilities."
+    },
+    "function:test_knowledge_graph.py:example_contributions": {
+      "name": "example_contributions",
+      "type": "function",
+      "summary": "Creates one SHAP contribution fixture for every model feature, including positive, negative, and neutral signs."
+    },
+    "function:test_knowledge_graph.py:explain": {
+      "name": "explain",
+      "type": "function",
+      "summary": "Invokes PatientKnowledgeGraph with the deterministic profile, prediction, SHAP, twin, and model fixtures."
+    },
+    "class:test_knowledge_graph.py:KnowledgeGraphTests": {
+      "name": "KnowledgeGraphTests",
+      "type": "class",
+      "summary": "Regression suite enforcing schema coverage, decoding boundaries, the 98-node temporary graph contract, patient non-persistence, model warnings, and database-failure fallback."
+    },
+    "config:.dockerignore": {
+      "name": ".dockerignore",
+      "type": "config",
+      "summary": "Controls the Docker build context by excluding virtual environments, generated artifacts, retired files, licensed SMPL model assets, and Python or notebook caches."
+    },
+    "service:Dockerfile": {
+      "name": "Dockerfile",
+      "type": "service",
+      "summary": "Builds the shared Python 3.11 CPU image used for notebook training, the Flask dashboard, and SMPL mesh export, including CPU-only PyTorch and legacy Chumpy support. The image runs as a non-root user and defaults to starting app.py."
+    },
+    "service:Dockerfile:python": {
+      "name": "python",
+      "type": "service",
+      "summary": "Single Python 3.11 Slim build stage that installs system and Python dependencies, copies the project, exposes dashboard and Jupyter ports, and launches the Flask application by default."
+    },
+    "service:docker-compose.yml": {
+      "name": "docker-compose.yml",
+      "type": "service",
+      "summary": "Orchestrates Neo4j, the browser dashboard, JupyterLab, notebook execution, and SMPL export using a shared project image and bind-mounted workspace. Optional profiles isolate training and mesh-export jobs from the default services."
+    },
+    "service:docker-compose.yml:neo4j": {
+      "name": "neo4j",
+      "type": "service",
+      "summary": "Runs Neo4j 5.26 Community with loopback-only browser and Bolt ports, persistent database storage, environment-based credentials, and a Cypher health check."
+    },
+    "service:docker-compose.yml:dashboard": {
+      "name": "dashboard",
+      "type": "service",
+      "summary": "Builds and runs the Flask research dashboard on loopback port 5000, connects it to Neo4j and the host Ollama endpoint, and delays startup until Neo4j is healthy."
+    },
+    "service:docker-compose.yml:jupyter": {
+      "name": "jupyter",
+      "type": "service",
+      "summary": "Starts token-free JupyterLab on loopback port 8888 against the bind-mounted project workspace for interactive model development and training."
+    },
+    "service:docker-compose.yml:train-notebook": {
+      "name": "train-notebook",
+      "type": "service",
+      "summary": "Executes the diabetes-risk training notebook non-interactively through nbconvert with no cell timeout and writes a separate executed notebook artifact under the training profile."
+    },
+    "service:docker-compose.yml:smpl-export": {
+      "name": "smpl-export",
+      "type": "service",
+      "summary": "Runs the headless SMPL exporter with a sample BMI and risk score, mounting licensed SMPL assets read-only and writing a GLB into notebook artifacts under the smpl profile."
+    },
+    "config:.env.example": {
+      "name": ".env.example",
+      "type": "config",
+      "summary": "Defines local Docker-oriented Neo4j connection defaults for the dashboard and documents the different Bolt address used by host-run processes."
+    },
+    "document:README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "Primary operating guide for the explainable diabetes-risk Digital Twin, covering its four research stages, Docker workflow, notebook-only training, troubleshooting, and non-clinical boundaries."
+    },
+    "document:SMPL_SETUP.md": {
+      "name": "SMPL_SETUP.md",
+      "type": "document",
+      "summary": "Explains the Stage 3 SMPL shape and risk-colour mapping, licensed model requirement, and Docker commands for exporting patient-specific GLB or OBJ twins."
+    },
+    "document:SUPERVISOR_HANDOFF.md": {
+      "name": "SUPERVISOR_HANDOFF.md",
+      "type": "document",
+      "summary": "Provides a supervisor-sharing checklist, short demonstration script, research limitations, and a sample hand-off email for the prototype."
+    },
+    "document:SYSTEM_USER_GUIDE.md": {
+      "name": "SYSTEM_USER_GUIDE.md",
+      "type": "document",
+      "summary": "Step-by-step user guide for starting the Docker services, selecting or importing patients, interpreting Stages 1-4, running what-if comparisons, and managing the stack."
+    },
+    "document:WEBSITE_REVIEW.md": {
+      "name": "WEBSITE_REVIEW.md",
+      "type": "document",
+      "summary": "Reviews patient-row traceability across prediction, SHAP, simulation, and 3D output while recording proposal alignment, unresolved research gaps, and validation criteria."
+    },
+    "document:plan.md": {
+      "name": "plan.md",
+      "type": "document",
+      "summary": "Original Stage 3 implementation plan for mapping BMI and predicted risk into an SMPL virtual patient, exporting meshes, and integrating what-if controls with the prediction pipeline."
+    },
+    "document:requirements.txt": {
+      "name": "requirements.txt",
+      "type": "document",
+      "summary": "Pins and constrains the Python dependencies for data processing, Random Forest and SHAP analysis, Flask and Neo4j integration, notebooks, and SMPL mesh generation."
+    },
+    "document:research-question-card.md": {
+      "name": "research-question-card.md",
+      "type": "document",
+      "summary": "Frames the applied research question around consistent use of one dataset-linked patient across prediction, explanation, 3D representation, and manual simulation, with evidence and falsification criteria."
+    },
+    "file:share_supervisor.ps1": {
+      "name": "share_supervisor.ps1",
+      "type": "file",
+      "summary": "Builds a timestamped supervisor ZIP containing source, documentation, notebook, UI assets, and small evidence files while excluding raw data, model binaries, caches, and licensed SMPL assets."
+    },
+    "file:diabetes_risk_stages_1_2.ipynb": {
+      "name": "diabetes_risk_stages_1_2.ipynb",
+      "type": "file",
+      "summary": "Executed research notebook that loads and cleans the BRFSS data, trains and evaluates the three-class random forest, produces global and patient-level explanations, and demonstrates a manually edited Digital Twin scenario. It is the project's retained model-training path and writes report-ready artifacts under artifacts_notebook."
+    },
+    "function:diabetes_risk_stages_1_2.ipynb:predict_profile": {
+      "name": "predict_profile",
+      "type": "function",
+      "summary": "Reconstructs a feature-ordered one-row frame, reruns the trained classifier, and returns the predicted label plus per-class and high-risk probabilities for a patient scenario."
+    },
+    "function:diabetes_risk_stages_1_2.ipynb:smpl_descriptor": {
+      "name": "smpl_descriptor",
+      "type": "function",
+      "summary": "Converts a profile and its model output into the BMI, gender, SMPL beta, risk band, and color metadata used to describe current and scenario twins."
+    },
+    "document:models/smpl/README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "Documents where licensed female or male SMPL pickle files must be placed and explains that twin_generator.py expects models/smpl as its default model directory."
+    },
+    "file:ollama_recommendations.py": {
+      "name": "ollama_recommendations.py",
+      "type": "file",
+      "summary": "Builds a complete temporary patient-evidence payload for a local Ollama model, calls its non-streaming generate endpoint, and rejects unsafe or incomplete prose in favor of a deterministic non-causal summary."
+    },
+    "class:ollama_recommendations.py:OllamaRecommendationError": {
+      "name": "OllamaRecommendationError",
+      "type": "class",
+      "summary": "Carries a sanitized public error message for local Ollama configuration, connectivity, response, and evidence failures."
+    },
+    "function:ollama_recommendations.py:configured_model": {
+      "name": "configured_model",
+      "type": "function",
+      "summary": "Returns the locally configured Ollama model name, falling back to the project's small default model."
+    },
+    "function:ollama_recommendations.py:build_recommendation_input": {
+      "name": "build_recommendation_input",
+      "type": "function",
+      "summary": "Validates the presence of all 21 observations and three class probabilities, then packages those values with SHAP evidence, twin metadata, and the model limitation for temporary local inference."
+    },
+    "function:ollama_recommendations.py:_passes_research_safety_checks": {
+      "name": "_passes_research_safety_checks",
+      "type": "function",
+      "summary": "Checks generated prose for required research disclaimers, the known Medium-class recall limitation, prohibited causal claims, and disallowed list formatting."
+    },
+    "function:ollama_recommendations.py:_deterministic_evidence_summary": {
+      "name": "_deterministic_evidence_summary",
+      "type": "function",
+      "summary": "Builds a deterministic fallback explanation from the three probabilities and the strongest positive and negative patient-specific SHAP contributions while retaining explicit research and medical-advice boundaries."
+    },
+    "function:ollama_recommendations.py:generate_local_guidance": {
+      "name": "generate_local_guidance",
+      "type": "function",
+      "summary": "Sends complete patient evidence to the configured local Ollama API, translates connection and response failures, and returns either a checked draft or the deterministic safety fallback."
+    },
+    "function:ollama_recommendations.py:guidance_error_message": {
+      "name": "guidance_error_message",
+      "type": "function",
+      "summary": "Converts known local-guidance errors into their public message and hides unexpected exception details behind a generic dashboard-safe response."
+    },
+    "file:src/export_smpl.py": {
+      "name": "export_smpl.py",
+      "type": "file",
+      "summary": "Command-line SMPL exporter that generates a patient-shaped mesh, applies the model-risk color to its vertices, writes GLB or OBJ output, and records matching JSON metadata without requiring PyVista."
+    },
+    "function:src/export_smpl.py:main": {
+      "name": "main",
+      "type": "function",
+      "summary": "Parses BMI, risk, gender, and output arguments, generates and colors the SMPL mesh, then exports both geometry and synchronized metadata."
+    },
+    "file:src/twin_generator.py": {
+      "name": "twin_generator.py",
+      "type": "file",
+      "summary": "Implements the project's Digital Twin rendering boundary by mapping BMI to SMPL shape, mapping model probability to color, loading licensed legacy SMPL weights, and producing mesh data for export or optional PyVista display."
+    },
+    "function:src/twin_generator.py:bmi_to_beta0": {
+      "name": "bmi_to_beta0",
+      "type": "function",
+      "summary": "Maps BMI to the first SMPL shape coefficient using the project's transparent linear visualization formula."
+    },
+    "function:src/twin_generator.py:risk_to_color": {
+      "name": "risk_to_color",
+      "type": "function",
+      "summary": "Maps a zero-to-100 model-risk percentage into the green, orange, or red color used by twin meshes."
+    },
+    "class:src/twin_generator.py:TwinGenerator": {
+      "name": "TwinGenerator",
+      "type": "class",
+      "summary": "Lazily loads the gender-specific licensed SMPL model, generates vertices and faces from BMI-derived betas, and can wrap the result as a risk-colored PyVista mesh."
+    },
+    "function:src/twin_generator.py:display_demo": {
+      "name": "display_demo",
+      "type": "function",
+      "summary": "Creates a TwinGenerator and opens a PyVista window for quick local inspection of a BMI- and risk-linked mesh."
+    },
+    "file:static/js/knowledge_graph.js": {
+      "name": "knowledge_graph.js",
+      "type": "file",
+      "summary": "Initializes the patient-specific Cytoscape view, styles evidence and twin nodes, supports group filters and keyboard selection, and synchronizes focused graph nodes with accessible definition and connection details."
+    },
+    "function:static/js/knowledge_graph.js:stringify": {
+      "name": "stringify",
+      "type": "function",
+      "summary": "Formats graph detail values for display, including probability-like numbers as percentages and missing values as an explicit placeholder."
+    },
+    "function:static/js/knowledge_graph.js:appendDefinitionList": {
+      "name": "appendDefinitionList",
+      "type": "function",
+      "summary": "Rebuilds an accessible definition list for selected graph metadata and supplies an empty-state message when no details exist."
+    },
+    "function:static/js/knowledge_graph.js:selectNode": {
+      "name": "selectNode",
+      "type": "function",
+      "summary": "Focuses a Cytoscape node and its neighborhood, updates the node picker and summary, lists connected evidence, and partitions node metadata into definition and technical panels."
+    },
+    "file:static/style.css": {
+      "name": "style.css",
+      "type": "file",
+      "summary": "Defines the responsive visual system for patient selection, predictions, SHAP factors, the Stage 4 knowledge-graph workspace, local guidance states, and side-by-side current/scenario 3D twins."
+    },
+    "file:templates/index.html": {
+      "name": "index.html",
+      "type": "file",
+      "summary": "Primary Flask/Jinja dashboard template covering dataset patient selection, three-class prediction, SHAP explanations, the interactive Stage 4 graph, local Ollama guidance, and current-versus-scenario model-viewer twins."
+    },
+    "file:test_ollama_recommendations.py": {
+      "name": "test_ollama_recommendations.py",
+      "type": "file",
+      "summary": "Unit and Flask integration tests that verify complete temporary evidence, local non-streaming Ollama requests, rejection of incomplete inputs, deterministic replacement of unsafe drafts, and dashboard rendering of safe guidance."
+    },
+    "function:test_ollama_recommendations.py:evidence": {
+      "name": "evidence",
+      "type": "function",
+      "summary": "Creates a complete synthetic boundary fixture containing 21 observations with SHAP values, three probabilities, the model warning, and twin metadata."
+    },
+    "class:test_ollama_recommendations.py:FakeResponse": {
+      "name": "FakeResponse",
+      "type": "class",
+      "summary": "Imitates a context-managed Ollama HTTP response containing prose that satisfies the research-safety contract."
+    },
+    "class:test_ollama_recommendations.py:UnsafeResponse": {
+      "name": "UnsafeResponse",
+      "type": "class",
+      "summary": "Overrides the fake response body with prohibited causal wording and list formatting to exercise deterministic fallback behavior."
+    },
+    "class:test_ollama_recommendations.py:OllamaRecommendationTests": {
+      "name": "OllamaRecommendationTests",
+      "type": "class",
+      "summary": "Exercises the local-guidance evidence contract, HTTP payload, safety fallback, error boundary, and Flask dashboard integration using patched patient, graph, model, and twin dependencies."
+    }
+  },
+  "totalNodes": 83,
+  "totalEdges": 203
+}

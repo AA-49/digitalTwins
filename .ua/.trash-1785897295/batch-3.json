@@ -1,0 +1,158 @@
+{
+  "nodes": [
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "Defines local Docker-oriented Neo4j connection defaults for the dashboard and documents the different Bolt address used by host-run processes.",
+      "tags": ["configuration", "neo4j", "docker", "environment"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Primary operating guide for the explainable diabetes-risk Digital Twin, covering its four research stages, Docker workflow, notebook-only training, troubleshooting, and non-clinical boundaries.",
+      "tags": ["documentation", "entry-point", "docker", "research-prototype", "user-guide"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:SMPL_SETUP.md",
+      "type": "document",
+      "name": "SMPL_SETUP.md",
+      "filePath": "SMPL_SETUP.md",
+      "summary": "Explains the Stage 3 SMPL shape and risk-colour mapping, licensed model requirement, and Docker commands for exporting patient-specific GLB or OBJ twins.",
+      "tags": ["documentation", "smpl", "3d-visualization", "containerization", "setup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:SUPERVISOR_HANDOFF.md",
+      "type": "document",
+      "name": "SUPERVISOR_HANDOFF.md",
+      "filePath": "SUPERVISOR_HANDOFF.md",
+      "summary": "Provides a supervisor-sharing checklist, short demonstration script, research limitations, and a sample hand-off email for the prototype.",
+      "tags": ["documentation", "handoff", "research-boundary", "demonstration", "sharing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:SYSTEM_USER_GUIDE.md",
+      "type": "document",
+      "name": "SYSTEM_USER_GUIDE.md",
+      "filePath": "SYSTEM_USER_GUIDE.md",
+      "summary": "Step-by-step user guide for starting the Docker services, selecting or importing patients, interpreting Stages 1-4, running what-if comparisons, and managing the stack.",
+      "tags": ["documentation", "user-guide", "dashboard", "docker", "workflow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:WEBSITE_REVIEW.md",
+      "type": "document",
+      "name": "WEBSITE_REVIEW.md",
+      "filePath": "WEBSITE_REVIEW.md",
+      "summary": "Reviews patient-row traceability across prediction, SHAP, simulation, and 3D output while recording proposal alignment, unresolved research gaps, and validation criteria.",
+      "tags": ["documentation", "validation", "research-review", "traceability", "limitations"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:plan.md",
+      "type": "document",
+      "name": "plan.md",
+      "filePath": "plan.md",
+      "summary": "Original Stage 3 implementation plan for mapping BMI and predicted risk into an SMPL virtual patient, exporting meshes, and integrating what-if controls with the prediction pipeline.",
+      "tags": ["documentation", "project-plan", "smpl", "digital-twin", "what-if-simulation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "requirements.txt",
+      "summary": "Pins and constrains the Python dependencies for data processing, Random Forest and SHAP analysis, Flask and Neo4j integration, notebooks, and SMPL mesh generation.",
+      "tags": ["configuration", "python", "dependencies", "machine-learning", "build-system"],
+      "complexity": "simple",
+      "languageNotes": "The NumPy upper bound preserves compatibility with the selected CPU PyTorch wheel, while scikit-learn is pinned to the artifact-producing version."
+    },
+    {
+      "id": "document:research-question-card.md",
+      "type": "document",
+      "name": "research-question-card.md",
+      "filePath": "research-question-card.md",
+      "summary": "Frames the applied research question around consistent use of one dataset-linked patient across prediction, explanation, 3D representation, and manual simulation, with evidence and falsification criteria.",
+      "tags": ["documentation", "research-question", "experiment-design", "traceability", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:share_supervisor.ps1",
+      "type": "file",
+      "name": "share_supervisor.ps1",
+      "filePath": "share_supervisor.ps1",
+      "summary": "Builds a timestamped supervisor ZIP containing source, documentation, notebook, UI assets, and small evidence files while excluding raw data, model binaries, caches, and licensed SMPL assets.",
+      "tags": ["powershell", "packaging", "sharing", "privacy", "automation"],
+      "complexity": "moderate",
+      "languageNotes": "Uses PowerShell literal-path operations and extension allow-listing to assemble a constrained, temporary staging tree before compression."
+    }
+  ],
+  "edges": [
+    {"source": "config:.env.example", "target": "service:docker-compose.yml", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "config:.env.example", "target": "file:knowledge_graph.py", "type": "configures", "direction": "forward", "weight": 0.6},
+
+    {"source": "document:README.md", "target": "file:app.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:README.md", "target": "file:stage3.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:README.md", "target": "file:knowledge_graph.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:README.md", "target": "file:ollama_recommendations.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:README.md", "target": "file:diabetes_risk_stages_1_2.ipynb", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:README.md", "target": "service:docker-compose.yml", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:README.md", "target": "document:SMPL_SETUP.md", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "document:README.md", "target": "document:SUPERVISOR_HANDOFF.md", "type": "related", "direction": "forward", "weight": 0.5},
+
+    {"source": "document:SMPL_SETUP.md", "target": "file:src/twin_generator.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:SMPL_SETUP.md", "target": "file:src/export_smpl.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:SMPL_SETUP.md", "target": "service:docker-compose.yml", "type": "documents", "direction": "forward", "weight": 0.5},
+
+    {"source": "document:SUPERVISOR_HANDOFF.md", "target": "file:share_supervisor.ps1", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:SUPERVISOR_HANDOFF.md", "target": "file:diabetes_risk_stages_1_2.ipynb", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:SUPERVISOR_HANDOFF.md", "target": "file:app.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:SUPERVISOR_HANDOFF.md", "target": "file:stage3.py", "type": "documents", "direction": "forward", "weight": 0.5},
+
+    {"source": "document:SYSTEM_USER_GUIDE.md", "target": "file:app.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:SYSTEM_USER_GUIDE.md", "target": "file:stage3.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:SYSTEM_USER_GUIDE.md", "target": "file:knowledge_graph.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:SYSTEM_USER_GUIDE.md", "target": "file:templates/index.html", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:SYSTEM_USER_GUIDE.md", "target": "service:docker-compose.yml", "type": "documents", "direction": "forward", "weight": 0.5},
+
+    {"source": "document:WEBSITE_REVIEW.md", "target": "file:app.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:WEBSITE_REVIEW.md", "target": "file:stage3.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:WEBSITE_REVIEW.md", "target": "file:src/twin_generator.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:WEBSITE_REVIEW.md", "target": "file:diabetes_risk_stages_1_2.ipynb", "type": "documents", "direction": "forward", "weight": 0.5},
+
+    {"source": "document:plan.md", "target": "file:src/twin_generator.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:plan.md", "target": "file:src/export_smpl.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:plan.md", "target": "file:stage3.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:plan.md", "target": "file:app.py", "type": "documents", "direction": "forward", "weight": 0.5},
+
+    {"source": "document:requirements.txt", "target": "service:Dockerfile", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "document:requirements.txt", "target": "file:app.py", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "document:requirements.txt", "target": "file:stage3.py", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "document:requirements.txt", "target": "file:knowledge_graph.py", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "document:requirements.txt", "target": "file:src/twin_generator.py", "type": "configures", "direction": "forward", "weight": 0.6},
+
+    {"source": "document:research-question-card.md", "target": "file:app.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:research-question-card.md", "target": "file:stage3.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:research-question-card.md", "target": "file:src/twin_generator.py", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:research-question-card.md", "target": "file:diabetes_risk_stages_1_2.ipynb", "type": "documents", "direction": "forward", "weight": 0.5},
+
+    {"source": "file:share_supervisor.ps1", "target": "document:README.md", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "document:SUPERVISOR_HANDOFF.md", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "document:WEBSITE_REVIEW.md", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "document:research-question-card.md", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "document:SMPL_SETUP.md", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "document:requirements.txt", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "file:app.py", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "file:stage3.py", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "file:diabetes_risk.py", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "service:Dockerfile", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "service:docker-compose.yml", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:share_supervisor.ps1", "target": "file:diabetes_risk_stages_1_2.ipynb", "type": "depends_on", "direction": "forward", "weight": 0.6}
+  ]
+}

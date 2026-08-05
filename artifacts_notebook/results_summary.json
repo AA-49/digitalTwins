@@ -1,0 +1,124 @@
+{
+  "dataset_rows": 253680,
+  "features": [
+    "HighBP",
+    "HighChol",
+    "CholCheck",
+    "BMI",
+    "Smoker",
+    "Stroke",
+    "HeartDiseaseorAttack",
+    "PhysActivity",
+    "Fruits",
+    "Veggies",
+    "HvyAlcoholConsump",
+    "AnyHealthcare",
+    "NoDocbcCost",
+    "GenHlth",
+    "MentHlth",
+    "PhysHlth",
+    "DiffWalk",
+    "Sex",
+    "Age",
+    "Education",
+    "Income"
+  ],
+  "class_counts": {
+    "Low": 213703,
+    "Medium (prediabetes)": 4631,
+    "High (diabetes)": 35346
+  },
+  "metrics": {
+    "accuracy": 0.819575843582466,
+    "balanced_accuracy": 0.45090048576525366,
+    "macro_f1": 0.44344337170200737,
+    "weighted_f1": 0.8158245737388298,
+    "macro_ovr_roc_auc": 0.7582394335088004
+  },
+  "classification_report": {
+    "precision": {
+      "Low": 0.8958133887500875,
+      "Medium (prediabetes)": 0.0,
+      "High (diabetes)": 0.41408160638434804,
+      "accuracy": 0.819575843582466,
+      "macro avg": 0.4366316650448119,
+      "weighted avg": 0.8123443496550465
+    },
+    "recall": {
+      "Low": 0.8976158723473948,
+      "Medium (prediabetes)": 0.0,
+      "High (diabetes)": 0.4550855849483661,
+      "accuracy": 0.819575843582466,
+      "macro avg": 0.45090048576525366,
+      "weighted avg": 0.819575843582466
+    },
+    "f1-score": {
+      "Low": 0.8967137247569185,
+      "Medium (prediabetes)": 0.0,
+      "High (diabetes)": 0.43361639034910365,
+      "accuracy": 0.819575843582466,
+      "macro avg": 0.44344337170200737,
+      "weighted avg": 0.8158245737388298
+    },
+    "support": {
+      "Low": 42741.0,
+      "Medium (prediabetes)": 926.0,
+      "High (diabetes)": 7069.0,
+      "accuracy": 0.819575843582466,
+      "macro avg": 50736.0,
+      "weighted avg": 50736.0
+    }
+  },
+  "top_global_features": [
+    {
+      "feature": "BMI",
+      "importance_mean": 0.03429780459417324,
+      "importance_std": 0.004960275672330207
+    },
+    {
+      "feature": "GenHlth",
+      "importance_mean": 0.025216710411019715,
+      "importance_std": 0.0035897428196586235
+    },
+    {
+      "feature": "HighBP",
+      "importance_mean": 0.020347575574621378,
+      "importance_std": 0.003264660085686948
+    },
+    {
+      "feature": "HighChol",
+      "importance_mean": 0.01354007162044502,
+      "importance_std": 0.0019113341039377909
+    },
+    {
+      "feature": "Age",
+      "importance_mean": 0.012206138689186541,
+      "importance_std": 0.004298869027458098
+    },
+    {
+      "feature": "HeartDiseaseorAttack",
+      "importance_mean": 0.004068258839373761,
+      "importance_std": 0.0013514913594705467
+    },
+    {
+      "feature": "HvyAlcoholConsump",
+      "importance_mean": 0.0029650801407214654,
+      "importance_std": 0.001110759836938926
+    },
+    {
+      "feature": "DiffWalk",
+      "importance_mean": 0.001892643821034623,
+      "importance_std": 0.0017434778613386822
+    },
+    {
+      "feature": "Stroke",
+      "importance_mean": 0.001548935135971058,
+      "importance_std": 0.0007013932476982031
+    },
+    {
+      "feature": "CholCheck",
+      "importance_mean": 0.001437510130883357,
+      "importance_std": 0.0005835952424522054
+    }
+  ]
+}

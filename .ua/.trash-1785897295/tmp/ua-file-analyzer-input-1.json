@@ -1,0 +1,47 @@
+{
+  "projectRoot": "C:\\Users\\user\\OneDrive\\Desktop\\Swinb\\Research\\training3",
+  "batchFiles": [
+    {"path": "app.py", "language": "python", "sizeLines": 393, "fileCategory": "code"},
+    {"path": "diabetes_risk.py", "language": "python", "sizeLines": 60, "fileCategory": "code"},
+    {"path": "knowledge_graph.py", "language": "python", "sizeLines": 623, "fileCategory": "code"},
+    {"path": "stage3.py", "language": "python", "sizeLines": 150, "fileCategory": "code"},
+    {"path": "test_knowledge_graph.py", "language": "python", "sizeLines": 178, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "app.py": [
+      "diabetes_risk.py",
+      "knowledge_graph.py",
+      "ollama_recommendations.py",
+      "stage3.py"
+    ],
+    "diabetes_risk.py": [],
+    "knowledge_graph.py": [
+      "diabetes_risk.py"
+    ],
+    "stage3.py": [
+      "diabetes_risk.py"
+    ],
+    "test_knowledge_graph.py": [
+      "diabetes_risk.py",
+      "knowledge_graph.py",
+      "stage3.py"
+    ]
+  },
+  "neighborMap": {
+    "app.py": [
+      {
+        "path": "ollama_recommendations.py",
+        "batchIndex": 4,
+        "symbols": [
+          "OllamaRecommendationError",
+          "configured_model",
+          "build_recommendation_input",
+          "_passes_research_safety_checks",
+          "_deterministic_evidence_summary",
+          "generate_local_guidance",
+          "guidance_error_message"
+        ]
+      }
+    ]
+  }
+}

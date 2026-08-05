@@ -1,0 +1,105 @@
+[
+  {
+    "order": 1,
+    "title": "Project and Research Boundary",
+    "description": "Start with the README to understand the four-stage Explainable Diabetes Risk Digital Twin, its Docker workflow, and its notebook-only training approach. The research question then anchors the tour around one dataset-linked patient whose prediction, SHAP evidence, scenario, graph, and 3D representation must remain consistent and explicitly non-clinical.",
+    "nodeIds": [
+      "document:README.md",
+      "document:research-question-card.md"
+    ]
+  },
+  {
+    "order": 2,
+    "title": "Dashboard Entry Point",
+    "description": "The Flask entry point is the runtime map for the whole prototype: it selects a numbered patient, requests three-class prediction and SHAP evidence, runs manual scenarios, exports SMPL twins, assembles Stage 4, and invokes local Ollama guidance. Reading it immediately after the overview shows how the four research stages are coordinated without confusing orchestration with the specialist modules that implement each stage.",
+    "nodeIds": [
+      "file:app.py"
+    ],
+    "languageLesson": "Flask route functions form the HTTP boundary, while lazy initialization keeps large model, graph, and SMPL resources out of process startup until a request needs them."
+  },
+  {
+    "order": 3,
+    "title": "Notebook-Only Model Training",
+    "description": "The retained notebook is the sole training path: it cleans BRFSS data, trains and evaluates the three-class Random Forest, records imbalance-aware metrics, creates global and patient SHAP explanations, and demonstrates a manually edited scenario. Its artifacts become the model evidence consumed by the dashboard, so this stop explains where runtime predictions originate without relying on the retired script workflow.",
+    "nodeIds": [
+      "file:diabetes_risk_stages_1_2.ipynb"
+    ]
+  },
+  {
+    "order": 4,
+    "title": "Shared Feature Contract",
+    "description": "The shared diabetes-risk module defines the authoritative target, ordered 21-feature schema, risk labels, dataset checks, patient validation, serialization, and model loading. This contract connects the notebook artifacts from Step 3 to every runtime service, preventing feature-order drift as the same patient moves through prediction, SHAP, simulation, and explanation.",
+    "nodeIds": [
+      "file:diabetes_risk.py"
+    ],
+    "languageLesson": "A Python module can serve as a single source of truth for constants and validation helpers, allowing independent pipeline stages to share one stable data contract."
+  },
+  {
+    "order": 5,
+    "title": "Prediction SHAP and Scenarios",
+    "description": "Stage 3 loads the notebook-trained model, enforces the shared feature order, produces all three class probabilities, and extracts patient-specific SHAP values across library versions. It also compares the current profile with a manually changed scenario, treating the difference as a non-causal model response rather than a treatment effect or recommendation.",
+    "nodeIds": [
+      "file:stage3.py"
+    ]
+  },
+  {
+    "order": 6,
+    "title": "Patient-Specific SMPL Twins",
+    "description": "The twin generator is the rendering boundary that maps each profile's BMI to SMPL shape and its model probability to display colour, then produces mesh data from licensed weights. The setup documentation explains the optional model assets and export workflow, clarifying why current and scenario twins are generated separately from their own inputs and remain visual research representations.",
+    "nodeIds": [
+      "file:src/twin_generator.py",
+      "document:SMPL_SETUP.md",
+      "document:models/smpl/README.md"
+    ],
+    "languageLesson": "Lazy loading isolates optional heavyweight assets: the application can expose a clear fallback when licensed SMPL weights are absent instead of failing during ordinary prediction."
+  },
+  {
+    "order": 7,
+    "title": "Temporary Stage 4 Graph",
+    "description": "The Stage 4 service combines all 21 decoded observations, all patient-specific SHAP contributions, three probabilities, evaluation warnings, and current-twin evidence into a Cytoscape-ready graph. Neo4j stores only reusable definitions and model metadata; the selected patient's graph stays request-local, and its relationships explain model evidence without inventing direct clinical causal edges.",
+    "nodeIds": [
+      "file:knowledge_graph.py"
+    ]
+  },
+  {
+    "order": 8,
+    "title": "Ollama Evidence Explanation",
+    "description": "Building on the same temporary evidence boundary, the Ollama module packages complete observations, SHAP values, probabilities, twin metadata, and the model warning for local non-streaming generation. It validates generated prose for research disclaimers, the known Medium-class recall limitation, prohibited causal language, and completeness, replacing unsafe or unavailable output with a deterministic evidence summary.",
+    "nodeIds": [
+      "file:ollama_recommendations.py"
+    ]
+  },
+  {
+    "order": 9,
+    "title": "Browser Evidence Workspace",
+    "description": "The Jinja template presents patient selection, predictions, SHAP factors, local guidance, the Stage 4 graph, and side-by-side current and scenario twins in one browser workflow. Responsive styling and accessible Cytoscape interactions let users filter, select, and inspect evidence while keeping limitations and fallback states visible alongside the results.",
+    "nodeIds": [
+      "file:templates/index.html",
+      "file:static/js/knowledge_graph.js",
+      "file:static/style.css"
+    ],
+    "languageLesson": "Server-rendered Jinja establishes the initial evidence view, while client-side JavaScript progressively enhances graph selection, filtering, keyboard interaction, and responsive relayout."
+  },
+  {
+    "order": 10,
+    "title": "Boundary and Safety Tests",
+    "description": "The knowledge-graph tests enforce complete patient evidence, SHAP sign and probability fidelity, the 98-node contract, patient non-persistence, idempotent Neo4j initialization, and disconnected fallback behavior. The Ollama tests complement them by checking complete temporary inputs, safe HTTP payloads, rejection of unsafe prose, deterministic fallback, and Flask integration.",
+    "nodeIds": [
+      "file:test_knowledge_graph.py",
+      "file:test_ollama_recommendations.py"
+    ]
+  },
+  {
+    "order": 11,
+    "title": "Docker and Jupyter Deployment",
+    "description": "The Dockerfile creates one non-root Python image for the dashboard, notebook execution, and SMPL export, while Compose orchestrates Neo4j, Flask, JupyterLab, the notebook-training profile, and optional mesh export. The environment example, dependency specification, and user guide make that infrastructure reproducible and explain how to operate the browser-visible workflow without persisting patient evidence in Neo4j.",
+    "nodeIds": [
+      "service:Dockerfile",
+      "service:docker-compose.yml",
+      "config:.env.example",
+      "document:requirements.txt",
+      "document:SYSTEM_USER_GUIDE.md"
+    ],
+    "languageLesson": "Docker Compose profiles keep notebook training and mesh export as opt-in jobs while default services remain focused on the dashboard and Neo4j; bind mounts preserve the editable research workspace and generated artifacts."
+  }
+]

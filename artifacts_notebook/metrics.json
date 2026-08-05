@@ -1,0 +1,48 @@
+{
+  "n_rows": 253680,
+  "n_train": 202944,
+  "n_test": 50736,
+  "class_counts": {
+    "0": 213703,
+    "1": 4631,
+    "2": 35346
+  },
+  "accuracy": 0.819575843582466,
+  "balanced_accuracy": 0.45090048576525366,
+  "macro_f1": 0.44344337170200737,
+  "weighted_f1": 0.8158245737388298,
+  "macro_ovr_roc_auc": 0.7582394335088004,
+  "classification_report": {
+    "Low": {
+      "precision": 0.8958133887500875,
+      "recall": 0.8976158723473948,
+      "f1-score": 0.8967137247569185,
+      "support": 42741.0
+    },
+    "Medium (prediabetes)": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 926.0
+    },
+    "High (diabetes)": {
+      "precision": 0.41408160638434804,
+      "recall": 0.4550855849483661,
+      "f1-score": 0.43361639034910365,
+      "support": 7069.0
+    },
+    "accuracy": 0.819575843582466,
+    "macro avg": {
+      "precision": 0.4366316650448119,
+      "recall": 0.45090048576525366,
+      "f1-score": 0.44344337170200737,
+      "support": 50736.0
+    },
+    "weighted avg": {
+      "precision": 0.8123443496550465,
+      "recall": 0.819575843582466,
+      "f1-score": 0.8158245737388298,
+      "support": 50736.0
+    }
+  }
+}

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diabetes Digital Twin | Stages 1-4</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script defer src="{{ url_for('static', filename='vendor/cytoscape.min.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='js/knowledge_graph.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">RESEARCH PROTOTYPE - STAGES 1-4</p>
+      <h1>Explainable diabetes risk Digital Twin</h1>
+      <p>Select a numbered patient from the active dataset, inspect the model explanation, and compare a manual what-if scenario.</p>
+      <p class="disclaimer">For research and demonstration only. This is not a medical diagnosis, treatment recommendation, or causal forecast.</p>
+    </header>
+
+    <section class="card guide-card" id="how-to-use">
+      <p class="eyebrow">HOW TO USE THIS SYSTEM</p>
+      <h2>Follow these steps in order</h2>
+      <ol class="guide-steps">
+        <li><strong>Open the dashboard.</strong><span>Keep Docker Desktop running, then open <code>http://127.0.0.1:5000</code>.</span></li>
+        <li><strong>Select a dataset patient.</strong><span>Enter a patient number and choose <em>Load patient</em>, or choose <em>Use</em> in the numbered table.</span></li>
+        <li><strong>Wait for the patient analysis.</strong><span>The first run can take one or two minutes while the prediction model loads and the matching 3D body is generated.</span></li>
+        <li><strong>Read Stage 1.</strong><span>Review the predicted risk category and the three model probabilities. These are research-model outputs, not a diagnosis.</span></li>
+        <li><strong>Read Stage 2.</strong><span>Review the strongest SHAP factors. They explain what influenced this prediction but do not prove medical causes.</span></li>
+        <li><strong>Inspect the Stage 3 twin.</strong><span>BMI changes body shape, sex selects the SMPL model, and predicted high-risk probability changes colour. Drag to rotate and scroll to zoom.</span></li>
+        <li><strong>Explore Stage 4.</strong><span>Connect all 21 observations with their decoded states, SHAP contributions, prediction probabilities, model evaluation, current Digital Twin, and optional local-model guidance.</span></li>
+        <li><strong>Try a what-if scenario.</strong><span>Edit the allowed values and choose <em>Compare scenario</em>. The current and scenario results and 3D twins appear side by side.</span></li>
+        <li><strong>Repeat with another patient.</strong><span>Select a new number to update all four stages and regenerate the 3D twin for that current patient.</span></li>
+      </ol>
+      <p class="hint"><strong>Optional:</strong> Import a compatible CSV below to test another patient dataset. The imported data stays active until the app restarts.</p>
+    </section>
+
+    <section class="card dataset-card">
+      <p class="eyebrow">DATASET-BACKED TESTING</p>
+      <h2>Import or select a patient</h2>
+      <p>Active dataset: <strong>{{ dataset_name }}</strong> - {{ "{:,}".format(patient_count) }} valid patients.</p>
+      <form method="post" enctype="multipart/form-data" class="import-row">
+        <label><span>Import another patient CSV</span><input type="file" name="dataset_file" accept=".csv,text/csv" required></label>
+        <button name="action" value="import_dataset" type="submit">Import dataset</button>
+      </form>
+      <p class="hint">The CSV must contain the same 21 BRFSS feature columns used to train the model. The target column <code>Diabetes_012</code> is optional. An imported file remains active until the local app restarts or another file is imported.</p>
+      {% if notice %}<p class="notice">{{ notice }}</p>{% endif %}
+
+      <form method="post" class="patient-jump">
+        <label><span>Patient number</span><input name="patient_number" type="number" min="1" max="{{ patient_count }}" value="{{ patient_number }}" required></label>
+        <button name="action" value="predict" type="submit">Load patient and run Stages 1-4</button>
+      </form>
+
+      <div class="patient-table-wrap">
+        <table class="patient-table">
+          <thead><tr><th>No.</th><th>BMI</th><th>Age code</th><th>Sex</th><th>Dataset class</th><th></th></tr></thead>
+          <tbody>
+            {% for patient in patient_rows %}
+            <tr class="{% if patient.number == patient_number %}selected{% endif %}">
+              <td>{{ patient.number }}</td><td>{{ "%.1f"|format(patient.bmi) }}</td><td>{{ patient.age }}</td>
+              <td>{{ patient.sex }}</td><td>{{ patient.actual_label or "Not supplied" }}</td>
+              <td>
+                <form method="post">
+                  <input type="hidden" name="patient_number" value="{{ patient.number }}">
+                  <button class="small-button" name="action" value="predict" type="submit">Use</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <p class="eyebrow">CURRENT DATASET PATIENT #{{ patient_number }}</p>
+      <h2>Patient profile</h2>
+      {% if actual_label %}<p class="hint">Recorded dataset class: {{ actual_label }}. This is shown for evaluation and is not used as a model input.</p>{% endif %}
+      <div class="profile-grid">
+        {% for name, label, kind, default, attrs in fields %}
+        <div><span>{{ label }}</span><strong>{{ values[name] }}</strong></div>
+        {% endfor %}
+      </div>
+    </section>
+
+    {% if error %}<section class="card error">{{ error }}</section>{% endif %}
+    {% if current %}
+    <section class="card result risk-{{ current.predicted_class }}">
+      <p class="eyebrow">STAGE 1 - PREDICTION - PATIENT #{{ patient_number }}</p>
+      <h2>Current category: {{ current.label }}</h2>
+      <p>High-diabetes probability: <strong>{{ "%.1f"|format(current.high_risk_probability * 100) }}%</strong></p>
+      {% for probability in current.probabilities %}
+      <div class="probability"><div><span>{{ probability.label }}</span><strong>{{ "%.1f"|format(probability.value * 100) }}%</strong></div><div class="bar"><i style="width: {{ probability.value * 100 }}%"></i></div></div>
+      {% endfor %}
+      <p class="hint">Model: {{ model_name }}</p>
+    </section>
+
+    <section class="card">
+      <p class="eyebrow">STAGE 2 - EXPLANATION - PATIENT #{{ patient_number }}</p>
+      <h2>Strongest factors for this predicted category</h2>
+      <p class="hint">SHAP values indicate model support for the predicted class; they are not causes or clinical advice.</p>
+      <ol class="factor-list">{% for factor in explanation %}<li><strong>{{ factor.feature }}</strong><span>value {{ factor.value }} - SHAP {{ "%+.3f"|format(factor.shap_value) }}</span></li>{% endfor %}</ol>
+    </section>
+
+    {% if knowledge_graph %}
+    <section class="card kg-card">
+      <p class="eyebrow">STAGE 4 - NEO4J KNOWLEDGE GRAPH - PATIENT #{{ patient_number }}</p>
+      <h2>Patient-centric model explanation</h2>
+      <p class="kg-status {% if not knowledge_graph.connected %}kg-status-unavailable{% endif %}">{{ knowledge_graph.message }}</p>
+      <p class="kg-warning" role="alert">{{ knowledge_graph.warning }}</p>
+
+      {% if knowledge_graph.connected %}
+      <div class="kg-toolbar" aria-label="Knowledge graph filters">
+        <span>Show:</span>
+        <button type="button" class="kg-filter active" data-kg-filter="all" aria-pressed="true">All</button>
+        <button type="button" class="kg-filter" data-kg-filter="profile" aria-pressed="false">Profile</button>
+        <button type="button" class="kg-filter" data-kg-filter="explanation" aria-pressed="false">Model explanation</button>
+        <button type="button" class="kg-filter" data-kg-filter="prediction" aria-pressed="false">Prediction</button>
+        <button type="button" class="kg-filter" data-kg-filter="twin" aria-pressed="false">Digital Twin</button>
+        <button type="button" class="kg-reset" data-kg-reset>Reset focus</button>
+        <label class="kg-node-picker">Keyboard node
+          <select id="kg-node-picker"><option value="">Choose a node</option></select>
+        </label>
+      </div>
+      <div class="kg-legend" aria-label="Knowledge graph legend">
+        {% for item in knowledge_graph.legend %}
+        <span><i style="background:{{ item.color }}"></i>{{ item.label }}</span>
+        {% endfor %}
+      </div>
+      <div class="kg-workspace">
+        <div id="knowledge-graph" role="img" aria-label="Interactive patient knowledge graph. Select a node to inspect its meaning and connections."></div>
+        <aside class="kg-detail" aria-live="polite">
+          <p class="eyebrow">SELECTED NODE</p>
+          <h3 id="kg-detail-title">Current Patient</h3>
+          <p id="kg-detail-summary">Select any node to focus its immediate relationships and inspect its details.</p>
+          <details open>
+            <summary>Connections</summary>
+            <ul id="kg-detail-connections"><li>Select a graph node.</li></ul>
+          </details>
+          <details>
+            <summary>Model and technical details</summary>
+            <dl id="kg-detail-technical"></dl>
+          </details>
+          <details>
+            <summary>Data definition</summary>
+            <dl id="kg-detail-definition"></dl>
+          </details>
+          <details>
+            <summary>All current attributes</summary>
+            <div id="kg-detail-attributes" class="kg-mini-attributes"></div>
+          </details>
+        </aside>
+      </div>
+      <script id="knowledge-graph-data" type="application/json">{{ knowledge_graph|tojson }}</script>
+      <p class="hint">Green and red relationships describe SHAP support for this model prediction. Blue and gray relationships decode the current data. Purple relationships connect the 3D twin. No edge is a clinical causal claim.</p>
+      {% else %}
+      <p class="hint">The interactive view is disabled, but the current profile remains available below.</p>
+      {% endif %}
+
+      <details class="kg-fallback" {% if not knowledge_graph.connected %}open{% endif %}>
+        <summary>Accessible list of all 21 current-profile attributes</summary>
+        <div class="kg-attributes">
+          {% for attribute in knowledge_graph.attributes %}
+          <div>
+            <span>{{ attribute.label }}</span>
+            <strong>{{ attribute.value }}</strong>
+            <small>{{ attribute.state }} · {{ attribute.domain }} · SHAP {{ "%+.3f"|format(attribute.shap_value) }}</small>
+          </div>
+          {% endfor %}
+        </div>
+      </details>
+      <p class="disclaimer">This graph explains the current dataset values and model output. It does not contain insulin-resistance mechanisms, treatment recommendations, proof of causation, or clinical advice.</p>
+
+      <div class="local-guidance-panel">
+        <p class="eyebrow">OLLAMA LOCAL MODEL</p>
+        <h3>Explain this patient’s model evidence locally</h3>
+        <p class="hint">Model: <code>{{ ollama_model }}</code>. The dashboard sends the temporary 21 observations and SHAP values, three probabilities, Digital Twin summary, and model limitation only to Ollama running on this computer.</p>
+        <form method="post">
+          <input type="hidden" name="patient_number" value="{{ patient_number }}">
+          <button name="action" value="local_guidance" type="submit">Generate local research guidance</button>
+        </form>
+        {% if local_guidance %}
+        <div class="local-guidance-output" aria-live="polite">
+          <h4>Local guidance for Patient #{{ patient_number }}</h4>
+          <p>{{ local_guidance }}</p>
+        </div>
+        {% elif local_guidance_error %}
+        <p class="local-guidance-error" role="alert">{{ local_guidance_error }}</p>
+        {% endif %}
+        <p class="kg-warning">The local model is a small code-oriented language model. Its wording can be incomplete or inaccurate. Unsafe drafts are automatically replaced with a deterministic evidence summary. The checked diabetes model has 0.0 Medium/prediabetes recall.</p>
+        <p class="disclaimer">This generated text is model-based, non-causal, for research only, and is not medical advice, diagnosis, or a treatment plan.</p>
+      </div>
+
+    </section>
+    {% endif %}
+
+    <section class="card smpl-card">
+      <p class="eyebrow">STAGE 3 - CURRENT PATIENT 3D TWIN - PATIENT #{{ patient_number }}</p>
+      <h2>Live patient-linked representation</h2>
+      <div class="comparison-grid">
+        <div><h3>Body shape</h3><p>BMI {{ "%.1f"|format(smpl.bmi) }}</p><strong>beta 0 {{ "%+.2f"|format(smpl.beta0) }}</strong><span>SMPL body-shape coefficient</span></div>
+        <div><h3>Risk visual</h3><p>{{ smpl.band }} risk band</p><strong style="color: {{ smpl.color }}">{{ "%.1f"|format(smpl.risk_percent) }}%</strong><span>Mesh colour: {{ smpl.color }}</span></div>
+      </div>
+      {% if smpl_status %}<p class="hint twin-status">{{ smpl_status }}</p>{% endif %}
+      {% if twin_metadata %}
+      <model-viewer id="current-patient-twin" src="{{ url_for('digital_twin_asset') }}?v={{ twin_metadata.version }}"
+        camera-controls auto-rotate shadow-intensity="1" exposure="1"
+        data-risk-colour="{{ smpl.color }}" alt="3D twin for current dataset patient {{ patient_number }}"></model-viewer>
+      <p class="hint">This mesh was regenerated from Patient #{{ patient_number }}: BMI {{ twin_metadata.bmi }}, risk {{ "%.1f"|format(twin_metadata.risk_percent) }}%, {{ twin_metadata.gender }} model.</p>
+      {% else %}
+      <p class="hint">A stale saved mesh is intentionally hidden. Start Docker and retry this patient so the displayed 3D model is guaranteed to match the current record.</p>
+      {% endif %}
+    </section>
+
+    <form method="post">
+      <input type="hidden" name="patient_number" value="{{ patient_number }}">
+      <section class="card twin">
+        <p class="eyebrow">STAGE 3 - MANUAL WHAT-IF SIMULATION</p>
+        <h2>Edit a scenario for Patient #{{ patient_number }}</h2>
+        <p class="hint">The baseline is reloaded from the active dataset on the server. Only these scenario values can change.</p>
+        <div class="form-grid compact">
+          {% for name, label, kind, default, attrs in scenario_fields %}
+          <label><span>{{ label }}</span>
+            {% if kind == "binary" %}<select name="scenario_{{ name }}"><option value="0" {% if values[name]|int == 0 %}selected{% endif %}>No (0)</option><option value="1" {% if values[name]|int == 1 %}selected{% endif %}>Yes (1)</option></select>
+            {% else %}<input name="scenario_{{ name }}" type="number" value="{{ values[name] }}" required {% for attribute, value in attrs.items() %}{{ attribute }}="{{ value }}" {% endfor %}>{% endif %}
+          </label>
+          {% endfor %}
+        </div>
+        <button name="action" value="simulate" type="submit">Compare scenario</button>
+      </section>
+    </form>
+    {% endif %}
+
+    {% if simulation %}
+    <section class="card comparison">
+      <p class="eyebrow">DIGITAL TWIN COMPARISON - PATIENT #{{ patient_number }}</p>
+      <h2>Current dataset state versus simulated state</h2>
+      <div class="comparison-grid"><div><h3>Current</h3><p>{{ simulation.baseline.label }}</p><strong>{{ "%.1f"|format(simulation.baseline.high_risk_probability * 100) }}%</strong><span>high-diabetes probability</span></div><div><h3>Scenario</h3><p>{{ simulation.scenario.label }}</p><strong>{{ "%.1f"|format(simulation.scenario.high_risk_probability * 100) }}%</strong><span>high-diabetes probability</span></div></div>
+      <p class="delta {% if simulation.high_risk_change < 0 %}down{% elif simulation.high_risk_change > 0 %}up{% endif %}">Change: {{ "%+.1f"|format(simulation.high_risk_change * 100) }} percentage points</p>
+      <div class="twin-comparison-grid">
+        <div>
+          <h3>Current patient 3D twin</h3>
+          {% if twin_metadata %}
+          <model-viewer src="{{ url_for('digital_twin_asset') }}?v={{ twin_metadata.version }}"
+            camera-controls auto-rotate shadow-intensity="1" exposure="1"
+            data-risk-colour="{{ smpl.color }}" alt="Current 3D twin for patient {{ patient_number }}"></model-viewer>
+          <p class="hint">BMI {{ "%.1f"|format(twin_metadata.bmi) }} · Risk {{ "%.1f"|format(twin_metadata.risk_percent) }}% · {{ twin_metadata.gender }}</p>
+          {% else %}
+          <p class="hint">The current-patient mesh is not available.</p>
+          {% endif %}
+        </div>
+        <div>
+          <h3>Scenario 3D twin</h3>
+          {% if scenario_twin_metadata %}
+          <model-viewer src="{{ url_for('scenario_digital_twin_asset') }}?v={{ scenario_twin_metadata.version }}"
+            camera-controls auto-rotate shadow-intensity="1" exposure="1"
+            data-risk-colour="{{ scenario_smpl.color }}" alt="Scenario 3D twin for patient {{ patient_number }}"></model-viewer>
+          <p class="hint">BMI {{ "%.1f"|format(scenario_twin_metadata.bmi) }} · Risk {{ "%.1f"|format(scenario_twin_metadata.risk_percent) }}% · {{ scenario_twin_metadata.gender }}</p>
+          {% else %}
+          <p class="hint">The scenario mesh could not be generated.</p>
+          {% endif %}
+        </div>
+      </div>
+      {% if scenario_smpl_status %}<p class="hint twin-status">{{ scenario_smpl_status }}</p>{% endif %}
+      <h3>Edited variables</h3><ul>{% for change in simulation.changes %}<li>{{ change.feature }}: {{ change.from }} to {{ change.to }}</li>{% else %}<li>No values were changed.</li>{% endfor %}</ul>
+    </section>
+    {% endif %}
+  </main>
+
+  {% if twin_metadata or scenario_twin_metadata %}
+  <script>
+    document.querySelectorAll("model-viewer[data-risk-colour]").forEach((viewer) => {
+      viewer.addEventListener("load", () => {
+        const colour = viewer.dataset.riskColour;
+        const rgb = [
+          Number.parseInt(colour.slice(1, 3), 16) / 255,
+          Number.parseInt(colour.slice(3, 5), 16) / 255,
+          Number.parseInt(colour.slice(5, 7), 16) / 255,
+          1
+        ];
+        for (const material of viewer.model.materials) {
+          material.pbrMetallicRoughness.setBaseColorFactor(rgb);
+        }
+      });
+    });
+  </script>
+  {% endif %}
+</body>
+</html>

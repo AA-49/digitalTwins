@@ -1,0 +1,790 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 4,
+  "filesSkipped": [
+    "diabetes_risk_stages_1_2.ipynb",
+    "static/style.css",
+    "templates/index.html"
+  ],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 4,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 3,
+      "failed": 0,
+      "skipped": 1
+    }
+  },
+  "results": [
+    {
+      "path": "models/smpl/README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 9,
+      "nonEmptyLines": 6,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 0
+      }
+    },
+    {
+      "path": "src/export_smpl.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 51,
+      "nonEmptyLines": 39,
+      "functions": [
+        {
+          "name": "main",
+          "startLine": 19,
+          "endLine": 47,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "main",
+          "line": 19,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "main",
+          "callee": "argparse.ArgumentParser",
+          "lineNumber": 20
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 21
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 22
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 23
+        },
+        {
+          "caller": "main",
+          "callee": "parser.add_argument",
+          "lineNumber": 24
+        },
+        {
+          "caller": "main",
+          "callee": "parser.parse_args",
+          "lineNumber": 25
+        },
+        {
+          "caller": "main",
+          "callee": "TwinGenerator",
+          "lineNumber": 27
+        },
+        {
+          "caller": "main",
+          "callee": "gen.generate",
+          "lineNumber": 28
+        },
+        {
+          "caller": "main",
+          "callee": "risk_to_color",
+          "lineNumber": 32
+        },
+        {
+          "caller": "main",
+          "callee": "int",
+          "lineNumber": 33
+        },
+        {
+          "caller": "main",
+          "callee": "np.tile",
+          "lineNumber": 34
+        },
+        {
+          "caller": "main",
+          "callee": "np.array",
+          "lineNumber": 34
+        },
+        {
+          "caller": "main",
+          "callee": "len",
+          "lineNumber": 34
+        },
+        {
+          "caller": "main",
+          "callee": "trimesh.Trimesh",
+          "lineNumber": 35
+        },
+        {
+          "caller": "main",
+          "callee": "Path",
+          "lineNumber": 36
+        },
+        {
+          "caller": "main",
+          "callee": "mesh.export",
+          "lineNumber": 37
+        },
+        {
+          "caller": "main",
+          "callee": "out_path.with_suffix",
+          "lineNumber": 38
+        },
+        {
+          "caller": "main",
+          "callee": "metadata_path.write_text",
+          "lineNumber": 39
+        },
+        {
+          "caller": "main",
+          "callee": "json.dumps",
+          "lineNumber": 39
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 46
+        },
+        {
+          "caller": "main",
+          "callee": "out_path.resolve",
+          "lineNumber": 46
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 47
+        },
+        {
+          "caller": "main",
+          "callee": "metadata_path.resolve",
+          "lineNumber": 47
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/twin_generator.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 164,
+      "nonEmptyLines": 134,
+      "functions": [
+        {
+          "name": "bmi_to_beta0",
+          "startLine": 28,
+          "endLine": 33,
+          "params": [
+            "bmi"
+          ]
+        },
+        {
+          "name": "risk_to_color",
+          "startLine": 36,
+          "endLine": 48,
+          "params": [
+            "prob"
+          ]
+        },
+        {
+          "name": "display_demo",
+          "startLine": 145,
+          "endLine": 153,
+          "params": [
+            "bmi",
+            "risk_prob",
+            "gender"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TwinGenerator",
+          "startLine": 51,
+          "endLine": 142,
+          "methods": [
+            "__init__",
+            "_load_model",
+            "generate",
+            "mesh_with_color"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "bmi_to_beta0",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "risk_to_color",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "TwinGenerator",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "display_demo",
+          "line": 145,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "bmi_to_beta0",
+          "callee": "float",
+          "lineNumber": 33
+        },
+        {
+          "caller": "risk_to_color",
+          "callee": "float",
+          "lineNumber": 43
+        },
+        {
+          "caller": "__init__",
+          "callee": "Path",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_load_model",
+          "callee": "self.model_folder.exists",
+          "lineNumber": 61
+        },
+        {
+          "caller": "_load_model",
+          "callee": "FileNotFoundError",
+          "lineNumber": 62
+        },
+        {
+          "caller": "_load_model",
+          "callee": "self.gender.lower().startswith",
+          "lineNumber": 63
+        },
+        {
+          "caller": "_load_model",
+          "callee": "self.gender.lower",
+          "lineNumber": 63
+        },
+        {
+          "caller": "_load_model",
+          "callee": "self.model_folder.glob",
+          "lineNumber": 65
+        },
+        {
+          "caller": "_load_model",
+          "callee": "path.name.lower",
+          "lineNumber": 65
+        },
+        {
+          "caller": "_load_model",
+          "callee": "expected_name.lower",
+          "lineNumber": 65
+        },
+        {
+          "caller": "_load_model",
+          "callee": "\", \".join",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_load_model",
+          "callee": "self.model_folder.glob",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_load_model",
+          "callee": "FileNotFoundError",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_load_model",
+          "callee": "hasattr",
+          "lineNumber": 80
+        },
+        {
+          "caller": "_load_model",
+          "callee": "{\n            \"bool\": np.bool_, \"int\": int, \"float\": float, \"complex\": complex,\n            \"object\": object, \"unicode\": str, \"str\": str,\n        }.items",
+          "lineNumber": 84
+        },
+        {
+          "caller": "_load_model",
+          "callee": "setattr",
+          "lineNumber": 89
+        },
+        {
+          "caller": "_load_model",
+          "callee": "RuntimeError",
+          "lineNumber": 93
+        },
+        {
+          "caller": "_load_model",
+          "callee": "smplx.SMPL",
+          "lineNumber": 97
+        },
+        {
+          "caller": "_load_model",
+          "callee": "str",
+          "lineNumber": 98
+        },
+        {
+          "caller": "generate",
+          "callee": "self._load_model",
+          "lineNumber": 107
+        },
+        {
+          "caller": "generate",
+          "callee": "bmi_to_beta0",
+          "lineNumber": 108
+        },
+        {
+          "caller": "generate",
+          "callee": "torch.zeros",
+          "lineNumber": 109
+        },
+        {
+          "caller": "generate",
+          "callee": "float",
+          "lineNumber": 110
+        },
+        {
+          "caller": "generate",
+          "callee": "torch.device",
+          "lineNumber": 113
+        },
+        {
+          "caller": "generate",
+          "callee": "model.to",
+          "lineNumber": 114
+        },
+        {
+          "caller": "generate",
+          "callee": "betas.to",
+          "lineNumber": 115
+        },
+        {
+          "caller": "generate",
+          "callee": "model",
+          "lineNumber": 119
+        },
+        {
+          "caller": "generate",
+          "callee": "model.forward",
+          "lineNumber": 121
+        },
+        {
+          "caller": "generate",
+          "callee": "out.vertices.detach().cpu().numpy",
+          "lineNumber": 123
+        },
+        {
+          "caller": "generate",
+          "callee": "out.vertices.detach().cpu",
+          "lineNumber": 123
+        },
+        {
+          "caller": "generate",
+          "callee": "out.vertices.detach",
+          "lineNumber": 123
+        },
+        {
+          "caller": "generate",
+          "callee": "model.faces.astype",
+          "lineNumber": 124
+        },
+        {
+          "caller": "mesh_with_color",
+          "callee": "self.generate",
+          "lineNumber": 133
+        },
+        {
+          "caller": "mesh_with_color",
+          "callee": "trimesh.Trimesh",
+          "lineNumber": 134
+        },
+        {
+          "caller": "mesh_with_color",
+          "callee": "RuntimeError",
+          "lineNumber": 138
+        },
+        {
+          "caller": "mesh_with_color",
+          "callee": "pv.wrap",
+          "lineNumber": 139
+        },
+        {
+          "caller": "mesh_with_color",
+          "callee": "risk_to_color",
+          "lineNumber": 140
+        },
+        {
+          "caller": "mesh_with_color",
+          "callee": "np.tile",
+          "lineNumber": 141
+        },
+        {
+          "caller": "mesh_with_color",
+          "callee": "np.array",
+          "lineNumber": 141
+        },
+        {
+          "caller": "mesh_with_color",
+          "callee": "int",
+          "lineNumber": 141
+        },
+        {
+          "caller": "mesh_with_color",
+          "callee": "int",
+          "lineNumber": 141
+        },
+        {
+          "caller": "mesh_with_color",
+          "callee": "int",
+          "lineNumber": 141
+        },
+        {
+          "caller": "display_demo",
+          "callee": "TwinGenerator",
+          "lineNumber": 147
+        },
+        {
+          "caller": "display_demo",
+          "callee": "gen.mesh_with_color",
+          "lineNumber": 148
+        },
+        {
+          "caller": "display_demo",
+          "callee": "pv.Plotter",
+          "lineNumber": 150
+        },
+        {
+          "caller": "display_demo",
+          "callee": "p.add_mesh",
+          "lineNumber": 151
+        },
+        {
+          "caller": "display_demo",
+          "callee": "p.add_text",
+          "lineNumber": 152
+        },
+        {
+          "caller": "display_demo",
+          "callee": "p.show",
+          "lineNumber": 153
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 3,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "static/js/knowledge_graph.js",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 264,
+      "nonEmptyLines": 242,
+      "callGraph": [
+        {
+          "caller": "ready",
+          "callee": "document.addEventListener",
+          "lineNumber": 6
+        },
+        {
+          "caller": "ready",
+          "callee": "callback",
+          "lineNumber": 8
+        },
+        {
+          "caller": "stringify",
+          "callee": "key.includes",
+          "lineNumber": 15
+        },
+        {
+          "caller": "stringify",
+          "callee": "key.includes",
+          "lineNumber": 15
+        },
+        {
+          "caller": "stringify",
+          "callee": "key.includes",
+          "lineNumber": 15
+        },
+        {
+          "caller": "stringify",
+          "callee": "key.includes",
+          "lineNumber": 15
+        },
+        {
+          "caller": "stringify",
+          "callee": "key.includes",
+          "lineNumber": 15
+        },
+        {
+          "caller": "stringify",
+          "callee": "(value * 100).toFixed",
+          "lineNumber": 16
+        },
+        {
+          "caller": "stringify",
+          "callee": "Number.isInteger",
+          "lineNumber": 18
+        },
+        {
+          "caller": "stringify",
+          "callee": "String",
+          "lineNumber": 18
+        },
+        {
+          "caller": "stringify",
+          "callee": "value.toFixed",
+          "lineNumber": 18
+        },
+        {
+          "caller": "stringify",
+          "callee": "JSON.stringify",
+          "lineNumber": 20
+        },
+        {
+          "caller": "stringify",
+          "callee": "String",
+          "lineNumber": 21
+        },
+        {
+          "caller": "humanize",
+          "callee": "key.replaceAll(\"_\", \" \").replace",
+          "lineNumber": 25
+        },
+        {
+          "caller": "humanize",
+          "callee": "key.replaceAll",
+          "lineNumber": 25
+        },
+        {
+          "caller": "humanize",
+          "callee": "letter.toUpperCase",
+          "lineNumber": 25
+        },
+        {
+          "caller": "appendDefinitionList",
+          "callee": "target.replaceChildren",
+          "lineNumber": 29
+        },
+        {
+          "caller": "appendDefinitionList",
+          "callee": "entries.forEach",
+          "lineNumber": 30
+        },
+        {
+          "caller": "appendDefinitionList",
+          "callee": "document.createElement",
+          "lineNumber": 31
+        },
+        {
+          "caller": "appendDefinitionList",
+          "callee": "document.createElement",
+          "lineNumber": 32
+        },
+        {
+          "caller": "appendDefinitionList",
+          "callee": "humanize",
+          "lineNumber": 33
+        },
+        {
+          "caller": "appendDefinitionList",
+          "callee": "stringify",
+          "lineNumber": 34
+        },
+        {
+          "caller": "appendDefinitionList",
+          "callee": "target.append",
+          "lineNumber": 35
+        },
+        {
+          "caller": "appendDefinitionList",
+          "callee": "document.createElement",
+          "lineNumber": 38
+        },
+        {
+          "caller": "appendDefinitionList",
+          "callee": "target.append",
+          "lineNumber": 40
+        },
+        {
+          "caller": "selectNode",
+          "callee": "cy.elements().removeClass",
+          "lineNumber": 185
+        },
+        {
+          "caller": "selectNode",
+          "callee": "cy.elements",
+          "lineNumber": 185
+        },
+        {
+          "caller": "selectNode",
+          "callee": "node.closedNeighborhood",
+          "lineNumber": 186
+        },
+        {
+          "caller": "selectNode",
+          "callee": "cy.elements().difference(neighborhood).addClass",
+          "lineNumber": 187
+        },
+        {
+          "caller": "selectNode",
+          "callee": "cy.elements().difference",
+          "lineNumber": 187
+        },
+        {
+          "caller": "selectNode",
+          "callee": "cy.elements",
+          "lineNumber": 187
+        },
+        {
+          "caller": "selectNode",
+          "callee": "node.addClass",
+          "lineNumber": 188
+        },
+        {
+          "caller": "selectNode",
+          "callee": "cy.animate",
+          "lineNumber": 189
+        },
+        {
+          "caller": "selectNode",
+          "callee": "node.data",
+          "lineNumber": 191
+        },
+        {
+          "caller": "selectNode",
+          "callee": "connections.replaceChildren",
+          "lineNumber": 196
+        },
+        {
+          "caller": "selectNode",
+          "callee": "node.connectedEdges",
+          "lineNumber": 197
+        },
+        {
+          "caller": "selectNode",
+          "callee": "document.createElement",
+          "lineNumber": 199
+        },
+        {
+          "caller": "selectNode",
+          "callee": "connections.append",
+          "lineNumber": 201
+        },
+        {
+          "caller": "selectNode",
+          "callee": "connectedEdges.forEach",
+          "lineNumber": 203
+        },
+        {
+          "caller": "selectNode",
+          "callee": "document.createElement",
+          "lineNumber": 204
+        },
+        {
+          "caller": "selectNode",
+          "callee": "edge.source().id",
+          "lineNumber": 205
+        },
+        {
+          "caller": "selectNode",
+          "callee": "edge.source",
+          "lineNumber": 205
+        },
+        {
+          "caller": "selectNode",
+          "callee": "node.id",
+          "lineNumber": 205
+        },
+        {
+          "caller": "selectNode",
+          "callee": "edge.target",
+          "lineNumber": 206
+        },
+        {
+          "caller": "selectNode",
+          "callee": "edge.source",
+          "lineNumber": 206
+        },
+        {
+          "caller": "selectNode",
+          "callee": "edge.data",
+          "lineNumber": 207
+        },
+        {
+          "caller": "selectNode",
+          "callee": "other.data",
+          "lineNumber": 207
+        },
+        {
+          "caller": "selectNode",
+          "callee": "connections.append",
+          "lineNumber": 208
+        },
+        {
+          "caller": "selectNode",
+          "callee": "Object.entries",
+          "lineNumber": 212
+        },
+        {
+          "caller": "selectNode",
+          "callee": "appendDefinitionList",
+          "lineNumber": 213
+        },
+        {
+          "caller": "selectNode",
+          "callee": "detailEntries.filter",
+          "lineNumber": 213
+        },
+        {
+          "caller": "selectNode",
+          "callee": "definitionKeys.has",
+          "lineNumber": 213
+        },
+        {
+          "caller": "selectNode",
+          "callee": "appendDefinitionList",
+          "lineNumber": 214
+        },
+        {
+          "caller": "selectNode",
+          "callee": "detailEntries.filter",
+          "lineNumber": 214
+        },
+        {
+          "caller": "selectNode",
+          "callee": "definitionKeys.has",
+          "lineNumber": 214
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

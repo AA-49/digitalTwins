@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "Provides local Neo4j username, password, and Bolt URI defaults for the Docker Compose deployment without embedding patient data.",
+      "tags": ["configuration", "neo4j", "credentials", "local-development"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Introduces the four-stage explainable diabetes-risk Digital Twin, documents local and Docker workflows, and defines the model-derived, non-causal research boundary for prediction, SHAP, simulation, Neo4j, and SMPL outputs.",
+      "tags": ["documentation", "entry-point", "digital-twin", "research-boundary", "setup"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:SMPL_SETUP.md",
+      "type": "document",
+      "name": "SMPL_SETUP.md",
+      "filePath": "SMPL_SETUP.md",
+      "summary": "Explains the optional Stage 3 SMPL pathway, licensed model asset placement, BMI and risk mappings, Docker export commands, and the dashboard's patient-specific GLB workflow.",
+      "tags": ["documentation", "smpl", "3d-export", "docker", "licensed-assets"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:SUPERVISOR_HANDOFF.md",
+      "type": "document",
+      "name": "SUPERVISOR_HANDOFF.md",
+      "filePath": "SUPERVISOR_HANDOFF.md",
+      "summary": "Defines a safe supervisor-sharing package, a concise demonstration sequence, an evidence-oriented status table, and limitations concerning BRFSS data, minority-class performance, and non-causal simulation.",
+      "tags": ["documentation", "handoff", "research-reporting", "privacy", "limitations"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:SYSTEM_USER_GUIDE.md",
+      "type": "document",
+      "name": "SYSTEM_USER_GUIDE.md",
+      "filePath": "SYSTEM_USER_GUIDE.md",
+      "summary": "Guides users through starting the Docker dashboard, selecting or importing numbered patients, interpreting Stages 1-4, comparing scenarios, and diagnosing basic container failures.",
+      "tags": ["documentation", "user-guide", "dashboard", "docker", "troubleshooting"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:WEBSITE_REVIEW.md",
+      "type": "document",
+      "name": "WEBSITE_REVIEW.md",
+      "filePath": "WEBSITE_REVIEW.md",
+      "summary": "Reviews the dataset-linked dashboard against supervisor feedback and research-stage expectations, recording patient consistency checks alongside BRFSS, causal, and SMPL calibration gaps.",
+      "tags": ["documentation", "validation", "research-review", "patient-traceability", "limitations"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:plan.md",
+      "type": "document",
+      "name": "plan.md",
+      "filePath": "plan.md",
+      "summary": "Lays out the original Stage 3 implementation plan for mapping BMI and model risk into an SMPL body shape and colour, exporting a mesh, and integrating the result with a web what-if workflow.",
+      "tags": ["documentation", "project-plan", "smpl", "digital-twin", "what-if-simulation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "requirements.txt",
+      "summary": "Pins and constrains the Python dependencies for model training, imbalance handling, SHAP explanation, Flask and Neo4j integration, Jupyter, and SMPL mesh generation.",
+      "tags": ["dependency-management", "python", "machine-learning", "visualization", "configuration"],
+      "complexity": "simple",
+      "languageNotes": "NumPy remains below version 2 and scikit-learn is pinned to preserve compatibility with checked-in CPU PyTorch and model artifacts."
+    },
+    {
+      "id": "document:research-question-card.md",
+      "type": "document",
+      "name": "research-question-card.md",
+      "filePath": "research-question-card.md",
+      "summary": "Frames the applied research question around consistent reuse of one numbered dataset record across prediction, SHAP explanation, 3D representation, and manual what-if simulation, with explicit supporting and falsifying evidence.",
+      "tags": ["documentation", "research-question", "experiment-design", "patient-traceability", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:share_supervisor.ps1",
+      "type": "file",
+      "name": "share_supervisor.ps1",
+      "filePath": "share_supervisor.ps1",
+      "summary": "Builds a timestamped supervisor ZIP containing source, documentation, notebook, and small evidence artifacts while excluding raw data, trained models, virtual environments, bytecode, and licensed SMPL weights.",
+      "tags": ["automation", "packaging", "privacy", "powershell", "handoff"],
+      "complexity": "moderate",
+      "languageNotes": "The script stages an allowlisted package, recursively filters source folders, and removes the temporary staging directory after compression."
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:README.md",
+      "target": "document:SMPL_SETUP.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:SUPERVISOR_HANDOFF.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:SYSTEM_USER_GUIDE.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:SMPL_SETUP.md",
+      "target": "document:plan.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:WEBSITE_REVIEW.md",
+      "target": "document:research-question-card.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:WEBSITE_REVIEW.md",
+      "target": "document:SUPERVISOR_HANDOFF.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:share_supervisor.ps1",
+      "target": "document:SUPERVISOR_HANDOFF.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:share_supervisor.ps1",
+      "target": "document:README.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:share_supervisor.ps1",
+      "target": "document:WEBSITE_REVIEW.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:share_supervisor.ps1",
+      "target": "document:SMPL_SETUP.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:share_supervisor.ps1",
+      "target": "document:requirements.txt",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

@@ -1,0 +1,683 @@
+{
+  "fileNodes": [
+    {
+      "id": "file:app.py",
+      "type": "file",
+      "name": "app.py",
+      "filePath": "app.py",
+      "summary": "Hosts the Flask dashboard that coordinates dataset-backed patient selection, model prediction, SHAP explanations, what-if simulation, current and scenario SMPL twins, and the temporary Stage 4 graph.",
+      "tags": [
+        "entry-point",
+        "api-handler",
+        "dashboard",
+        "orchestration"
+      ]
+    },
+    {
+      "id": "file:knowledge_graph.py",
+      "type": "file",
+      "name": "knowledge_graph.py",
+      "filePath": "knowledge_graph.py",
+      "summary": "Implements the Stage 4 patient-centric knowledge graph: Neo4j persists only reusable definitions and model metadata, while complete patient observations, probabilities, SHAP contributions, and twin nodes are assembled in memory.",
+      "tags": [
+        "service",
+        "neo4j",
+        "explainability",
+        "serialization",
+        "tested"
+      ]
+    },
+    {
+      "id": "file:stage3.py",
+      "type": "file",
+      "name": "stage3.py",
+      "filePath": "stage3.py",
+      "summary": "Provides the Stage 3 model-backed Digital Twin for three-class prediction, version-tolerant SHAP explanation, manual what-if comparison, and SMPL visual descriptors.",
+      "tags": [
+        "service",
+        "digital-twin",
+        "simulation",
+        "explainability",
+        "tested"
+      ]
+    },
+    {
+      "id": "file:test_knowledge_graph.py",
+      "type": "file",
+      "name": "test_knowledge_graph.py",
+      "filePath": "test_knowledge_graph.py",
+      "summary": "Tests the Stage 4 graph schema, decoding boundaries, temporary patient model completeness, SHAP and probability fidelity, idempotent initialization, and Neo4j-unavailable fallback behavior.",
+      "tags": [
+        "test",
+        "neo4j",
+        "explainability",
+        "validation"
+      ]
+    },
+    {
+      "id": "file:diabetes_risk.py",
+      "type": "file",
+      "name": "diabetes_risk.py",
+      "filePath": "diabetes_risk.py",
+      "summary": "Defines the shared BRFSS feature schema, risk labels, artifact paths, and validation, serialization, and model-loading helpers used throughout Stages 1-4.",
+      "tags": [
+        "utility",
+        "validation",
+        "data-model",
+        "serialization",
+        "tested"
+      ]
+    },
+    {
+      "id": "file:explain_patient.py",
+      "type": "file",
+      "name": "explain_patient.py",
+      "filePath": "explain_patient.py",
+      "summary": "Implements the Stage 2 command-line workflow for validating one patient, predicting risk, calculating class-specific SHAP contributions, and saving JSON, CSV, and waterfall-plot artifacts.",
+      "tags": [
+        "entry-point",
+        "explainability",
+        "shap",
+        "patient-data"
+      ]
+    },
+    {
+      "id": "file:train.py",
+      "type": "file",
+      "name": "train.py",
+      "filePath": "train.py",
+      "summary": "Implements Stage 1 training and evaluation for a class-balanced three-class Random Forest, producing the model, metrics, confusion matrix, ROC curves, and held-out permutation importance artifacts.",
+      "tags": [
+        "entry-point",
+        "model-training",
+        "evaluation",
+        "data-pipeline"
+      ]
+    },
+    {
+      "id": "service:.dockerignore",
+      "type": "service",
+      "name": ".dockerignore",
+      "filePath": ".dockerignore",
+      "summary": "Defines the Docker build-context exclusions for local environments, generated artifacts, archived files, licensed SMPL weights, trained models, and execution logs.",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "build-context",
+        "privacy"
+      ]
+    },
+    {
+      "id": "service:Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "Dockerfile",
+      "summary": "Builds the shared Python 3.11 CPU image used for the Flask dashboard, Jupyter training, and SMPL export, installing PyTorch and legacy Chumpy support before copying the project and dropping to a non-root user.",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "deployment",
+        "python"
+      ]
+    },
+    {
+      "id": "service:Dockerfile:python",
+      "type": "service",
+      "name": "python",
+      "filePath": "Dockerfile",
+      "summary": "Represents the Python 3.11 slim container stage that installs project dependencies, exposes Flask and Jupyter ports, and defaults to running the dashboard.",
+      "tags": [
+        "container-stage",
+        "python-runtime",
+        "flask",
+        "jupyter"
+      ]
+    },
+    {
+      "id": "service:docker-compose.yml",
+      "type": "service",
+      "name": "docker-compose.yml",
+      "filePath": "docker-compose.yml",
+      "summary": "Orchestrates Neo4j, the Flask dashboard, JupyterLab, notebook execution, and optional SMPL mesh export from one shared project image, with localhost-only ports and persistent Neo4j storage.",
+      "tags": [
+        "orchestration",
+        "infrastructure",
+        "neo4j",
+        "deployment",
+        "jupyter"
+      ]
+    },
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "Provides local Neo4j username, password, and Bolt URI defaults for the Docker Compose deployment without embedding patient data.",
+      "tags": [
+        "configuration",
+        "neo4j",
+        "credentials",
+        "local-development"
+      ]
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Introduces the four-stage explainable diabetes-risk Digital Twin, documents local and Docker workflows, and defines the model-derived, non-causal research boundary for prediction, SHAP, simulation, Neo4j, and SMPL outputs.",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "digital-twin",
+        "research-boundary",
+        "setup"
+      ]
+    },
+    {
+      "id": "document:SMPL_SETUP.md",
+      "type": "document",
+      "name": "SMPL_SETUP.md",
+      "filePath": "SMPL_SETUP.md",
+      "summary": "Explains the optional Stage 3 SMPL pathway, licensed model asset placement, BMI and risk mappings, Docker export commands, and the dashboard's patient-specific GLB workflow.",
+      "tags": [
+        "documentation",
+        "smpl",
+        "3d-export",
+        "docker",
+        "licensed-assets"
+      ]
+    },
+    {
+      "id": "document:SUPERVISOR_HANDOFF.md",
+      "type": "document",
+      "name": "SUPERVISOR_HANDOFF.md",
+      "filePath": "SUPERVISOR_HANDOFF.md",
+      "summary": "Defines a safe supervisor-sharing package, a concise demonstration sequence, an evidence-oriented status table, and limitations concerning BRFSS data, minority-class performance, and non-causal simulation.",
+      "tags": [
+        "documentation",
+        "handoff",
+        "research-reporting",
+        "privacy",
+        "limitations"
+      ]
+    },
+    {
+      "id": "document:SYSTEM_USER_GUIDE.md",
+      "type": "document",
+      "name": "SYSTEM_USER_GUIDE.md",
+      "filePath": "SYSTEM_USER_GUIDE.md",
+      "summary": "Guides users through starting the Docker dashboard, selecting or importing numbered patients, interpreting Stages 1-4, comparing scenarios, and diagnosing basic container failures.",
+      "tags": [
+        "documentation",
+        "user-guide",
+        "dashboard",
+        "docker",
+        "troubleshooting"
+      ]
+    },
+    {
+      "id": "document:WEBSITE_REVIEW.md",
+      "type": "document",
+      "name": "WEBSITE_REVIEW.md",
+      "filePath": "WEBSITE_REVIEW.md",
+      "summary": "Reviews the dataset-linked dashboard against supervisor feedback and research-stage expectations, recording patient consistency checks alongside BRFSS, causal, and SMPL calibration gaps.",
+      "tags": [
+        "documentation",
+        "validation",
+        "research-review",
+        "patient-traceability",
+        "limitations"
+      ]
+    },
+    {
+      "id": "document:plan.md",
+      "type": "document",
+      "name": "plan.md",
+      "filePath": "plan.md",
+      "summary": "Lays out the original Stage 3 implementation plan for mapping BMI and model risk into an SMPL body shape and colour, exporting a mesh, and integrating the result with a web what-if workflow.",
+      "tags": [
+        "documentation",
+        "project-plan",
+        "smpl",
+        "digital-twin",
+        "what-if-simulation"
+      ]
+    },
+    {
+      "id": "document:requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "requirements.txt",
+      "summary": "Pins and constrains the Python dependencies for model training, imbalance handling, SHAP explanation, Flask and Neo4j integration, Jupyter, and SMPL mesh generation.",
+      "tags": [
+        "dependency-management",
+        "python",
+        "machine-learning",
+        "visualization",
+        "configuration"
+      ]
+    },
+    {
+      "id": "document:research-question-card.md",
+      "type": "document",
+      "name": "research-question-card.md",
+      "filePath": "research-question-card.md",
+      "summary": "Frames the applied research question around consistent reuse of one numbered dataset record across prediction, SHAP explanation, 3D representation, and manual what-if simulation, with explicit supporting and falsifying evidence.",
+      "tags": [
+        "documentation",
+        "research-question",
+        "experiment-design",
+        "patient-traceability",
+        "validation"
+      ]
+    },
+    {
+      "id": "file:share_supervisor.ps1",
+      "type": "file",
+      "name": "share_supervisor.ps1",
+      "filePath": "share_supervisor.ps1",
+      "summary": "Builds a timestamped supervisor ZIP containing source, documentation, notebook, and small evidence artifacts while excluding raw data, trained models, virtual environments, bytecode, and licensed SMPL weights.",
+      "tags": [
+        "automation",
+        "packaging",
+        "privacy",
+        "powershell",
+        "handoff"
+      ]
+    },
+    {
+      "id": "file:diabetes_risk_stages_1_2.ipynb",
+      "type": "file",
+      "name": "diabetes_risk_stages_1_2.ipynb",
+      "filePath": "diabetes_risk_stages_1_2.ipynb",
+      "summary": "Research notebook implementing the reproducible Stages 1-3 workflow: three-class diabetes-risk training and evaluation, global and patient-level explanations, and a dataset-linked manual Digital Twin scenario. It records class-imbalance-aware metrics and explicitly frames SHAP and scenario changes as non-causal research evidence.",
+      "tags": [
+        "jupyter-notebook",
+        "model-training",
+        "explainability",
+        "digital-twin",
+        "evaluation"
+      ]
+    },
+    {
+      "id": "document:models/smpl/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "models/smpl/README.md",
+      "summary": "Documents where licensed female or male SMPL model files must be placed and names the exact legacy model filenames expected by the twin generator.",
+      "tags": [
+        "documentation",
+        "smpl-model",
+        "licensed-assets",
+        "setup"
+      ]
+    },
+    {
+      "id": "file:src/export_smpl.py",
+      "type": "file",
+      "name": "export_smpl.py",
+      "filePath": "src/export_smpl.py",
+      "summary": "Command-line exporter that generates a patient-shaped SMPL mesh from BMI and sex, colors it from model risk, writes GLB or OBJ output, and saves matching JSON metadata without requiring PyVista.",
+      "tags": [
+        "entry-point",
+        "mesh-export",
+        "digital-twin",
+        "serialization"
+      ]
+    },
+    {
+      "id": "file:src/twin_generator.py",
+      "type": "file",
+      "name": "twin_generator.py",
+      "filePath": "src/twin_generator.py",
+      "summary": "Provides the SMPL patient Digital Twin engine, including BMI-to-shape mapping, risk-color encoding, lazy loading of licensed legacy model weights, mesh generation, and an optional PyVista viewer.",
+      "tags": [
+        "digital-twin",
+        "smpl-model",
+        "mesh-generation",
+        "visualization",
+        "service"
+      ]
+    },
+    {
+      "id": "file:static/js/knowledge_graph.js",
+      "type": "file",
+      "name": "knowledge_graph.js",
+      "filePath": "static/js/knowledge_graph.js",
+      "summary": "Initializes the patient-centric Cytoscape knowledge graph, styles clinical-observation and model-evidence node groups, and supports node inspection, filtering, reset, responsive relayout, and accessible fallback behavior.",
+      "tags": [
+        "component",
+        "knowledge-graph",
+        "cytoscape",
+        "event-handler",
+        "visualization"
+      ]
+    },
+    {
+      "id": "file:static/style.css",
+      "type": "file",
+      "name": "style.css",
+      "filePath": "static/style.css",
+      "summary": "Defines the responsive visual system for patient selection, risk results, SHAP factors, Stage 4 graph inspection, and current-versus-scenario 3D twin comparison cards.",
+      "tags": [
+        "component",
+        "responsive-design",
+        "dashboard",
+        "visualization"
+      ]
+    },
+    {
+      "id": "file:templates/index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "templates/index.html",
+      "summary": "Primary Flask/Jinja dashboard template joining patient import and selection with Stages 1-4 outputs: probabilities, SHAP evidence, an interactive knowledge graph, current SMPL twin, and manual scenario comparison.",
+      "tags": [
+        "component",
+        "dashboard",
+        "jinja-template",
+        "digital-twin",
+        "knowledge-graph"
+      ]
+    }
+  ],
+  "importEdges": [
+    {
+      "source": "file:app.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:knowledge_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:stage3.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:knowledge_graph.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:stage3.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:test_knowledge_graph.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:test_knowledge_graph.py",
+      "target": "file:knowledge_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:test_knowledge_graph.py",
+      "target": "file:stage3.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:explain_patient.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:train.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/export_smpl.py",
+      "target": "file:src/twin_generator.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ],
+  "allEdges": [
+    {
+      "source": "file:app.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:knowledge_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app.py",
+      "target": "file:stage3.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:knowledge_graph.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:stage3.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:test_knowledge_graph.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:test_knowledge_graph.py",
+      "target": "file:knowledge_graph.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:test_knowledge_graph.py",
+      "target": "file:stage3.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:diabetes_risk.py",
+      "target": "file:test_knowledge_graph.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:knowledge_graph.py",
+      "target": "file:test_knowledge_graph.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:stage3.py",
+      "target": "file:test_knowledge_graph.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:explain_patient.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:train.py",
+      "target": "file:diabetes_risk.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:.dockerignore",
+      "target": "service:Dockerfile",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:Dockerfile:python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:SMPL_SETUP.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:SUPERVISOR_HANDOFF.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:SYSTEM_USER_GUIDE.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:SMPL_SETUP.md",
+      "target": "document:plan.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:WEBSITE_REVIEW.md",
+      "target": "document:research-question-card.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:WEBSITE_REVIEW.md",
+      "target": "document:SUPERVISOR_HANDOFF.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:share_supervisor.ps1",
+      "target": "document:SUPERVISOR_HANDOFF.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:share_supervisor.ps1",
+      "target": "document:README.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:share_supervisor.ps1",
+      "target": "document:WEBSITE_REVIEW.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:share_supervisor.ps1",
+      "target": "document:SMPL_SETUP.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:share_supervisor.ps1",
+      "target": "document:requirements.txt",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:models/smpl/README.md",
+      "target": "file:src/twin_generator.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/export_smpl.py",
+      "target": "file:src/twin_generator.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:templates/index.html",
+      "target": "file:static/js/knowledge_graph.js",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:templates/index.html",
+      "target": "file:static/style.css",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

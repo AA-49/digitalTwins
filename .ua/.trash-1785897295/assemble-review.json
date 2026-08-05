@@ -1,0 +1,14 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 0,
+  "edgesRestored": 0,
+  "crossBatchEdgesAdded": 0,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "The merge report contains no normalization, dangling-edge, or unfixable corrections; this is consistent with the four source batches.",
+    "All 11 authoritative import relationships from the 27-entry import map already exist exactly once as normalized file-to-file imports edges.",
+    "The assembled graph has 83 unique nodes and 203 unique edges, with no dangling references, invalid node types, invalid complexity values, invalid directions, or out-of-range weights.",
+    "The tested-by linker output is coherent: four production file nodes are tagged tested and each has a matching tested_by edge to its test file."
+  ]
+}

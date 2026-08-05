@@ -1,0 +1,385 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 8,
+  "filesSkipped": [
+    "requirements.txt",
+    "share_supervisor.ps1"
+  ],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 8,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 0,
+      "failed": 0,
+      "skipped": 8
+    }
+  },
+  "results": [
+    {
+      "path": ".env.example",
+      "language": "config",
+      "fileCategory": "config",
+      "totalLines": 7,
+      "nonEmptyLines": 6,
+      "definitions": [
+        {
+          "name": "NEO4J_USER",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 2,
+          "endLine": 2
+        },
+        {
+          "name": "NEO4J_PASSWORD",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 3,
+          "endLine": 3
+        },
+        {
+          "name": "NEO4J_URI",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 7,
+          "endLine": 7
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 3
+      }
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 126,
+      "nonEmptyLines": 80,
+      "sections": [
+        {
+          "heading": "Explainable Diabetes Risk Digital Twin - Stages 1 to 4",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Setup",
+          "level": 2,
+          "line": 20
+        },
+        {
+          "heading": "Train and evaluate (Stage 1)",
+          "level": 2,
+          "line": 38
+        },
+        {
+          "heading": "Train in the notebook (recommended)",
+          "level": 2,
+          "line": 46
+        },
+        {
+          "heading": "Run the Stage 1-4 local dashboard",
+          "level": 2,
+          "line": 54
+        },
+        {
+          "heading": "Docker and Jupyter workflow",
+          "level": 2,
+          "line": 71
+        },
+        {
+          "heading": "Explain a patient (Stage 2)",
+          "level": 2,
+          "line": 90
+        },
+        {
+          "heading": "Research reporting",
+          "level": 2,
+          "line": 106
+        },
+        {
+          "heading": "Supervisor sharing",
+          "level": 2,
+          "line": 114
+        },
+        {
+          "heading": "Stage 4 prototype boundary",
+          "level": 2,
+          "line": 118
+        },
+        {
+          "heading": "SMPL 3D representation",
+          "level": 2,
+          "line": 124
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 11
+      }
+    },
+    {
+      "path": "SMPL_SETUP.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 52,
+      "nonEmptyLines": 33,
+      "sections": [
+        {
+          "heading": "SMPL Stage 3 setup and export",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "One required licensed asset",
+          "level": 2,
+          "line": 10
+        },
+        {
+          "heading": "Docker export",
+          "level": 2,
+          "line": 20
+        },
+        {
+          "heading": "Rebuild after dependency changes",
+          "level": 2,
+          "line": 46
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 4
+      }
+    },
+    {
+      "path": "SUPERVISOR_HANDOFF.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 51,
+      "nonEmptyLines": 35,
+      "sections": [
+        {
+          "heading": "Supervisor hand-off: Knowledge Graph-driven Diabetes Digital Twin",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "What to share now",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "One-minute demo sequence",
+          "level": 2,
+          "line": 15
+        },
+        {
+          "heading": "Honest project status against the proposal",
+          "level": 2,
+          "line": 24
+        },
+        {
+          "heading": "Limitations to state clearly",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "Suggested supervisor email",
+          "level": 2,
+          "line": 40
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "SYSTEM_USER_GUIDE.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 66,
+      "nonEmptyLines": 52,
+      "sections": [
+        {
+          "heading": "Diabetes Risk Digital Twin: User Guide",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Start the system",
+          "level": 2,
+          "line": 6
+        },
+        {
+          "heading": "Use the dashboard",
+          "level": 2,
+          "line": 20
+        },
+        {
+          "heading": "Import another patient dataset",
+          "level": 2,
+          "line": 43
+        },
+        {
+          "heading": "Stop or restart the system",
+          "level": 2,
+          "line": 54
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": "WEBSITE_REVIEW.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 36,
+      "nonEmptyLines": 26,
+      "sections": [
+        {
+          "heading": "Website and research-stage review",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Outcome",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "Supervisor feedback addressed",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "Alignment with `Knowledge Graph-driven Digital Twin 1.pdf`",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "Important research gaps",
+          "level": 2,
+          "line": 23
+        },
+        {
+          "heading": "Validation criteria",
+          "level": 2,
+          "line": 30
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    },
+    {
+      "path": "plan.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 67,
+      "nonEmptyLines": 54,
+      "sections": [
+        {
+          "heading": "Project Plan: Stage 3 - Medical Digital Twin Construction (SMPL-Based)",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "📌 Project Context & Goal",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "🛠️ Tech Stack & Dependencies",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "🚀 Step-by-Step Execution Plan for Agent",
+          "level": 2,
+          "line": 17
+        },
+        {
+          "heading": "Task 1: Environment Setup & Model Assets Preparation",
+          "level": 3,
+          "line": 19
+        },
+        {
+          "heading": "Task 2: Implement the Data-to-Shape Mapping Logic",
+          "level": 3,
+          "line": 28
+        },
+        {
+          "heading": "Task 3: Build the 3D Twin Generation Pipeline",
+          "level": 3,
+          "line": 36
+        },
+        {
+          "heading": "Task 4: Integrate Stage 2 Model with Stage 3 What-If UI",
+          "level": 3,
+          "line": 40
+        },
+        {
+          "heading": "📄 Expected File Structure to Create",
+          "level": 2,
+          "line": 52
+        },
+        {
+          "heading": "🎯 Next Immediate Action Item for Agent",
+          "level": 2,
+          "line": 66
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 10
+      }
+    },
+    {
+      "path": "research-question-card.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 39,
+      "nonEmptyLines": 24,
+      "sections": [
+        {
+          "heading": "Research Question Card",
+          "level": 2,
+          "line": 1
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 1
+      }
+    }
+  ]
+}

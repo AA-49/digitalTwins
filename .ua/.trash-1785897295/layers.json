@@ -1,0 +1,57 @@
+[
+  {
+    "id": "layer:api",
+    "name": "Application and API Orchestration",
+    "description": "Coordinates the Flask dashboard across patient selection, model inference, SHAP, scenarios, Digital Twin exports, Stage 4 graph delivery, and local Ollama guidance.",
+    "nodeIds": ["file:app.py"]
+  },
+  {
+    "id": "layer:data",
+    "name": "Model and Data Workflow",
+    "description": "Defines the authoritative BRFSS feature contract and retains the notebook-only path for training, evaluation, SHAP analysis, and dataset-linked scenarios.",
+    "nodeIds": ["file:diabetes_risk.py", "file:diabetes_risk_stages_1_2.ipynb"]
+  },
+  {
+    "id": "layer:service",
+    "name": "Digital Twin and Explanation Services",
+    "description": "Implements model-backed simulation, temporary patient graph assembly, validated local-LLM explanations, and patient-specific SMPL mesh generation and export.",
+    "nodeIds": ["file:knowledge_graph.py", "file:stage3.py", "file:ollama_recommendations.py", "file:src/export_smpl.py", "file:src/twin_generator.py"]
+  },
+  {
+    "id": "layer:ui",
+    "name": "Browser UI Layer",
+    "description": "Renders the Flask/Jinja dashboard and supplies responsive styling and accessible Cytoscape interactions for the four research stages.",
+    "nodeIds": ["file:templates/index.html", "file:static/js/knowledge_graph.js", "file:static/style.css"]
+  },
+  {
+    "id": "layer:test",
+    "name": "Validation and Test Layer",
+    "description": "Verifies Stage 4 graph completeness and privacy boundaries together with Ollama evidence validation, safe fallbacks, and Flask integration behavior.",
+    "nodeIds": ["file:test_knowledge_graph.py", "file:test_ollama_recommendations.py"]
+  },
+  {
+    "id": "layer:infrastructure",
+    "name": "Infrastructure and Configuration",
+    "description": "Packages and orchestrates Flask, Jupyter, Neo4j, notebook training, and SMPL export while managing dependencies, environment defaults, build exclusions, and private-safe handoff automation.",
+    "nodeIds": [
+      "config:.dockerignore",
+      "service:Dockerfile",
+      "service:Dockerfile:python",
+      "service:docker-compose.yml",
+      "service:docker-compose.yml:neo4j",
+      "service:docker-compose.yml:dashboard",
+      "service:docker-compose.yml:jupyter",
+      "service:docker-compose.yml:train-notebook",
+      "service:docker-compose.yml:smpl-export",
+      "config:.env.example",
+      "document:requirements.txt",
+      "file:share_supervisor.ps1"
+    ]
+  },
+  {
+    "id": "layer:documentation",
+    "name": "Research and User Documentation",
+    "description": "Documents setup, operation, SMPL assets, research framing, validation evidence, limitations, and safe supervisor handoff for the prototype.",
+    "nodeIds": ["document:README.md", "document:SMPL_SETUP.md", "document:SUPERVISOR_HANDOFF.md", "document:SYSTEM_USER_GUIDE.md", "document:WEBSITE_REVIEW.md", "document:plan.md", "document:research-question-card.md", "document:models/smpl/README.md"]
+  }
+]

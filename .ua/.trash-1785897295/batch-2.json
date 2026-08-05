@@ -1,0 +1,180 @@
+{
+  "nodes": [
+    {
+      "id": "config:.dockerignore",
+      "type": "config",
+      "name": ".dockerignore",
+      "filePath": ".dockerignore",
+      "summary": "Controls the Docker build context by excluding virtual environments, generated artifacts, retired files, licensed SMPL model assets, and Python or notebook caches.",
+      "tags": ["configuration", "containerization", "build-context", "artifact-exclusion"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "Dockerfile",
+      "summary": "Builds the shared Python 3.11 CPU image used for notebook training, the Flask dashboard, and SMPL mesh export, including CPU-only PyTorch and legacy Chumpy support. The image runs as a non-root user and defaults to starting app.py.",
+      "tags": ["containerization", "infrastructure", "python-runtime", "cpu-image", "deployment"],
+      "complexity": "moderate",
+      "languageNotes": "Orders dependency installation before the project copy to preserve Docker layer caching for source-only changes."
+    },
+    {
+      "id": "service:Dockerfile:python",
+      "type": "service",
+      "name": "python",
+      "filePath": "Dockerfile",
+      "summary": "Single Python 3.11 Slim build stage that installs system and Python dependencies, copies the project, exposes dashboard and Jupyter ports, and launches the Flask application by default.",
+      "tags": ["container-stage", "python-runtime", "cpu-only", "non-root"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "service:docker-compose.yml",
+      "type": "service",
+      "name": "docker-compose.yml",
+      "filePath": "docker-compose.yml",
+      "summary": "Orchestrates Neo4j, the browser dashboard, JupyterLab, notebook execution, and SMPL export using a shared project image and bind-mounted workspace. Optional profiles isolate training and mesh-export jobs from the default services.",
+      "tags": ["orchestration", "infrastructure", "containerization", "research-workflow", "service-definition"],
+      "complexity": "moderate",
+      "languageNotes": "Compose profiles make notebook training and SMPL export explicit on-demand jobs while dashboard startup waits for Neo4j health."
+    },
+    {
+      "id": "service:docker-compose.yml:neo4j",
+      "type": "service",
+      "name": "neo4j",
+      "filePath": "docker-compose.yml",
+      "summary": "Runs Neo4j 5.26 Community with loopback-only browser and Bolt ports, persistent database storage, environment-based credentials, and a Cypher health check.",
+      "tags": ["neo4j", "graph-database", "persistent-service", "health-check"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "service:docker-compose.yml:dashboard",
+      "type": "service",
+      "name": "dashboard",
+      "filePath": "docker-compose.yml",
+      "summary": "Builds and runs the Flask research dashboard on loopback port 5000, connects it to Neo4j and the host Ollama endpoint, and delays startup until Neo4j is healthy.",
+      "tags": ["flask-dashboard", "web-service", "neo4j-client", "ollama-client", "health-gated"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "service:docker-compose.yml:jupyter",
+      "type": "service",
+      "name": "jupyter",
+      "filePath": "docker-compose.yml",
+      "summary": "Starts token-free JupyterLab on loopback port 8888 against the bind-mounted project workspace for interactive model development and training.",
+      "tags": ["jupyterlab", "notebook", "interactive-training", "development-service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:docker-compose.yml:train-notebook",
+      "type": "service",
+      "name": "train-notebook",
+      "filePath": "docker-compose.yml",
+      "summary": "Executes the diabetes-risk training notebook non-interactively through nbconvert with no cell timeout and writes a separate executed notebook artifact under the training profile.",
+      "tags": ["notebook-training", "nbconvert", "batch-job", "training-profile"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:docker-compose.yml:smpl-export",
+      "type": "service",
+      "name": "smpl-export",
+      "filePath": "docker-compose.yml",
+      "summary": "Runs the headless SMPL exporter with a sample BMI and risk score, mounting licensed SMPL assets read-only and writing a GLB into notebook artifacts under the smpl profile.",
+      "tags": ["smpl", "mesh-export", "batch-job", "glb", "smpl-profile"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:.dockerignore",
+      "target": "service:Dockerfile",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:Dockerfile:python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:neo4j",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:dashboard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:jupyter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:train-notebook",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:smpl-export",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml:dashboard",
+      "target": "service:docker-compose.yml:neo4j",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:dashboard",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:jupyter",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:train-notebook",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:smpl-export",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

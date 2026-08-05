@@ -1,0 +1,65 @@
+{
+  "nodes": [
+    {
+      "id": "service:.dockerignore",
+      "type": "service",
+      "name": ".dockerignore",
+      "filePath": ".dockerignore",
+      "summary": "Defines the Docker build-context exclusions for local environments, generated artifacts, archived files, licensed SMPL weights, trained models, and execution logs.",
+      "tags": ["containerization", "infrastructure", "build-context", "privacy"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "Dockerfile",
+      "summary": "Builds the shared Python 3.11 CPU image used for the Flask dashboard, Jupyter training, and SMPL export, installing PyTorch and legacy Chumpy support before copying the project and dropping to a non-root user.",
+      "tags": ["containerization", "infrastructure", "deployment", "python"],
+      "complexity": "simple",
+      "languageNotes": "The dependency-first copy order preserves Docker layer caching, while CPU-only PyTorch and NumPy 1.x compatibility support reproducible local execution."
+    },
+    {
+      "id": "service:Dockerfile:python",
+      "type": "service",
+      "name": "python",
+      "filePath": "Dockerfile",
+      "summary": "Represents the Python 3.11 slim container stage that installs project dependencies, exposes Flask and Jupyter ports, and defaults to running the dashboard.",
+      "tags": ["container-stage", "python-runtime", "flask", "jupyter"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:docker-compose.yml",
+      "type": "service",
+      "name": "docker-compose.yml",
+      "filePath": "docker-compose.yml",
+      "summary": "Orchestrates Neo4j, the Flask dashboard, JupyterLab, notebook execution, and optional SMPL mesh export from one shared project image, with localhost-only ports and persistent Neo4j storage.",
+      "tags": ["orchestration", "infrastructure", "neo4j", "deployment", "jupyter"],
+      "complexity": "moderate",
+      "languageNotes": "Compose profiles isolate one-shot training and SMPL export jobs from the default dashboard workflow."
+    }
+  ],
+  "edges": [
+    {
+      "source": "service:.dockerignore",
+      "target": "service:Dockerfile",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:Dockerfile:python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:Dockerfile",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}
