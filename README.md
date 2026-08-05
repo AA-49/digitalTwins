@@ -2,11 +2,9 @@
 
 An interactive research prototype that connects a numbered CDC BRFSS 2015 patient record to diabetes-risk prediction, patient-specific SHAP explanation, a manual what-if Digital Twin, a temporary patient-centric knowledge graph, and research-safe explanatory guidance.
 
-## Live dashboard
+## Local dashboard
 
-Open the hosted application at **[digitaltwinstest.vercel.app](https://digitaltwinstest.vercel.app)**.
-
-The Vercel deployment supports patient selection, three-class prediction, SHAP evidence, scenario comparison, the complete temporary Stage 4 graph, and deterministic hosted guidance. The complete local research environment uses Docker, Neo4j, Jupyter, Ollama, and optional licensed SMPL assets.
+Run the complete research environment locally with Docker, Neo4j, Jupyter, Ollama, and optional licensed SMPL assets. The dashboard is available only on this computer at <http://127.0.0.1:5000>.
 
 > **Research only:** This project is not a medical diagnosis, treatment recommendation, causal forecast, or clinical decision-support system. BRFSS is cross-sectional survey data. A changed prediction after editing a scenario does not prove that the change caused or prevented diabetes.
 
@@ -18,7 +16,7 @@ The Vercel deployment supports patient selection, three-class prediction, SHAP e
 | 2 - Explanation | Patient-specific SHAP contributions showing model support or opposition |
 | 3 - Digital Twin | Current-versus-scenario prediction and optional patient-specific SMPL meshes |
 | 4 - Knowledge graph | All 21 observations, decoded states, 21 SHAP contributions, three probabilities, model evaluation, and current twin |
-| Guidance | Local Ollama explanation or deterministic hosted evidence summary with safety checks |
+| Guidance | Local Ollama explanation with a deterministic safety fallback |
 
 The selected one-based patient number always maps to the same row in the active cleaned dataset. The server reloads that row for prediction and scenario baselines instead of trusting browser-submitted baseline values.
 
@@ -26,12 +24,11 @@ The selected one-based patient number always maps to the same row in the active 
 
 The default dataset contains 253,680 records and is highly imbalanced. Accuracy must never be reported alone.
 
-| Deployment | Trees | Accuracy | Balanced accuracy | Macro-F1 | Medium recall |
+| Model | Trees | Accuracy | Balanced accuracy | Macro-F1 | Medium recall |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Local Docker model | 400 | 81.96% | 45.09% | 44.34% | 0.00% |
-| Vercel model | 75 | 81.77% | 44.99% | 44.27% | 0.22% |
 
-The hosted model is a reproducible subset of 75 already-trained trees from the checked 400-tree Random Forest. It is smaller so it can load within the Vercel serverless package and memory boundary. Neither result demonstrates reliable Medium/prediabetes screening performance.
+The local result does not demonstrate reliable Medium/prediabetes screening performance.
 
 ## Run locally with Docker
 
@@ -89,7 +86,7 @@ docker compose down
 2. Review the Stage 1 category and all three probabilities.
 3. Review the Stage 2 SHAP factors. They explain this model output; they do not establish medical causes.
 4. Explore the Stage 4 graph, filters, keyboard selector, connected evidence, and model limitations.
-5. Choose **Generate local research guidance** locally or **Generate hosted evidence summary** on Vercel.
+5. Choose **Generate local research guidance** to use Ollama on this computer.
 6. Inspect the Stage 3 current twin when a matching SMPL mesh is available.
 7. Edit the permitted scenario fields and choose **Compare scenario**.
 8. Review the baseline and scenario probabilities, exact edited values, and separate twins.
@@ -116,14 +113,6 @@ docker compose --profile training run --rm train-notebook
 
 This reads `diabetes_012_health_indicators_BRFSS2015.csv` and updates the local evidence under `artifacts_notebook/`.
 
-Regenerate the smaller hosted model from the checked local model:
-
-```powershell
-.\.venv-stage3\Scripts\python.exe scripts\create_vercel_model.py
-```
-
-The hosted artifact and its separate metrics are stored under `artifacts_vercel/`.
-
 ## Optional SMPL 3D setup
 
 SMPL weights are licensed and are not included in this repository. Obtain them from the official SMPL provider and place the appropriate files in `models/smpl/`, for example:
@@ -149,15 +138,6 @@ docker compose --profile smpl run --rm smpl-export python -m src.export_smpl --b
 
 The prototype maps BMI to the first SMPL shape coefficient and maps predicted High probability to mesh colour. This visualization rule is not an anatomically validated clinical model. When weights or matching metadata are unavailable, the dashboard hides stale meshes instead of displaying an incorrect patient twin.
 
-## Hosted architecture
-
-Vercel runs the Flask entry point in `app.py` using the configuration in `vercel.json`.
-
-- The 75-tree model is loaded from `artifacts_vercel/`.
-- When Vercel cannot reach a local Neo4j instance, the same complete 98-node/135-edge temporary graph is assembled from embedded reusable definitions.
-- Vercel cannot access `host.docker.internal` on the user's computer, so hosted guidance is deterministic and safety-checked rather than Ollama-generated.
-- Licensed SMPL weights remain local; the hosted page truthfully reports when live mesh generation is unavailable.
-
 ## Tests
 
 Run the automated checks with the project virtual environment:
@@ -168,7 +148,7 @@ node --check static/js/knowledge_graph.js
 docker compose config --quiet
 ```
 
-The Python suite checks the complete patient graph, categorical decoding, temporary fallback behavior, Ollama evidence boundary, hosted summary, and research-safety fallback.
+The Python suite checks the complete patient graph, categorical decoding, temporary fallback behavior, Ollama evidence boundary, deterministic summary, and research-safety fallback.
 
 ## Troubleshooting
 
@@ -230,9 +210,7 @@ docker compose restart dashboard
 | `ollama_recommendations.py` | Local evidence prompt, safety checks, and deterministic fallback |
 | `diabetes_risk_stages_1_2.ipynb` | Reproducible training and experiment notebook |
 | `docker-compose.yml` | Dashboard, Neo4j, Jupyter, training, and SMPL services |
-| `vercel.json` | Hosted Flask function packaging |
 | `artifacts_notebook/` | Local model and research evidence |
-| `artifacts_vercel/` | Smaller hosted model and hosted metrics |
 
 ## License and data
 

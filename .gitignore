@@ -6,10 +6,8 @@ dist/
 delete/
 file delete/
 *.joblib
-!artifacts_vercel/diabetes_risk_random_forest.joblib
 models/smpl/*.pkl
 patient.csv
 .env
 
-.vercel
 .env*

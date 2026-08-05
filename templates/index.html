@@ -23,7 +23,7 @@
       <p class="eyebrow">HOW TO USE THIS SYSTEM</p>
       <h2>Follow these steps in order</h2>
       <ol class="guide-steps">
-        <li><strong>Open the dashboard.</strong><span>{% if hosted_mode %}Use this hosted Vercel page; no local Docker process is required for the hosted demonstration.{% else %}Keep Docker Desktop running, then open <code>http://127.0.0.1:5000</code>.{% endif %}</span></li>
+        <li><strong>Open the dashboard.</strong><span>Keep Docker Desktop running, then open <code>http://127.0.0.1:5000</code>.</span></li>
         <li><strong>Select a dataset patient.</strong><span>Enter a patient number and choose <em>Load patient</em>, or choose <em>Use</em> in the numbered table.</span></li>
         <li><strong>Wait for the patient analysis.</strong><span>The first run can take one or two minutes while the prediction model loads and the matching 3D body is generated.</span></li>
         <li><strong>Read Stage 1.</strong><span>Review the predicted risk category and the three model probabilities. These are research-model outputs, not a diagnosis.</span></li>
@@ -173,12 +173,12 @@
       <p class="disclaimer">This graph explains the current dataset values and model output. It does not contain insulin-resistance mechanisms, treatment recommendations, proof of causation, or clinical advice.</p>
 
       <div class="local-guidance-panel">
-        <p class="eyebrow">{% if hosted_mode %}HOSTED SAFE EVIDENCE SUMMARY{% else %}OLLAMA LOCAL MODEL{% endif %}</p>
-        <h3>{% if hosted_mode %}Summarise this patient’s model evidence{% else %}Explain this patient’s model evidence locally{% endif %}</h3>
-        <p class="hint">{% if hosted_mode %}Vercel cannot access Ollama on your computer. The hosted version therefore produces the deterministic, safety-checked evidence summary from the same 21 observations, SHAP values, three probabilities, Digital Twin summary, and model limitation.{% else %}Model: <code>{{ ollama_model }}</code>. The dashboard sends the temporary 21 observations and SHAP values, three probabilities, Digital Twin summary, and model limitation only to Ollama running on this computer.{% endif %}</p>
+        <p class="eyebrow">OLLAMA LOCAL MODEL</p>
+        <h3>Explain this patient’s model evidence locally</h3>
+        <p class="hint">Model: <code>{{ ollama_model }}</code>. The dashboard sends the temporary 21 observations and SHAP values, three probabilities, Digital Twin summary, and model limitation only to Ollama running on this computer.</p>
         <form method="post">
           <input type="hidden" name="patient_number" value="{{ patient_number }}">
-          <button name="action" value="local_guidance" type="submit">Generate {% if hosted_mode %}hosted evidence summary{% else %}local research guidance{% endif %}</button>
+          <button name="action" value="local_guidance" type="submit">Generate local research guidance</button>
         </form>
         {% if local_guidance %}
         <div class="local-guidance-output" aria-live="polite">
@@ -188,7 +188,7 @@
         {% elif local_guidance_error %}
         <p class="local-guidance-error" role="alert">{{ local_guidance_error }}</p>
         {% endif %}
-        <p class="kg-warning">{% if hosted_mode %}The hosted summary is deterministic and uses only the displayed model evidence. The hosted model's exact Medium/prediabetes recall limitation is shown above.{% else %}The local model is a small code-oriented language model. Its wording can be incomplete or inaccurate. Unsafe drafts are automatically replaced with a deterministic evidence summary. The checked diabetes model has 0.0 Medium/prediabetes recall.{% endif %}</p>
+        <p class="kg-warning">The local model is a small code-oriented language model. Its wording can be incomplete or inaccurate. Unsafe drafts are automatically replaced with a deterministic evidence summary. The checked diabetes model has 0.0 Medium/prediabetes recall.</p>
         <p class="disclaimer">This generated text is model-based, non-causal, for research only, and is not medical advice, diagnosis, or a treatment plan.</p>
       </div>
 

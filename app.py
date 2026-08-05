@@ -15,7 +15,6 @@ from diabetes_risk import FEATURES
 from knowledge_graph import PatientKnowledgeGraph
 from ollama_recommendations import (
     configured_model,
-    deterministic_evidence_summary,
     generate_local_guidance,
     guidance_error_message,
 )
@@ -23,7 +22,6 @@ from stage3 import DiabetesDigitalTwin, RISK_LABELS, smpl_twin_descriptor
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
-HOSTED_MODE = os.environ.get("HOSTED_MODE", "").lower() in {"1", "true", "yes"}
 TWIN: DiabetesDigitalTwin | None = None
 KNOWLEDGE_GRAPH = PatientKnowledgeGraph(
     metrics_path=os.environ.get("MODEL_METRICS_PATH", "artifacts_notebook/metrics.json")
@@ -345,14 +343,9 @@ def index():
                 )
                 if action == "local_guidance":
                     try:
-                        if HOSTED_MODE:
-                            local_guidance = deterministic_evidence_summary(
-                                patient_number, current, knowledge_graph
-                            )
-                        else:
-                            local_guidance = generate_local_guidance(
-                                patient_number, current, knowledge_graph, smpl
-                            )
+                        local_guidance = generate_local_guidance(
+                            patient_number, current, knowledge_graph, smpl
+                        )
                     except Exception as exc:
                         local_guidance_error = guidance_error_message(exc)
                 smpl_status = refresh_smpl_twin(baseline, current)
@@ -395,7 +388,6 @@ def index():
         knowledge_graph=knowledge_graph,
         local_guidance=local_guidance, local_guidance_error=local_guidance_error,
         ollama_model=configured_model(),
-        hosted_mode=HOSTED_MODE,
         dataset_name=dataset.source_name, patient_count=len(dataset.frame), patient_number=patient_number,
         patient_rows=dataset.patient_window(patient_number), actual_label=dataset.actual_label(patient_number),
     )
