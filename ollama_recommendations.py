@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import socket
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -13,36 +12,28 @@ from urllib.request import Request, urlopen
 DEFAULT_BASE_URL = "http://127.0.0.1:11434"
 DEFAULT_MODEL = "qwen2.5-coder:1.5b"
 SYSTEM_PROMPT = """
-You are writing a patient-friendly explanation for a diabetes-risk research
-prototype. Use only the supplied BRFSS observations, decoded states, three
-model probabilities, patient-specific SHAP values, Digital Twin summary, and
-model limitation.
-
-Write three or four short connected paragraphs in clear, simple English. Do
-not use bullet points or numbered lists. First explain the prediction and the
-strongest model-supporting and model-opposing factors. Then suggest practical,
-low-risk topics the person could discuss with a qualified healthcare
-professional, but only when supported by the supplied observations. Do not
-diagnose, prescribe treatment, recommend medication changes, invent laboratory
-results, or claim that SHAP values or graph links are medical causes. Do not
-promise that changing a factor will reduce risk. Explicitly state the supplied
-model limitation and finish by saying the output is model-based, non-causal,
-for research only, and not medical advice.
+Select references for a diabetes-risk research explanation. Return one JSON
+object only, with exactly these keys: supporting_features, opposing_features,
+and discussion_topics. Feature lists may contain only supplied feature keys;
+supporting features must have positive SHAP values and opposing features must
+have negative SHAP values. Choose at most three supporting and two opposing
+features. discussion_topics may contain at most three codes from the supplied
+allowed_discussion_topics object. Do not write prose, diagnoses, advice,
+treatment, medication instructions, or additional keys.
 """.strip()
 
-PROHIBITED_CLAIMS = (
-    "causes diabetes",
-    "prevent diabetes",
-    "protective effect",
-    "reduces the risk",
-    "reduce the risk",
-    "increases the risk",
-    "increase the risk",
-    "risk of developing diabetes",
-    "chances of diabetes",
-    "strong predictor",
-    "contribute to an increased likelihood",
-)
+DISCUSSION_TOPICS: dict[str, tuple[str, str]] = {
+    "blood_pressure": ("HighBP", "the recorded blood-pressure status"),
+    "cholesterol": ("HighChol", "the recorded cholesterol status"),
+    "physical_activity": ("PhysActivity", "the recorded physical-activity response"),
+    "nutrition": ("Fruits", "the recorded fruit and vegetable responses"),
+    "smoking": ("Smoker", "the recorded smoking-history response"),
+    "mobility": ("DiffWalk", "the recorded walking-difficulty response"),
+    "general_health": ("GenHlth", "the recorded general-health response"),
+    "healthcare_access": ("AnyHealthcare", "the recorded healthcare-access responses"),
+    "wellbeing": ("MentHlth", "the recorded physical and mental health-day responses"),
+    "alcohol": ("HvyAlcoholConsump", "the recorded alcohol-consumption response"),
+}
 
 
 class OllamaRecommendationError(RuntimeError):
@@ -71,6 +62,12 @@ def build_recommendation_input(
     if len(probabilities) != 3:
         raise OllamaRecommendationError("All three model probabilities are required for local guidance.")
 
+    attribute_by_key = {item["key"]: item for item in attributes}
+    allowed_topics = {
+        code: description
+        for code, (_feature, description) in DISCUSSION_TOPICS.items()
+        if _topic_is_supported(code, attribute_by_key)
+    }
     return {
         "local_patient_reference": f"Patient #{patient_number}",
         "prediction": {
@@ -85,27 +82,98 @@ def build_recommendation_input(
             "risk_band": twin.get("band"),
         },
         "model_limitation": knowledge_graph.get("warning"),
+        "allowed_discussion_topics": allowed_topics,
         "evidence_boundary": (
             "BRFSS observations and SHAP values are model-based associations, not clinical causes."
         ),
     }
 
 
-def _passes_research_safety_checks(text: str) -> bool:
-    lowered = text.lower()
-    required = (
-        "research" in lowered,
-        "not medical advice" in lowered,
-        "0.0" in lowered and ("medium" in lowered or "prediabetes" in lowered),
-        "non-causal" in lowered or "not a cause" in lowered or "does not mean" in lowered,
+def _topic_is_supported(
+    code: str, attributes: dict[str, dict[str, Any]]
+) -> bool:
+    values = {key: float(item["value"]) for key, item in attributes.items()}
+    checks = {
+        "blood_pressure": values.get("HighBP") == 1,
+        "cholesterol": values.get("HighChol") == 1,
+        "physical_activity": values.get("PhysActivity") == 0,
+        "nutrition": values.get("Fruits") == 0 or values.get("Veggies") == 0,
+        "smoking": values.get("Smoker") == 1,
+        "mobility": values.get("DiffWalk") == 1,
+        "general_health": values.get("GenHlth", 0) >= 3,
+        "healthcare_access": values.get("AnyHealthcare") == 0 or values.get("NoDocbcCost") == 1,
+        "wellbeing": values.get("MentHlth", 0) > 0 or values.get("PhysHlth", 0) > 0,
+        "alcohol": values.get("HvyAlcoholConsump") == 1,
+    }
+    return bool(checks.get(code, False))
+
+
+def _validate_selection(
+    raw: str, evidence: dict[str, Any]
+) -> dict[str, list[str]]:
+    try:
+        selection = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise OllamaRecommendationError("The local model returned invalid structured output.") from exc
+    required_keys = {"supporting_features", "opposing_features", "discussion_topics"}
+    if not isinstance(selection, dict) or set(selection) != required_keys:
+        raise OllamaRecommendationError("The local model returned an unexpected selection schema.")
+    if not all(isinstance(selection[key], list) for key in required_keys):
+        raise OllamaRecommendationError("The local model selection fields must be lists.")
+
+    attributes = {
+        item["key"]: item for item in evidence["observations_and_shap_evidence"]
+    }
+    supports = selection["supporting_features"]
+    opposes = selection["opposing_features"]
+    topics = selection["discussion_topics"]
+    if len(supports) > 3 or len(opposes) > 2 or len(topics) > 3:
+        raise OllamaRecommendationError("The local model selected too many evidence references.")
+    if any(not isinstance(item, str) for item in supports + opposes + topics):
+        raise OllamaRecommendationError("The local model selected an invalid reference type.")
+    if len(set(supports + opposes)) != len(supports + opposes):
+        raise OllamaRecommendationError("The local model repeated an evidence reference.")
+    if any(key not in attributes or float(attributes[key]["shap_value"]) <= 0 for key in supports):
+        raise OllamaRecommendationError("The local model selected unsupported positive evidence.")
+    if any(key not in attributes or float(attributes[key]["shap_value"]) >= 0 for key in opposes):
+        raise OllamaRecommendationError("The local model selected unsupported negative evidence.")
+    allowed_topics = evidence["allowed_discussion_topics"]
+    if len(set(topics)) != len(topics) or any(code not in allowed_topics for code in topics):
+        raise OllamaRecommendationError("The local model selected an unsupported discussion topic.")
+    return {key: list(selection[key]) for key in required_keys}
+
+
+def _render_selection(
+    patient_number: int,
+    prediction: dict[str, Any],
+    knowledge_graph: dict[str, Any],
+    selection: dict[str, list[str]],
+) -> str:
+    attributes = {item["key"]: item for item in knowledge_graph["attributes"]}
+
+    def describe(keys: list[str]) -> str:
+        return "; ".join(
+            f"{attributes[key]['label']} ({attributes[key]['state']}, SHAP {float(attributes[key]['shap_value']):+.3f})"
+            for key in keys
+        ) or "no factors selected"
+
+    probabilities = ", ".join(
+        f"{item['label']} {float(item['value']):.1%}"
+        for item in prediction["probabilities"]
     )
-    if not all(required):
-        return False
-    if any(claim in lowered for claim in PROHIBITED_CLAIMS):
-        return False
-    if re.search(r"(?m)^\s*(?:#{1,6}\s|[-*]\s|\d+\.\s)", text):
-        return False
-    return True
+    topics = "; ".join(
+        DISCUSSION_TOPICS[code][1] for code in selection["discussion_topics"]
+    ) or "the recorded survey observations in their full context"
+    warning = knowledge_graph.get("warning") or "Model results are research outputs."
+    return (
+        f"For Patient #{patient_number}, the research model predicted {prediction['label']}. "
+        f"Its estimated probabilities were {probabilities}. These are model estimates, not a diagnosis.\n\n"
+        f"The validated positive SHAP references selected were {describe(selection['supporting_features'])}. "
+        f"The validated negative SHAP references selected were {describe(selection['opposing_features'])}. "
+        "SHAP values describe support for or opposition to this model output; they do not establish medical causes.\n\n"
+        f"A qualified healthcare professional can help interpret {topics}. No raw local-model wording is displayed. "
+        f"{warning} This explanation is model-based, non-causal, for research only, and not medical advice."
+    )
 
 
 def _deterministic_evidence_summary(
@@ -169,10 +237,10 @@ def generate_local_guidance(
         "model": model,
         "system": SYSTEM_PROMPT,
         "prompt": (
-            "Prepare the research-only explanation from this temporary patient evidence. "
-            "Do not infer any fact that is absent.\n\n"
+            "Select only valid references from this temporary evidence.\n\n"
             + json.dumps(evidence, ensure_ascii=False, separators=(",", ":"))
         ),
+        "format": "json",
         "stream": False,
         "keep_alive": "10m",
         "options": {"temperature": 0.1, "num_predict": 320, "num_ctx": 8192},
@@ -204,12 +272,14 @@ def generate_local_guidance(
     except (json.JSONDecodeError, UnicodeDecodeError) as exc:
         raise OllamaRecommendationError("Ollama returned an unreadable response.") from exc
 
-    guidance = str(result.get("response", "")).strip()
-    if not guidance:
+    raw_selection = str(result.get("response", "")).strip()
+    if not raw_selection:
         raise OllamaRecommendationError("Ollama returned an empty response.")
-    if not _passes_research_safety_checks(guidance):
+    try:
+        selection = _validate_selection(raw_selection, evidence)
+    except OllamaRecommendationError:
         return _deterministic_evidence_summary(patient_number, prediction, knowledge_graph)
-    return guidance
+    return _render_selection(patient_number, prediction, knowledge_graph, selection)
 
 
 def deterministic_evidence_summary(

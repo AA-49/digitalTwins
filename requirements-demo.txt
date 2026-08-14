@@ -1,0 +1,2 @@
+-r requirements-smpl.txt
+pyvista>=0.43

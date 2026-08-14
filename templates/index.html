@@ -188,7 +188,7 @@
         {% elif local_guidance_error %}
         <p class="local-guidance-error" role="alert">{{ local_guidance_error }}</p>
         {% endif %}
-        <p class="kg-warning">The local model is a small code-oriented language model. Its wording can be incomplete or inaccurate. Unsafe drafts are automatically replaced with a deterministic evidence summary. The checked diabetes model has 0.0 Medium/prediabetes recall.</p>
+        <p class="kg-warning">The local model may select validated evidence references and allowlisted discussion topics, but its raw wording is never displayed. {{ knowledge_graph.warning }}</p>
         <p class="disclaimer">This generated text is model-based, non-causal, for research only, and is not medical advice, diagnosis, or a treatment plan.</p>
       </div>
 
@@ -204,7 +204,7 @@
       </div>
       {% if smpl_status %}<p class="hint twin-status">{{ smpl_status }}</p>{% endif %}
       {% if twin_metadata %}
-      <model-viewer id="current-patient-twin" src="{{ url_for('digital_twin_asset') }}?v={{ twin_metadata.version }}"
+      <model-viewer id="current-patient-twin" src="{{ twin_metadata.asset_url }}?v={{ twin_metadata.version }}"
         camera-controls auto-rotate shadow-intensity="1" exposure="1"
         data-risk-colour="{{ smpl.color }}" alt="3D twin for current dataset patient {{ patient_number }}"></model-viewer>
       <p class="hint">This mesh was regenerated from Patient #{{ patient_number }}: BMI {{ twin_metadata.bmi }}, risk {{ "%.1f"|format(twin_metadata.risk_percent) }}%, {{ twin_metadata.gender }} model.</p>
@@ -242,7 +242,7 @@
         <div>
           <h3>Current patient 3D twin</h3>
           {% if twin_metadata %}
-          <model-viewer src="{{ url_for('digital_twin_asset') }}?v={{ twin_metadata.version }}"
+          <model-viewer src="{{ twin_metadata.asset_url }}?v={{ twin_metadata.version }}"
             camera-controls auto-rotate shadow-intensity="1" exposure="1"
             data-risk-colour="{{ smpl.color }}" alt="Current 3D twin for patient {{ patient_number }}"></model-viewer>
           <p class="hint">BMI {{ "%.1f"|format(twin_metadata.bmi) }} · Risk {{ "%.1f"|format(twin_metadata.risk_percent) }}% · {{ twin_metadata.gender }}</p>
@@ -253,7 +253,7 @@
         <div>
           <h3>Scenario 3D twin</h3>
           {% if scenario_twin_metadata %}
-          <model-viewer src="{{ url_for('scenario_digital_twin_asset') }}?v={{ scenario_twin_metadata.version }}"
+          <model-viewer src="{{ scenario_twin_metadata.asset_url }}?v={{ scenario_twin_metadata.version }}"
             camera-controls auto-rotate shadow-intensity="1" exposure="1"
             data-risk-colour="{{ scenario_smpl.color }}" alt="Scenario 3D twin for patient {{ patient_number }}"></model-viewer>
           <p class="hint">BMI {{ "%.1f"|format(scenario_twin_metadata.bmi) }} · Risk {{ "%.1f"|format(scenario_twin_metadata.risk_percent) }}% · {{ scenario_twin_metadata.gender }}</p>

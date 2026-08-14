@@ -11,3 +11,4 @@ patient.csv
 .env
 
 .env*
+artifacts_notebook/twin_cache/

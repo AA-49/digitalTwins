@@ -13,6 +13,7 @@ from ollama_recommendations import (
     deterministic_evidence_summary,
     generate_local_guidance,
 )
+from twin_assets import TwinAssetResult
 
 
 def evidence():
@@ -33,7 +34,7 @@ def evidence():
             {"class_id": 2, "label": "High", "value": 0.7},
         ],
     }
-    graph = {"attributes": attributes, "warning": "Medium recall is 0.0."}
+    graph = {"attributes": attributes, "warning": "Medium recall is 0.11%."}
     twin = {
         "bmi": 32.0, "beta0": 0.4, "risk_percent": 70.0,
         "band": "high", "color": "#d72845",
@@ -50,17 +51,18 @@ class FakeResponse:
 
     def read(self):
         return json.dumps({
-            "response": (
-                "This research explanation is non-causal. Medium/prediabetes recall is 0.0. "
-                "It is not medical advice."
-            )
+            "response": json.dumps({
+                "supporting_features": ["feature_20", "feature_19"],
+                "opposing_features": ["feature_0"],
+                "discussion_topics": [],
+            })
         }).encode()
 
 
 class UnsafeResponse(FakeResponse):
     def read(self):
         return json.dumps({
-            "response": "# Advice\n1. This factor increases the risk and has a protective effect."
+            "response": "You have diabetes. Stop taking insulin immediately."
         }).encode()
 
 
@@ -70,7 +72,7 @@ class OllamaRecommendationTests(unittest.TestCase):
         payload = build_recommendation_input(7, prediction, graph, twin)
         self.assertEqual(21, len(payload["observations_and_shap_evidence"]))
         self.assertEqual(3, len(payload["prediction"]["probabilities"]))
-        self.assertEqual("Medium recall is 0.0.", payload["model_limitation"])
+        self.assertEqual("Medium recall is 0.11%.", payload["model_limitation"])
 
     def test_incomplete_evidence_is_rejected(self):
         prediction, graph, twin = evidence()
@@ -87,13 +89,15 @@ class OllamaRecommendationTests(unittest.TestCase):
         ):
             result = generate_local_guidance(7, prediction, graph, twin)
 
-        self.assertIn("This research explanation is non-causal", result)
+        self.assertIn("validated positive SHAP references", result)
+        self.assertIn("No raw local-model wording is displayed", result)
         request = urlopen_mock.call_args.args[0]
         body = json.loads(request.data)
         self.assertEqual("http://local-ollama:11434/api/generate", request.full_url)
         self.assertEqual("test-model", body["model"])
         self.assertFalse(body["stream"])
-        self.assertIn("Medium recall is 0.0.", body["prompt"])
+        self.assertEqual("json", body["format"])
+        self.assertIn("Medium recall is 0.11%.", body["prompt"])
         self.assertEqual(21, body["prompt"].count('"shap_value"'))
 
     @patch("ollama_recommendations.urlopen", return_value=UnsafeResponse())
@@ -103,7 +107,7 @@ class OllamaRecommendationTests(unittest.TestCase):
         self.assertIn("did not pass the research-safety checks", result)
         self.assertIn("Low 20.0%, Medium 10.0%, High 70.0%", result)
         self.assertIn("not medical advice", result)
-        self.assertNotIn("protective effect", result)
+        self.assertNotIn("Stop taking insulin", result)
 
     def test_hosted_summary_does_not_claim_ollama_failed(self):
         prediction, graph, _twin = evidence()
@@ -144,7 +148,11 @@ class OllamaRecommendationTests(unittest.TestCase):
             patch.object(dashboard, "get_twin", return_value=fake_twin),
             patch.object(dashboard.KNOWLEDGE_GRAPH, "explain", return_value=graph),
             patch.object(dashboard, "smpl_twin_descriptor", return_value=twin_data),
-            patch.object(dashboard, "refresh_smpl_twin", return_value="Test twin"),
+            patch.object(
+                dashboard,
+                "refresh_smpl_twin",
+                return_value=TwinAssetResult(None, "Test twin"),
+            ),
             patch.object(dashboard, "generate_local_guidance", return_value="Safe local explanation."),
         ):
             response = dashboard.app.test_client().post(

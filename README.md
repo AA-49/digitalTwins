@@ -322,7 +322,7 @@ curl.exe http://127.0.0.1:11434/api/tags
 docker compose exec -T dashboard python -c "import json, urllib.request; print(json.load(urllib.request.urlopen('http://host.docker.internal:11434/api/tags')))"
 ```
 
-Unsafe or incomplete Ollama drafts are automatically replaced with a deterministic research-safe evidence summary.
+Ollama returns only structured feature and discussion-topic selections. The server validates those references and renders deterministic research-safe prose; raw local-model wording is never displayed.
 
 ### Knowledge graph reports fallback mode
 
@@ -341,9 +341,9 @@ The checked local Random Forest contains 400 trees and was evaluated on the imba
 
 | Accuracy | Balanced accuracy | Macro-F1 | Medium recall |
 | ---: | ---: | ---: | ---: |
-| 81.96% | 45.09% | 44.34% | 0.00% |
+| 81.96% | 45.06% | 44.37% | 0.11% |
 
-Accuracy alone is misleading for this problem. The 0.00% Medium/prediabetes recall means this model is not reliable for Medium-class screening. Results must be described as model-based, non-causal research evidence—not clinical guidance.
+Accuracy alone is misleading for this problem. The 0.11% Medium/prediabetes recall means this model is not reliable for Medium-class screening. Results must be described as model-based, non-causal research evidence—not clinical guidance.
 
 ## Tests
 
@@ -352,6 +352,7 @@ Run the Python suite inside Docker and validate the Compose file:
 ```bat
 docker compose exec -T dashboard python -m unittest discover -v
 docker compose config --quiet
+docker compose exec -T dashboard python benchmarks/benchmark_stage3.py
 ```
 
 If the dashboard is not running, start it first with `docker compose up -d dashboard`. JavaScript syntax can also be checked on a development computer with Node.js installed:
@@ -390,17 +391,20 @@ Flask dashboard container
 
 Docker Compose binds all exposed ports to `127.0.0.1`, so the services are local to the Windows computer by default.
 
+Predictions and exact SHAP results use a bounded in-memory LRU cache (`ANALYSIS_CACHE_SIZE`, default 128). Generated SMPL assets use a content-addressed disk cache (`TWIN_CACHE_DIR`, default `artifacts_notebook/twin_cache`; `TWIN_CACHE_SIZE`, default 32). Cache data is temporary, ignored by Git, and never persisted to Neo4j.
+
 ## Key files
 
 | Path | Purpose |
 | --- | --- |
 | `README.md` | Windows-first installation, operation, and troubleshooting guide |
 | `docker-compose.yml` | Dashboard, Neo4j, Jupyter, training, and SMPL services |
-| `Dockerfile` | Shared Python 3.11 CPU image |
+| `Dockerfile` | Separate core, training/Jupyter, dashboard, and SMPL runtime targets |
 | `app.py` | Flask routes and four-stage dashboard workflow |
 | `stage3.py` | Model loading, prediction, SHAP, scenarios, and twin helpers |
+| `twin_assets.py` | Bounded content-addressed SMPL generation and asset reuse |
 | `knowledge_graph.py` | Reusable Neo4j schema and temporary patient graph assembly |
-| `ollama_recommendations.py` | Local evidence prompt, safety checks, and deterministic fallback |
+| `ollama_recommendations.py` | Validated local-model selections and deterministic safe rendering |
 | `diabetes_risk_stages_1_2.ipynb` | Reproducible model training and experiment notebook |
 | `artifacts_notebook\` | Generated local model and research evidence |
 

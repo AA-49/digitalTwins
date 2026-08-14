@@ -201,6 +201,9 @@ class PatientKnowledgeGraph:
         self._driver_supplied = driver is not None
         self._initialized = False
         self._lock = Lock()
+        self._model_lock = Lock()
+        self._ensured_models: set[str] = set()
+        self._definitions: dict[str, dict[str, Any]] | None = None
         self.metrics_path = Path(metrics_path)
         self.importance_path = Path(importance_path)
         self.metrics = self._load_metrics()
@@ -319,6 +322,8 @@ class PatientKnowledgeGraph:
             self._initialized = True
 
     def _ensure_model(self, model_name: str) -> None:
+        if model_name in self._ensured_models:
+            return
         report = self.metrics.get("classification_report", {})
         medium = report.get("Medium (prediabetes)", {})
         high = report.get("High (diabetes)", {})
@@ -333,31 +338,28 @@ class PatientKnowledgeGraph:
             "mediumRecall": medium.get("recall"),
             "highRecall": high.get("recall"),
         }
-        with self._get_driver().session() as session:
-            session.run(
-                """
-                MERGE (m:ModelVersion {name: $modelName})
-                MERGE (e:ModelEvaluation {id: $evaluation.id})
-                SET e += $evaluation
-                MERGE (m)-[:EVALUATED_BY]->(e)
-                """,
-                modelName=model_name,
-                evaluation=evaluation,
-            ).consume()
+        with self._model_lock:
+            if model_name in self._ensured_models:
+                return
+            with self._get_driver().session() as session:
+                session.run(
+                    """
+                    MERGE (m:ModelVersion {name: $modelName})
+                    MERGE (e:ModelEvaluation {id: $evaluation.id})
+                    SET e += $evaluation
+                    MERGE (m)-[:EVALUATED_BY]->(e)
+                    """,
+                    modelName=model_name,
+                    evaluation=evaluation,
+                ).consume()
+            self._ensured_models.add(model_name)
 
-    def explain(
-        self,
-        profile: dict[str, float],
-        prediction: dict[str, Any],
-        contributions: list[dict[str, Any]],
-        twin: dict[str, Any],
-        model_name: str,
-    ) -> dict[str, Any]:
-        """Join Neo4j definitions with live model outputs without patient writes."""
-        fallback_attributes = self._local_attributes(profile, contributions)
-        try:
-            self.initialize()
-            self._ensure_model(model_name)
+    def _load_definitions(self) -> dict[str, dict[str, Any]]:
+        if self._definitions is not None:
+            return self._definitions
+        with self._lock:
+            if self._definitions is not None:
+                return self._definitions
             with self._get_driver().session() as session:
                 rows = list(
                     session.run(
@@ -374,13 +376,29 @@ class PatientKnowledgeGraph:
                 )
             if len(rows) != len(FEATURES):
                 raise RuntimeError("Neo4j did not return all 21 attribute definitions.")
-            definitions = {row["key"]: dict(row) for row in rows}
+            self._definitions = {row["key"]: dict(row) for row in rows}
+            return self._definitions
+
+    def explain(
+        self,
+        profile: dict[str, float],
+        prediction: dict[str, Any],
+        contributions: list[dict[str, Any]],
+        twin: dict[str, Any],
+        model_name: str,
+    ) -> dict[str, Any]:
+        """Join Neo4j definitions with live model outputs without patient writes."""
+        fallback_attributes = self._local_attributes(profile, contributions)
+        try:
+            self.initialize()
+            self._ensure_model(model_name)
+            definitions = self._load_definitions()
             nodes, edges = self._build_graph(
                 profile, prediction, contributions, twin, model_name, definitions
             )
             return {
                 "connected": True,
-                "message": "Reusable definitions loaded from Neo4j; this patient graph is temporary and was not stored.",
+                "message": "Reusable definitions loaded and cached from Neo4j; this patient graph is temporary and was not stored.",
                 "warning": self._model_warning(),
                 "attributes": self._attributes(profile, contributions, definitions),
                 "nodes": nodes,

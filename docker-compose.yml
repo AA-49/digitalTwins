@@ -16,7 +16,9 @@ services:
       start_period: 20s
 
   dashboard:
-    build: .
+    build:
+      context: .
+      target: dashboard
     image: training3-dashboard:latest
     ports:
       - "127.0.0.1:5000:5000"
@@ -39,8 +41,10 @@ services:
     command: python app.py
 
   jupyter:
-    build: .
-    image: training3-dashboard:latest
+    build:
+      context: .
+      target: training
+    image: training3-training:latest
     ports:
       - "127.0.0.1:8888:8888"
     volumes:
@@ -51,8 +55,10 @@ services:
       --ServerApp.token='' --ServerApp.password=''
 
   train-notebook:
-    build: .
-    image: training3-dashboard:latest
+    build:
+      context: .
+      target: training
+    image: training3-training:latest
     profiles: ["training"]
     volumes:
       - ./:/app
@@ -64,8 +70,10 @@ services:
       diabetes_risk_stages_1_2.ipynb
 
   smpl-export:
-    build: .
-    image: training3-dashboard:latest
+    build:
+      context: .
+      target: smpl-runtime
+    image: training3-smpl:latest
     profiles: ["smpl"]
     volumes:
       - ./:/app

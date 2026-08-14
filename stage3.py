@@ -8,7 +8,9 @@ one or more survey variables.
 from __future__ import annotations
 
 import os
+from functools import lru_cache
 from pathlib import Path
+from threading import RLock
 from typing import Any
 
 import joblib
@@ -30,6 +32,7 @@ MODEL_CANDIDATES = tuple(
 )
 RISK_LABELS = {0: "Low", 1: "Medium (prediabetes)", 2: "High (diabetes)"}
 SMPL_MODELS_DIR = Path("models/smpl")
+ANALYSIS_CACHE_SIZE = max(1, int(os.environ.get("ANALYSIS_CACHE_SIZE", "128")))
 
 
 def find_model_path() -> Path:
@@ -47,6 +50,8 @@ class DiabetesDigitalTwin:
     def __init__(self, model_path: Path | None = None) -> None:
         self.model_path = model_path or find_model_path()
         self.model = joblib.load(self.model_path)
+        self._explainer = None
+        self._explainer_lock = RLock()
 
     @staticmethod
     def patient_frame(values: dict[str, float]) -> pd.DataFrame:
@@ -56,13 +61,33 @@ class DiabetesDigitalTwin:
             raise ValueError(f"Missing values for: {', '.join(missing)}")
         return pd.DataFrame([{feature: float(values[feature]) for feature in FEATURES}])
 
+    @staticmethod
+    def _profile_key(values: dict[str, float]) -> tuple[float, ...]:
+        missing = [feature for feature in FEATURES if feature not in values]
+        if missing:
+            raise ValueError(f"Missing values for: {', '.join(missing)}")
+        return tuple(float(values[feature]) for feature in FEATURES)
+
+    @staticmethod
+    def _frame_from_key(key: tuple[float, ...]) -> pd.DataFrame:
+        return pd.DataFrame([key], columns=FEATURES)
+
+    @lru_cache(maxsize=ANALYSIS_CACHE_SIZE)
+    def _predict_cached(
+        self, key: tuple[float, ...]
+    ) -> tuple[int, tuple[int, ...], tuple[float, ...]]:
+        patient = self._frame_from_key(key)
+        probabilities = tuple(map(float, self.model.predict_proba(patient)[0]))
+        class_ids = tuple(int(class_id) for class_id in self.model.classes_)
+        predicted_class = class_ids[int(np.argmax(probabilities))]
+        return predicted_class, class_ids, probabilities
+
     def predict(self, values: dict[str, float]) -> dict[str, Any]:
         """Predict three class probabilities and expose high-diabetes probability."""
-        patient = self.patient_frame(values)
-        probabilities = self.model.predict_proba(patient)[0]
-        class_ids = [int(class_id) for class_id in self.model.classes_]
-        probability_by_class = dict(zip(class_ids, map(float, probabilities)))
-        predicted_class = int(self.model.predict(patient)[0])
+        predicted_class, class_ids, probabilities = self._predict_cached(
+            self._profile_key(values)
+        )
+        probability_by_class = dict(zip(class_ids, probabilities))
         return {
             "predicted_class": predicted_class,
             "label": RISK_LABELS[predicted_class],
@@ -77,20 +102,22 @@ class DiabetesDigitalTwin:
             ],
         }
 
-    def explain(
-        self, values: dict[str, float], max_factors: int | None = 5
-    ) -> list[dict[str, Any]]:
-        """Return SHAP factors for the class predicted for this one patient.
-
-        SHAP output conventions differ between versions, so this supports both
-        list-per-class and three-dimensional ndarray formats.
-        """
+    @lru_cache(maxsize=ANALYSIS_CACHE_SIZE)
+    def _explain_cached(
+        self, key: tuple[float, ...]
+    ) -> tuple[tuple[str, float, float], ...]:
         import shap
 
-        patient = self.patient_frame(values)
-        predicted_class = int(self.model.predict(patient)[0])
-        class_index = list(self.model.classes_).index(predicted_class)
-        values_out = shap.TreeExplainer(self.model).shap_values(patient)
+        patient = self._frame_from_key(key)
+        predicted_class, class_ids, _probabilities = self._predict_cached(key)
+        class_index = class_ids.index(predicted_class)
+
+        # TreeExplainer construction is expensive and its calls are serialized so
+        # a single lazy instance can be reused safely by Flask request threads.
+        with self._explainer_lock:
+            if self._explainer is None:
+                self._explainer = shap.TreeExplainer(self.model)
+            values_out = self._explainer.shap_values(patient)
 
         if isinstance(values_out, list):
             contributions = np.asarray(values_out[class_index])[0]
@@ -105,16 +132,39 @@ class DiabetesDigitalTwin:
             else:
                 raise RuntimeError(f"Unexpected SHAP output shape: {array.shape}")
 
-        factors = pd.DataFrame({
-            "feature": FEATURES,
-            "value": patient.iloc[0].to_numpy(),
-            "shap_value": contributions,
-        })
+        return tuple(
+            (feature, float(patient.iloc[0][feature]), float(contribution))
+            for feature, contribution in zip(FEATURES, contributions)
+        )
+
+    def explain(
+        self, values: dict[str, float], max_factors: int | None = 5
+    ) -> list[dict[str, Any]]:
+        """Return SHAP factors for the class predicted for this one patient.
+
+        SHAP output conventions differ between versions, so this supports both
+        list-per-class and three-dimensional ndarray formats.
+        """
+        factors = pd.DataFrame(
+            self._explain_cached(self._profile_key(values)),
+            columns=["feature", "value", "shap_value"],
+        )
         factors["absolute_shap_value"] = factors["shap_value"].abs()
         factors = factors.sort_values("absolute_shap_value", ascending=False)
         if max_factors is not None:
             factors = factors.head(max_factors)
         return factors[["feature", "value", "shap_value"]].to_dict(orient="records")
+
+    def cache_info(self) -> dict[str, Any]:
+        """Expose bounded-cache statistics for benchmarks and diagnostics."""
+        return {
+            "prediction": self._predict_cached.cache_info()._asdict(),
+            "explanation": self._explain_cached.cache_info()._asdict(),
+        }
+
+    def clear_caches(self) -> None:
+        self._predict_cached.cache_clear()
+        self._explain_cached.cache_clear()
 
     def simulate(self, baseline: dict[str, float], scenario: dict[str, float]) -> dict[str, Any]:
         """Compare a current patient profile with a manually edited scenario."""

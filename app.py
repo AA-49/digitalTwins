@@ -2,14 +2,13 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 from pathlib import Path
-import shutil
-import subprocess
-import sys
 
+import numpy as np
 import pandas as pd
-from flask import Flask, abort, render_template, request, send_file
+from flask import Flask, abort, render_template, request, send_file, url_for
 
 from diabetes_risk import FEATURES
 from knowledge_graph import PatientKnowledgeGraph
@@ -19,6 +18,7 @@ from ollama_recommendations import (
     guidance_error_message,
 )
 from stage3 import DiabetesDigitalTwin, RISK_LABELS, smpl_twin_descriptor
+from twin_assets import TwinAssetResult, TwinAssetService
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
@@ -62,10 +62,46 @@ FIELDS = [
 SCENARIO_FEATURES = ["BMI", "GenHlth", "PhysActivity", "Fruits", "Veggies", "HvyAlcoholConsump", "HighBP", "HighChol"]
 FIELD_BY_NAME = {field[0]: field for field in FIELDS}
 FIELD_KINDS = {name: kind for name, _, kind, _, _ in FIELDS}
+FIELD_STEPS = {name: attrs.get("step") for name, _, _, _, attrs in FIELDS}
 FIELD_LIMITS = {
     name: (attrs.get("min"), attrs.get("max"))
     for name, _, _, _, attrs in FIELDS
 }
+TWIN_ASSETS = TwinAssetService()
+LATEST_TWIN_ASSET_KEYS: dict[str, str | None] = {"current": None, "scenario": None}
+
+
+def validate_feature_value(feature: str, value: object) -> float:
+    """Validate one BRFSS value using the same rules for uploads and scenarios."""
+    numeric = float(value)
+    if not math.isfinite(numeric):
+        raise ValueError(f"{feature} must be a finite number.")
+    if FIELD_KINDS[feature] == "binary" and numeric not in (0.0, 1.0):
+        raise ValueError(f"{feature} must be 0 or 1.")
+    if str(FIELD_STEPS[feature]) == "1" and not numeric.is_integer():
+        raise ValueError(f"{feature} must be a whole-number category or count.")
+    minimum, maximum = FIELD_LIMITS[feature]
+    if minimum is not None and numeric < float(minimum):
+        raise ValueError(f"{feature} must be at least {minimum}.")
+    if maximum is not None and numeric > float(maximum):
+        raise ValueError(f"{feature} must be at most {maximum}.")
+    return numeric
+
+
+def validate_feature_series(feature: str, values: pd.Series) -> None:
+    """Vectorized counterpart to ``validate_feature_value`` for large CSVs."""
+    numeric = values.to_numpy(dtype=float, copy=False)
+    if not np.isfinite(numeric).all():
+        raise ValueError(f"{feature} must contain only finite numbers.")
+    if FIELD_KINDS[feature] == "binary" and not values.isin([0, 1]).all():
+        raise ValueError(f"{feature} must contain only 0 or 1.")
+    if str(FIELD_STEPS[feature]) == "1" and not np.equal(numeric, np.floor(numeric)).all():
+        raise ValueError(f"{feature} must contain whole-number categories or counts.")
+    minimum, maximum = FIELD_LIMITS[feature]
+    if minimum is not None and (values < float(minimum)).any():
+        raise ValueError(f"{feature} contains values below {minimum}.")
+    if maximum is not None and (values > float(maximum)).any():
+        raise ValueError(f"{feature} contains values above {maximum}.")
 
 
 class PatientDataset:
@@ -85,13 +121,8 @@ class PatientDataset:
         if len(clean) > 500_000:
             raise ValueError("CSV contains more than the 500,000-row prototype limit.")
 
-        for feature, (minimum, maximum) in FIELD_LIMITS.items():
-            if FIELD_KINDS[feature] == "binary" and not clean[feature].isin([0, 1]).all():
-                raise ValueError(f"{feature} must contain only 0 or 1.")
-            if minimum is not None and (clean[feature] < float(minimum)).any():
-                raise ValueError(f"{feature} contains values below {minimum}.")
-            if maximum is not None and (clean[feature] > float(maximum)).any():
-                raise ValueError(f"{feature} contains values above {maximum}.")
+        for feature in FEATURES:
+            validate_feature_series(feature, clean[feature])
 
         if TARGET in clean:
             clean[TARGET] = pd.to_numeric(clean[TARGET], errors="coerce")
@@ -180,6 +211,9 @@ def twin_metadata(glb_path: Path = TWIN_GLB_PATH) -> dict | None:
 
 @app.get("/digital-twin.glb")
 def digital_twin_asset():
+    cached_path = TWIN_ASSETS.asset_path(LATEST_TWIN_ASSET_KEYS["current"] or "")
+    if cached_path is not None:
+        return send_file(cached_path, mimetype="model/gltf-binary", conditional=True)
     if not TWIN_GLB_PATH.exists():
         abort(404)
     return send_file(TWIN_GLB_PATH, mimetype="model/gltf-binary", conditional=True)
@@ -187,9 +221,20 @@ def digital_twin_asset():
 
 @app.get("/digital-twin-scenario.glb")
 def scenario_digital_twin_asset():
+    cached_path = TWIN_ASSETS.asset_path(LATEST_TWIN_ASSET_KEYS["scenario"] or "")
+    if cached_path is not None:
+        return send_file(cached_path, mimetype="model/gltf-binary", conditional=True)
     if not SCENARIO_TWIN_GLB_PATH.exists():
         abort(404)
     return send_file(SCENARIO_TWIN_GLB_PATH, mimetype="model/gltf-binary", conditional=True)
+
+
+@app.get("/digital-twin/<asset_key>.glb")
+def cached_digital_twin_asset(asset_key: str):
+    asset_path = TWIN_ASSETS.asset_path(asset_key)
+    if asset_path is None:
+        abort(404)
+    return send_file(asset_path, mimetype="model/gltf-binary", conditional=True)
 
 
 def refresh_smpl_twin(
@@ -197,87 +242,119 @@ def refresh_smpl_twin(
     prediction: dict,
     glb_path: Path = TWIN_GLB_PATH,
     profile_name: str = "3D twin",
-) -> str:
-    """Regenerate the saved GLB inside the app, with Docker as a host fallback."""
+) -> TwinAssetResult:
+    """Return a cached or newly generated content-addressed SMPL asset."""
     if not any((PROJECT_DIR / "models" / "smpl").glob("*.pkl")):
-        return "SMPL model weights are not available, so the 3D twin was not updated."
+        return TwinAssetResult(
+            None, "SMPL model weights are not available, so the 3D twin was not updated."
+        )
 
     gender = "male" if int(values["Sex"]) == 1 else "female"
     risk_percent = prediction["high_risk_probability"] * 100
-    metadata_path = glb_path.with_suffix(".json")
-    if glb_path.exists() and metadata_path.exists():
-        try:
-            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-            if (
-                float(metadata.get("bmi", -1)) == float(values["BMI"])
-                and abs(float(metadata.get("risk_percent", -1)) - risk_percent) < 0.0001
-                and metadata.get("gender") == gender
-            ):
-                return f"{profile_name} already matches its profile."
-        except (json.JSONDecodeError, TypeError, ValueError):
-            pass
-
-    export_arguments = [
-        "-m", "src.export_smpl",
-        "--bmi", str(values["BMI"]),
-        "--risk", str(risk_percent),
-        "--gender", gender,
-        "--out", glb_path.as_posix(),
-    ]
-
-    # In the Docker dashboard, all SMPL dependencies are already installed, so
-    # run the exporter in this container instead of trying to invoke Docker from
-    # inside Docker. On a local host with fewer Python dependencies, Docker
-    # remains a useful fallback.
-    direct_error = None
-    try:
-        completed = subprocess.run(
-            [sys.executable, *export_arguments],
-            cwd=PROJECT_DIR,
-            capture_output=True,
-            text=True,
-            timeout=180,
-            check=False,
-        )
-        if completed.returncode == 0:
-            return (
-                f"{profile_name} updated from this profile: BMI {values['BMI']}, {gender}, "
-                f"high-risk probability {prediction['high_risk_probability']:.1%}."
-            )
-        details = (completed.stderr or completed.stdout).strip().splitlines()
-        direct_error = details[-1] if details else "direct SMPL export failed"
-    except subprocess.TimeoutExpired:
-        direct_error = "direct SMPL export timed out"
-    except OSError as exc:
-        direct_error = str(exc)
-
-    if shutil.which("docker") is None:
-        return f"The 3D twin could not be updated in this environment: {direct_error}."
-
-    docker_command = [
-        "docker", "compose", "--profile", "smpl", "run", "--rm", "smpl-export",
-        "python", *export_arguments,
-    ]
-    try:
-        completed = subprocess.run(
-            docker_command,
-            cwd=PROJECT_DIR,
-            capture_output=True,
-            text=True,
-            timeout=180,
-            check=False,
-        )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return f"The 3D twin could not be updated: {exc}"
-    if completed.returncode != 0:
-        details = (completed.stderr or completed.stdout).strip().splitlines()
-        return "The 3D twin could not be updated: " + (
-            details[-1] if details else "Docker export failed."
-        )
-    return (
-        f"{profile_name} updated from this profile: BMI {values['BMI']}, {gender}, "
-        f"high-risk probability {prediction['high_risk_probability']:.1%}."
+    result = TWIN_ASSETS.get_or_create(
+        gender=gender,
+        bmi=values["BMI"],
+        risk_percent=risk_percent,
+        profile_name=profile_name,
     )
+    if result.metadata is not None:
+        slot = "scenario" if glb_path == SCENARIO_TWIN_GLB_PATH else "current"
+        LATEST_TWIN_ASSET_KEYS[slot] = result.metadata["asset_key"]
+    return result
+
+
+def parse_scenario(baseline: dict[str, float]) -> dict[str, float]:
+    """Reload the baseline and apply only validated, allowlisted form changes."""
+    scenario = baseline.copy()
+    for feature in SCENARIO_FEATURES:
+        scenario[feature] = validate_feature_value(
+            feature, request.form[f"scenario_{feature}"]
+        )
+    return scenario
+
+
+def request_asset_metadata(result: TwinAssetResult) -> dict | None:
+    if result.metadata is None:
+        return None
+    metadata = dict(result.metadata)
+    metadata["asset_url"] = url_for(
+        "cached_digital_twin_asset", asset_key=metadata["asset_key"]
+    )
+    metadata["version"] = metadata["asset_key"]
+    return metadata
+
+
+def empty_analysis(values: dict[str, float]) -> dict:
+    return {
+        "values": values,
+        "current": None,
+        "explanation": None,
+        "simulation": None,
+        "smpl": None,
+        "smpl_status": None,
+        "twin_metadata": None,
+        "scenario_twin_metadata": None,
+        "scenario_smpl": None,
+        "scenario_smpl_status": None,
+        "knowledge_graph": None,
+        "local_guidance": None,
+        "local_guidance_error": None,
+    }
+
+
+def run_patient_action(
+    patient_number: int, baseline: dict[str, float], action: str
+) -> dict:
+    """Run one validated patient workflow and return its template context."""
+    result = empty_analysis(baseline)
+    twin = get_twin()
+    scenario = None
+    if action == "simulate":
+        scenario = parse_scenario(baseline)
+        result["simulation"] = twin.simulate(baseline, scenario)
+        result["current"] = result["simulation"]["baseline"]
+        result["scenario_smpl"] = smpl_twin_descriptor(
+            scenario["BMI"], result["simulation"]["scenario"]["high_risk_probability"]
+        )
+    else:
+        result["current"] = twin.predict(baseline)
+
+    all_contributions = twin.explain(baseline, max_factors=None)
+    result["explanation"] = all_contributions[:5]
+    result["smpl"] = smpl_twin_descriptor(
+        baseline["BMI"], result["current"]["high_risk_probability"]
+    )
+    result["knowledge_graph"] = KNOWLEDGE_GRAPH.explain(
+        baseline,
+        result["current"],
+        all_contributions,
+        result["smpl"],
+        twin.model_path.name,
+    )
+    if action == "local_guidance":
+        try:
+            result["local_guidance"] = generate_local_guidance(
+                patient_number,
+                result["current"],
+                result["knowledge_graph"],
+                result["smpl"],
+            )
+        except Exception as exc:
+            result["local_guidance_error"] = guidance_error_message(exc)
+
+    current_asset = refresh_smpl_twin(baseline, result["current"])
+    result["smpl_status"] = current_asset.status
+    result["twin_metadata"] = request_asset_metadata(current_asset)
+    if scenario is not None:
+        scenario_asset = refresh_smpl_twin(
+            scenario,
+            result["simulation"]["scenario"],
+            SCENARIO_TWIN_GLB_PATH,
+            "Scenario 3D twin",
+        )
+        result["scenario_smpl_status"] = scenario_asset.status
+        result["scenario_twin_metadata"] = request_asset_metadata(scenario_asset)
+    return result
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -286,20 +363,9 @@ def index():
     dataset = get_patient_dataset()
     patient_number = 1
     values = dataset.patient(patient_number)
-    current = None
-    explanation = None
-    simulation = None
-    smpl = None
-    smpl_status = None
+    analysis = empty_analysis(values)
     error = None
     notice = None
-    current_twin_metadata = None
-    scenario_twin_metadata = None
-    scenario_smpl = None
-    scenario_smpl_status = None
-    knowledge_graph = None
-    local_guidance = None
-    local_guidance_error = None
     if request.method == "POST":
         try:
             action = request.form.get("action", "predict")
@@ -311,82 +377,24 @@ def index():
                 dataset = PATIENT_DATASET
                 patient_number = 1
                 values = dataset.patient(patient_number)
+                analysis = empty_analysis(values)
                 notice = (
                     f"Imported {dataset.source_name}: {len(dataset.frame):,} valid patient rows. "
                     "Patient numbering now follows this file."
                 )
             else:
                 patient_number = int(request.form.get("patient_number", 1))
-                baseline = dataset.patient(patient_number)
-                values = baseline
-                twin = get_twin()
-                if action == "simulate":
-                    scenario = baseline.copy()
-                    for feature in SCENARIO_FEATURES:
-                        scenario[feature] = float(request.form[f"scenario_{feature}"])
-                    simulation = twin.simulate(baseline, scenario)
-                    current = simulation["baseline"]
-                    scenario_smpl = smpl_twin_descriptor(
-                        scenario["BMI"], simulation["scenario"]["high_risk_probability"]
-                    )
-                else:
-                    current = twin.predict(baseline)
-                all_contributions = twin.explain(baseline, max_factors=None)
-                explanation = all_contributions[:5]
-                smpl = smpl_twin_descriptor(baseline["BMI"], current["high_risk_probability"])
-                knowledge_graph = KNOWLEDGE_GRAPH.explain(
-                    baseline,
-                    current,
-                    all_contributions,
-                    smpl,
-                    twin.model_path.name,
-                )
-                if action == "local_guidance":
-                    try:
-                        local_guidance = generate_local_guidance(
-                            patient_number, current, knowledge_graph, smpl
-                        )
-                    except Exception as exc:
-                        local_guidance_error = guidance_error_message(exc)
-                smpl_status = refresh_smpl_twin(baseline, current)
-                metadata = twin_metadata()
-                if metadata and (
-                    float(metadata.get("bmi", -1)) == float(baseline["BMI"])
-                    and abs(
-                        float(metadata.get("risk_percent", -1))
-                        - current["high_risk_probability"] * 100
-                    ) < 0.0001
-                ):
-                    current_twin_metadata = metadata
-                if action == "simulate":
-                    scenario_smpl_status = refresh_smpl_twin(
-                        scenario,
-                        simulation["scenario"],
-                        SCENARIO_TWIN_GLB_PATH,
-                        "Scenario 3D twin",
-                    )
-                    scenario_metadata = twin_metadata(SCENARIO_TWIN_GLB_PATH)
-                    if scenario_metadata and (
-                        float(scenario_metadata.get("bmi", -1)) == float(scenario["BMI"])
-                        and abs(
-                            float(scenario_metadata.get("risk_percent", -1))
-                            - simulation["scenario"]["high_risk_probability"] * 100
-                        ) < 0.0001
-                    ):
-                        scenario_twin_metadata = scenario_metadata
+                values = dataset.patient(patient_number)
+                analysis = run_patient_action(patient_number, values, action)
         except (KeyError, ValueError) as exc:
             error = f"Please provide valid patient data. ({exc})"
         except Exception as exc:
             error = f"The model could not complete this request. ({exc})"
     return render_template(
         "index.html", fields=FIELDS, scenario_fields=[FIELD_BY_NAME[name] for name in SCENARIO_FEATURES],
-        values=values, current=current, explanation=explanation, simulation=simulation, smpl=smpl, error=error,
+        **analysis, error=error,
         model_name=TWIN.model_path.name if TWIN else "Loads when you predict",
-        twin_metadata=current_twin_metadata, smpl_status=smpl_status, notice=notice,
-        scenario_twin_metadata=scenario_twin_metadata, scenario_smpl=scenario_smpl,
-        scenario_smpl_status=scenario_smpl_status,
-        knowledge_graph=knowledge_graph,
-        local_guidance=local_guidance, local_guidance_error=local_guidance_error,
+        notice=notice,
         ollama_model=configured_model(),
         dataset_name=dataset.source_name, patient_count=len(dataset.frame), patient_number=patient_number,
         patient_rows=dataset.patient_window(patient_number), actual_label=dataset.actual_label(patient_number),

@@ -158,6 +158,10 @@ class KnowledgeGraphTests(unittest.TestCase):
         explain(graph)
         constraint_queries = [query for query, _ in driver.fake_session.queries if "CREATE CONSTRAINT" in query]
         self.assertEqual(6, len(constraint_queries))
+        definition_queries = [query for query, _ in driver.fake_session.queries if "RETURN a.key AS key" in query]
+        model_queries = [query for query, _ in driver.fake_session.queries if "MERGE (m:ModelVersion" in query]
+        self.assertEqual(1, len(definition_queries))
+        self.assertEqual(1, len(model_queries))
         migration = "\n".join(query for query, _ in driver.fake_session.queries)
         self.assertIn("Insulin Resistance", migration)
         self.assertIn("Increased T2DM Risk", migration)
