@@ -1,0 +1,6 @@
+case_id,row_index,dataset_patient_number,actual_class,actual_label,predicted_class,predicted_label,predicted_probability,correct
+tp_low,25494,25495,0,Low,0,Low,0.9998977703075448,True
+tp_medium,138202,138203,1,Medium (prediabetes),1,Medium (prediabetes),0.4516480489717911,True
+tp_high,194034,194035,2,High (diabetes),2,High (diabetes),0.9045944006033766,True
+fn_medium,81,82,1,Medium (prediabetes),0,Low,0.580357302197327,False
+fp_high,21,22,0,Low,2,High (diabetes),0.7697461880245275,False

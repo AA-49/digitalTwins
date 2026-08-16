@@ -29,96 +29,173 @@
     "High (diabetes)": 35346
   },
   "metrics": {
-    "accuracy": 0.8196349731945758,
-    "balanced_accuracy": 0.4506070142054485,
-    "macro_f1": 0.4437493364732065,
-    "weighted_f1": 0.8158189914048523,
-    "macro_ovr_roc_auc": 0.7581523256193027
+    "accuracy": 0.8231126023882365,
+    "balanced_accuracy": 0.4516131147129711,
+    "macro_f1": 0.44613999052341247,
+    "weighted_f1": 0.8174552379791771,
+    "macro_ovr_roc_auc": 0.7575428060855893
   },
   "classification_report": {
     "precision": {
-      "Low": 0.8956296520988404,
-      "Medium (prediabetes)": 0.006578947368421052,
-      "High (diabetes)": 0.41413226349165266,
-      "accuracy": 0.8196349731945758,
-      "macro avg": 0.43878028765297133,
-      "weighted avg": 0.8123166989167887
+      "Low": 0.8944910430075048,
+      "Medium (prediabetes)": 0.05,
+      "High (diabetes)": 0.4222251515950435,
+      "accuracy": 0.8231126023882365,
+      "macro avg": 0.4555720648675161,
+      "weighted avg": 0.8127471556795879
     },
     "recall": {
-      "Low": 0.8980604103787933,
-      "Medium (prediabetes)": 0.0010799136069114472,
-      "High (diabetes)": 0.4526807186306408,
-      "accuracy": 0.8196349731945758,
-      "macro avg": 0.4506070142054485,
-      "weighted avg": 0.8196349731945758
+      "Low": 0.9033060372134494,
+      "Medium (prediabetes)": 0.002178649237472767,
+      "High (diabetes)": 0.44935465768799104,
+      "accuracy": 0.8231126023882365,
+      "macro avg": 0.4516131147129711,
+      "weighted avg": 0.8231126023882365
     },
     "f1-score": {
-      "Low": 0.8968433841912195,
-      "Medium (prediabetes)": 0.0018552875695732839,
-      "High (diabetes)": 0.4325493376588267,
-      "accuracy": 0.8196349731945758,
-      "macro avg": 0.4437493364732065,
-      "weighted avg": 0.8158189914048523
+      "Low": 0.8988769291834972,
+      "Medium (prediabetes)": 0.0041753653444676405,
+      "High (diabetes)": 0.43536767704227264,
+      "accuracy": 0.8231126023882365,
+      "macro avg": 0.44613999052341247,
+      "weighted avg": 0.8174552379791771
     },
     "support": {
-      "Low": 42741.0,
-      "Medium (prediabetes)": 926.0,
-      "High (diabetes)": 7069.0,
-      "accuracy": 0.8196349731945758,
-      "macro avg": 50736.0,
-      "weighted avg": 50736.0
+      "Low": 42619.0,
+      "Medium (prediabetes)": 918.0,
+      "High (diabetes)": 7128.0,
+      "accuracy": 0.8231126023882365,
+      "macro avg": 50665.0,
+      "weighted avg": 50665.0
     }
+  },
+  "duplicate_audit": {
+    "rows_before_cleaning": 253680,
+    "rows_after_cleaning": 253680,
+    "exact_duplicate_rows_beyond_first": 23899,
+    "repeated_feature_rows_beyond_first": 25772,
+    "feature_profiles_with_conflicting_targets": 1834,
+    "policy": "Preserve participant rows; group identical feature profiles during split."
+  },
+  "split_audit": {
+    "n_rows": 253680,
+    "n_train": 203015,
+    "n_test": 50665,
+    "test_fraction": 0.19972011983601387,
+    "train_unique_profiles": 182380,
+    "test_unique_profiles": 45528,
+    "cross_split_profile_overlap": 0
+  },
+  "permutation_config": {
+    "sample_size": 1000,
+    "repeats": 3,
+    "requested_n_jobs": 1,
+    "effective_n_jobs": 1,
+    "elapsed_seconds": 13.964390948000073,
+    "fallback_reason": null
   },
   "top_global_features": [
     {
-      "feature": "GenHlth",
-      "importance_mean": 0.04575607731403297,
-      "importance_std": 0.01171528501943055
-    },
-    {
       "feature": "BMI",
-      "importance_mean": 0.041490900615168136,
-      "importance_std": 0.010033548736687553
+      "importance_mean": 0.025898174433435433,
+      "importance_std": 0.0033230906140085167
     },
     {
-      "feature": "HighBP",
-      "importance_mean": 0.0307185063708497,
-      "importance_std": 0.006750081668356291
-    },
-    {
-      "feature": "Age",
-      "importance_mean": 0.025920089990076278,
-      "importance_std": 0.0042305505948572256
+      "feature": "GenHlth",
+      "importance_mean": 0.02270187424264647,
+      "importance_std": 0.0024976602761642205
     },
     {
       "feature": "HighChol",
-      "importance_mean": 0.012903225032745788,
-      "importance_std": 0.005720337330436598
+      "importance_mean": 0.013497503411844506,
+      "importance_std": 0.0002326342992990415
     },
     {
-      "feature": "HeartDiseaseorAttack",
-      "importance_mean": 0.010015661264440682,
-      "importance_std": 0.0016653984352305404
+      "feature": "Age",
+      "importance_mean": 0.007708116202668203,
+      "importance_std": 0.003925195029481112
     },
     {
-      "feature": "HvyAlcoholConsump",
-      "importance_mean": 0.004971215230473021,
-      "importance_std": 0.0022570141622207636
+      "feature": "HighBP",
+      "importance_mean": 0.0031886240875085847,
+      "importance_std": 0.011690279118407256
     },
     {
-      "feature": "MentHlth",
-      "importance_mean": 0.001481585763518219,
-      "importance_std": 0.000742000057919466
-    },
-    {
-      "feature": "AnyHealthcare",
-      "importance_mean": 0.0014115420920326842,
-      "importance_std": 0.0011755906083825748
+      "feature": "NoDocbcCost",
+      "importance_mean": 0.002817947230979149,
+      "importance_std": 0.0013887629868492475
     },
     {
       "feature": "CholCheck",
-      "importance_mean": 0.0012703999316414083,
-      "importance_std": 0.0023928599349956653
+      "importance_mean": 0.002661955651399317,
+      "importance_std": 0.0013870071316135083
+    },
+    {
+      "feature": "HeartDiseaseorAttack",
+      "importance_mean": 0.0010255017366986492,
+      "importance_std": 0.00276008648695466
+    },
+    {
+      "feature": "Education",
+      "importance_mean": 0.000822038500740733,
+      "importance_std": 0.00302364562793241
+    },
+    {
+      "feature": "Fruits",
+      "importance_mean": 0.00042187615073160006,
+      "importance_std": 0.003204822849144932
+    }
+  ],
+  "representative_cases": [
+    {
+      "case_id": "tp_low",
+      "dataset_patient_number": 25495,
+      "actual_class": 0,
+      "actual_label": "Low",
+      "predicted_class": 0,
+      "predicted_label": "Low",
+      "predicted_probability": 0.9998977703075448,
+      "correct": true
+    },
+    {
+      "case_id": "tp_medium",
+      "dataset_patient_number": 138203,
+      "actual_class": 1,
+      "actual_label": "Medium (prediabetes)",
+      "predicted_class": 1,
+      "predicted_label": "Medium (prediabetes)",
+      "predicted_probability": 0.4516480489717911,
+      "correct": true
+    },
+    {
+      "case_id": "tp_high",
+      "dataset_patient_number": 194035,
+      "actual_class": 2,
+      "actual_label": "High (diabetes)",
+      "predicted_class": 2,
+      "predicted_label": "High (diabetes)",
+      "predicted_probability": 0.9045944006033766,
+      "correct": true
+    },
+    {
+      "case_id": "fn_medium",
+      "dataset_patient_number": 82,
+      "actual_class": 1,
+      "actual_label": "Medium (prediabetes)",
+      "predicted_class": 0,
+      "predicted_label": "Low",
+      "predicted_probability": 0.580357302197327,
+      "correct": false
+    },
+    {
+      "case_id": "fp_high",
+      "dataset_patient_number": 22,
+      "actual_class": 0,
+      "actual_label": "Low",
+      "predicted_class": 2,
+      "predicted_label": "High (diabetes)",
+      "predicted_probability": 0.7697461880245275,
+      "correct": false
     }
   ]
 }

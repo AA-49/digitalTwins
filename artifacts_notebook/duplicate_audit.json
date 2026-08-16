@@ -1,0 +1,8 @@
+{
+  "rows_before_cleaning": 253680,
+  "rows_after_cleaning": 253680,
+  "exact_duplicate_rows_beyond_first": 23899,
+  "repeated_feature_rows_beyond_first": 25772,
+  "feature_profiles_with_conflicting_targets": 1834,
+  "policy": "Preserve participant rows; group identical feature profiles during split."
+}

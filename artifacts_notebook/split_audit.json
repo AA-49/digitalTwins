@@ -1,0 +1,9 @@
+{
+  "n_rows": 253680,
+  "n_train": 203015,
+  "n_test": 50665,
+  "test_fraction": 0.19972011983601387,
+  "train_unique_profiles": 182380,
+  "test_unique_profiles": 45528,
+  "cross_split_profile_overlap": 0
+}
