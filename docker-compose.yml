@@ -66,8 +66,8 @@ services:
     command: >-
       jupyter nbconvert --to notebook --execute
       --ExecutePreprocessor.timeout=0
-      --output diabetes_risk_stages_1_2_executed.ipynb
-      diabetes_risk_stages_1_2.ipynb
+      --output digital_twin_full_pipeline_executed.ipynb
+      digital_twin_full_pipeline.ipynb
 
   smpl-export:
     build:

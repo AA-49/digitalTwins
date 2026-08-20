@@ -91,7 +91,6 @@ def example_contributions():
 def explain(graph):
     return graph.explain(
         example_profile(), example_prediction(), example_contributions(),
-        {"bmi": 32.0, "beta0": 0.4, "risk_percent": 61.0, "band": "high", "color": "#d72845"},
         "balanced_random_forest.joblib",
     )
 
@@ -127,7 +126,7 @@ class KnowledgeGraphTests(unittest.TestCase):
         result = explain(PatientKnowledgeGraph(driver=driver))
         self.assertTrue(result["connected"])
         self.assertEqual(21, len(result["attributes"]))
-        self.assertEqual(98, len(result["nodes"]))
+        self.assertEqual(97, len(result["nodes"]))
         self.assertEqual(21, sum(node["type"] == "Observation" for node in result["nodes"]))
         self.assertEqual(21, sum(node["type"] == "ShapContribution" for node in result["nodes"]))
         self.assertEqual(3, sum(node["type"] == "RiskProbability" for node in result["nodes"]))
@@ -140,18 +139,29 @@ class KnowledgeGraphTests(unittest.TestCase):
         self.assertFalse(any("PatientSnapshot" in query or "(:Patient" in query
                              for query, _ in driver.fake_session.queries))
 
-    def test_shap_sign_probabilities_and_twin_are_preserved(self):
+    def test_class_two_shap_relationships_colors_and_probabilities_are_preserved(self):
         result = explain(PatientKnowledgeGraph(driver=FakeDriver()))
         relationships = {edge["relationship"] for edge in result["edges"]}
-        self.assertTrue({"SUPPORTS_PREDICTION", "OPPOSES_PREDICTION", "NEUTRAL_FOR_PREDICTION"} <= relationships)
+        self.assertTrue({
+            "INCREASES_MODEL_HIGH_RISK_ESTIMATE",
+            "DECREASES_MODEL_HIGH_RISK_ESTIMATE",
+            "NEUTRAL_FOR_MODEL_HIGH_RISK_ESTIMATE",
+        } <= relationships)
+        self.assertEqual({"class_id": 2, "label": "High (diabetes)"}, result["shap_target"])
+        shap_edges = [edge for edge in result["edges"] if "HIGH_RISK_ESTIMATE" in edge["relationship"]]
+        self.assertEqual(21, len(shap_edges))
+        self.assertTrue(all(edge["target"] == "probability-2" for edge in shap_edges))
+        legend = {item["key"]: item["color"] for item in result["legend"]}
+        self.assertEqual("#c92a3a", legend["positive_shap"])
+        self.assertEqual("#087f5b", legend["negative_shap"])
+        self.assertEqual("#7b8794", legend["neutral_shap"])
         probabilities = {node["details"]["class_id"]: node["details"]["probability"]
                          for node in result["nodes"] if node["type"] == "RiskProbability"}
         self.assertEqual({0: 0.29, 1: 0.10, 2: 0.61}, probabilities)
-        twin = next(node for node in result["nodes"] if node["type"] == "DigitalTwin")
-        self.assertEqual((32.0, 61.0, "#d72845"),
-                         (twin["details"]["bmi"], twin["details"]["risk_percent"], twin["details"]["color"]))
+        self.assertFalse(any(node["type"] == "DigitalTwin" for node in result["nodes"]))
+        self.assertFalse(any(edge["group"] == "twin" for edge in result["edges"]))
 
-    def test_initialization_is_idempotent_and_removes_old_mechanism_nodes(self):
+    def test_initialization_is_idempotent_and_removes_legacy_graph_nodes(self):
         driver = FakeDriver()
         graph = PatientKnowledgeGraph(driver=driver)
         explain(graph)
@@ -163,6 +173,7 @@ class KnowledgeGraphTests(unittest.TestCase):
         self.assertEqual(1, len(definition_queries))
         self.assertEqual(1, len(model_queries))
         migration = "\n".join(query for query, _ in driver.fake_session.queries)
+        self.assertIn("node:DigitalTwin", migration)
         self.assertIn("Insulin Resistance", migration)
         self.assertIn("Increased T2DM Risk", migration)
 
@@ -175,8 +186,8 @@ class KnowledgeGraphTests(unittest.TestCase):
         self.assertFalse(result["connected"])
         self.assertEqual(21, len(result["attributes"]))
         self.assertIn("database stopped", result["message"])
-        self.assertEqual(98, len(result["nodes"]))
-        self.assertEqual(135, len(result["edges"]))
+        self.assertEqual(97, len(result["nodes"]))
+        self.assertEqual(132, len(result["edges"]))
 
 
 if __name__ == "__main__":

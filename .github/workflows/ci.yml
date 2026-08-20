@@ -1,0 +1,50 @@
+name: Test dashboard and full pipeline notebook
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+            requirements-smpl.txt
+
+      - name: Install test dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements-dev.txt
+
+      - name: Run unit and notebook contract tests
+        run: >-
+          python -m unittest
+          test_app_validation.py
+          test_full_pipeline_notebook.py
+          test_knowledge_graph.py
+          test_ollama_recommendations.py
+          test_stage3_efficiency.py
+          test_twin_assets.py
+
+      - name: Check dashboard JavaScript syntax
+        run: node --check static/js/knowledge_graph.js
+
+      - name: Validate Docker Compose configuration
+        run: docker compose config --quiet

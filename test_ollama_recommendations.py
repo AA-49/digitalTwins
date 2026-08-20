@@ -140,7 +140,7 @@ class OllamaRecommendationTests(unittest.TestCase):
         fake_twin = SimpleNamespace(
             model_path=Path("fake-model.joblib"),
             predict=lambda _profile: prediction,
-            explain=lambda _profile, max_factors=None: graph["attributes"],
+            explain=lambda _profile, max_factors=None, class_id=None: graph["attributes"],
         )
 
         with (

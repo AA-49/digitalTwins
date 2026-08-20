@@ -41,6 +41,7 @@ class FakeExplainer:
         type(self).calls += 1
         values = np.zeros((1, len(FEATURES), 3))
         values[0, :, 0] = np.linspace(-0.1, 0.1, len(FEATURES))
+        values[0, :, 2] = np.linspace(0.3, -0.3, len(FEATURES))
         return values
 
 
@@ -87,6 +88,23 @@ class Stage3EfficiencyTests(unittest.TestCase):
         self.assertEqual(1, FakeExplainer.calls)
         self.assertEqual(1, twin.model.probability_calls)
         self.assertEqual(1, twin.cache_info()["explanation"]["hits"])
+        twin.clear_caches()
+
+    def test_requested_class_two_shap_is_used_when_class_zero_is_predicted(self):
+        twin = twin_with_fake_model()
+        fake_shap = SimpleNamespace(TreeExplainer=FakeExplainer)
+        self.assertEqual(0, twin.predict(profile())["predicted_class"])
+        with patch.dict(sys.modules, {"shap": fake_shap}):
+            predicted_class = twin.explain(profile(), max_factors=None)
+            high_class = twin.explain(profile(), max_factors=None, class_id=2)
+
+        predicted_by_feature = {item["feature"]: item["shap_value"] for item in predicted_class}
+        high_by_feature = {item["feature"]: item["shap_value"] for item in high_class}
+        self.assertAlmostEqual(-0.1, predicted_by_feature[FEATURES[0]])
+        self.assertAlmostEqual(0.3, high_by_feature[FEATURES[0]])
+        self.assertNotEqual(predicted_by_feature, high_by_feature)
+        self.assertEqual(1, FakeExplainer.builds)
+        self.assertEqual(2, FakeExplainer.calls)
         twin.clear_caches()
 
 

@@ -71,7 +71,7 @@ Start JupyterLab:
 docker compose up -d jupyter
 ```
 
-Open <http://127.0.0.1:8888>. The combined training and experiment notebook is `diabetes_risk_stages_1_2.ipynb`.
+Open <http://127.0.0.1:8888>. The combined Stage 1-4 notebook is `digital_twin_full_pipeline.ipynb`.
 
 Stop JupyterLab with the other services:
 
@@ -405,7 +405,7 @@ Predictions and exact SHAP results use a bounded in-memory LRU cache (`ANALYSIS_
 | `twin_assets.py` | Bounded content-addressed SMPL generation and asset reuse |
 | `knowledge_graph.py` | Reusable Neo4j schema and temporary patient graph assembly |
 | `ollama_recommendations.py` | Validated local-model selections and deterministic safe rendering |
-| `diabetes_risk_stages_1_2.ipynb` | Reproducible model training and experiment notebook |
+| `digital_twin_full_pipeline.ipynb` | Reproducible Stage 1-4 training, explanation, simulation, graph, and Docker dashboard notebook |
 | `artifacts_notebook\` | Generated local model and research evidence |
 
 ## Data and licensing

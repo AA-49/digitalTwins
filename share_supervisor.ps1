@@ -21,7 +21,7 @@ $files = @(
     'README.md', 'SUPERVISOR_HANDOFF.md', 'WEBSITE_REVIEW.md', 'research-question-card.md',
     'SMPL_SETUP.md', 'requirements.txt', 'app.py', 'stage3.py',
     'diabetes_risk.py', 'Dockerfile', 'docker-compose.yml',
-    'diabetes_risk_stages_1_2.ipynb'
+    'digital_twin_full_pipeline.ipynb'
 )
 foreach ($file in $files) {
     $source = Join-Path $root $file

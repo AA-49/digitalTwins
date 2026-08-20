@@ -139,7 +139,7 @@ RQ3 is supported only as a transparent model what-if experiment. The system can 
 
 Experiment 4 evaluates completeness, persistence boundaries, fallback behavior, and language-generation safety. The graph includes a temporary patient snapshot, six domains, all 21 observations, reusable attribute definitions, decoded states, all 21 SHAP contributions, a prediction node, three probability nodes, model and evaluation nodes, and one Digital Twin representation node. Patient-specific nodes are assembled in memory and are not written to Neo4j.
 
-Each SHAP contribution receives one of three explicit relations to the predicted-class output: `SUPPORTS_PREDICTION`, `OPPOSES_PREDICTION`, or `NEUTRAL_FOR_PREDICTION`. The graph removes earlier prototype nodes such as Insulin Resistance and Increased T2DM Risk because the BRFSS/model pipeline does not validate those mechanistic relationships.
+Each SHAP contribution receives one of three explicit relations to the class-2 High/diabetes probability: `INCREASES_MODEL_HIGH_RISK_ESTIMATE`, `DECREASES_MODEL_HIGH_RISK_ESTIMATE`, or `NEUTRAL_FOR_MODEL_HIGH_RISK_ESTIMATE`. The graph removes earlier prototype nodes such as the 3D Digital Twin, Insulin Resistance, and Increased T2DM Risk because they do not belong in the analytical model-evidence graph.
 
 For optional local guidance, Ollama receives all 21 observations and SHAP values, all three probabilities, the twin summary, the model limitation, and an allow-list of discussion topics. The local model may select at most three positive-SHAP features, two negative-SHAP features, and three supported topics. The server rejects incorrect signs, missing evidence, repeated references, extra keys, and unsupported topics. Raw model prose is never displayed; invalid output is replaced by a deterministic evidence summary.
 
@@ -178,7 +178,7 @@ Future work should first improve and repeatedly validate minority-class performa
 
 ## 12. Reproducibility Notes
 
-The main experiment is contained in `diabetes_risk_stages_1_2.ipynb`. Saved metrics and figures are under `artifacts_notebook/`. The dashboard is configured for local Docker execution.
+The complete Stage 1-4 experiment is contained in `digital_twin_full_pipeline.ipynb`. Saved metrics and evidence are under `artifacts_notebook/`. The dashboard is configured for local Docker execution.
 
 ```text
 docker compose up -d jupyter

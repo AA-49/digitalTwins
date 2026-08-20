@@ -319,16 +319,16 @@ def run_patient_action(
     else:
         result["current"] = twin.predict(baseline)
 
-    all_contributions = twin.explain(baseline, max_factors=None)
-    result["explanation"] = all_contributions[:5]
+    predicted_class_contributions = twin.explain(baseline, max_factors=None)
+    high_risk_contributions = twin.explain(baseline, max_factors=None, class_id=2)
+    result["explanation"] = predicted_class_contributions[:5]
     result["smpl"] = smpl_twin_descriptor(
         baseline["BMI"], result["current"]["high_risk_probability"]
     )
     result["knowledge_graph"] = KNOWLEDGE_GRAPH.explain(
         baseline,
         result["current"],
-        all_contributions,
-        result["smpl"],
+        high_risk_contributions,
         twin.model_path.name,
     )
     if action == "local_guidance":

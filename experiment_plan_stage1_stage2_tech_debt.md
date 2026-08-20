@@ -3,7 +3,7 @@
 > Project: Explainable Diabetes-Risk Digital Twin (Training3)  
 > Date: 2026-08-16  
 > Version: 1.0  
-> Scope: `diabetes_risk_stages_1_2.ipynb` and the supplied Stage 1/Stage 2 Tech Debt Register
+> Scope: the Stage 1-2 sections of `digital_twin_full_pipeline.ipynb` and the supplied Stage 1/Stage 2 Tech Debt Register
 
 ## 1. Purpose and decision boundary
 

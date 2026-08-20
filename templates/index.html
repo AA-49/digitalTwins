@@ -29,7 +29,7 @@
         <li><strong>Read Stage 1.</strong><span>Review the predicted risk category and the three model probabilities. These are research-model outputs, not a diagnosis.</span></li>
         <li><strong>Read Stage 2.</strong><span>Review the strongest SHAP factors. They explain what influenced this prediction but do not prove medical causes.</span></li>
         <li><strong>Inspect the Stage 3 twin.</strong><span>BMI changes body shape, sex selects the SMPL model, and predicted high-risk probability changes colour. Drag to rotate and scroll to zoom.</span></li>
-        <li><strong>Explore Stage 4.</strong><span>Connect all 21 observations with their decoded states, SHAP contributions, prediction probabilities, model evaluation, current Digital Twin, and optional local-model guidance.</span></li>
+        <li><strong>Explore Stage 4.</strong><span>Connect all 21 observations with their decoded states, class-2 High/diabetes SHAP contributions, prediction probabilities, model evaluation, and optional local-model guidance.</span></li>
         <li><strong>Try a what-if scenario.</strong><span>Edit the allowed values and choose <em>Compare scenario</em>. The current and scenario results and 3D twins appear side by side.</span></li>
         <li><strong>Repeat with another patient.</strong><span>Select a new number to update all four stages and regenerate the 3D twin for that current patient.</span></li>
       </ol>
@@ -117,7 +117,6 @@
         <button type="button" class="kg-filter" data-kg-filter="profile" aria-pressed="false">Profile</button>
         <button type="button" class="kg-filter" data-kg-filter="explanation" aria-pressed="false">Model explanation</button>
         <button type="button" class="kg-filter" data-kg-filter="prediction" aria-pressed="false">Prediction</button>
-        <button type="button" class="kg-filter" data-kg-filter="twin" aria-pressed="false">Digital Twin</button>
         <button type="button" class="kg-reset" data-kg-reset>Reset focus</button>
         <label class="kg-node-picker">Keyboard node
           <select id="kg-node-picker"><option value="">Choose a node</option></select>
@@ -153,7 +152,7 @@
         </aside>
       </div>
       <script id="knowledge-graph-data" type="application/json">{{ knowledge_graph|tojson }}</script>
-      <p class="hint">Green and red relationships describe SHAP support for this model prediction. Blue and gray relationships decode the current data. Purple relationships connect the 3D twin. No edge is a clinical causal claim.</p>
+      <p class="hint">Red relationships increase and green relationships decrease the model's class-2 High/diabetes estimate; gray is neutral. Blue relationships decode the current data. No edge is a clinical causal claim.</p>
       {% else %}
       <p class="hint">The interactive view is disabled, but the current profile remains available below.</p>
       {% endif %}
