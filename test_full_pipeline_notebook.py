@@ -54,26 +54,27 @@ class FullPipelineNotebookTests(unittest.TestCase):
         self.assertNotIn("types.MethodType", source)
         self.assertNotIn("patient1.csv", source)
 
-    def test_dashboard_cell_is_container_managed_and_bounded(self):
+    def test_notebook_hands_dashboard_startup_back_to_the_host(self):
         notebook = load_notebook()
         dashboard_cell = next(
             cell for cell in notebook["cells"] if cell.get("id") == "4fc054af"
         )
         source = "".join(dashboard_cell["source"])
         self.assertNotIn("subprocess.Popen", source)
-        self.assertIn('compose_base = ["docker", "compose"]', source)
-        self.assertIn('compose_base + ["up", "-d", "neo4j"]', source)
-        self.assertIn('compose_base + ["restart", "dashboard"]', source)
-        self.assertIn('"training3-dashboard:latest"', source)
-        self.assertIn('capture_output=True', source)
-        self.assertIn('Dashboard running (Docker): http://127.0.0.1:5000', source)
-        self.assertIn('compose_base + ["logs", "--tail=50", "dashboard"]', source)
+        self.assertNotIn("subprocess.run", source)
+        self.assertNotIn('["docker", "compose"]', source)
+        self.assertIn('ARTIFACTS / "diabetes_risk_random_forest.joblib"', source)
+        self.assertIn('ARTIFACTS / "stage3_case_study.json"', source)
+        self.assertIn('ARTIFACTS / "knowledge_graph.json"', source)
+        self.assertIn("assert not missing_outputs", source)
 
         shutdown_cell = notebook["cells"][notebook["cells"].index(dashboard_cell) + 1]
-        self.assertEqual(
-            "Run `docker compose down` in a terminal to stop the dashboard and Neo4j containers when finished.",
-            "".join(shutdown_cell["source"]),
-        )
+        instructions = "".join(shutdown_cell["source"])
+        self.assertIn("Windows host terminal", instructions)
+        self.assertIn("docker compose up -d --build dashboard", instructions)
+        self.assertIn("docker compose ps", instructions)
+        self.assertIn("http://127.0.0.1:5000", instructions)
+        self.assertIn("docker compose down", instructions)
 
 
 if __name__ == "__main__":

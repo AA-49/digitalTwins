@@ -12,7 +12,7 @@ The canonical workflow is [`digital_twin_full_pipeline.ipynb`](digital_twin_full
 2. **Stage 2 — Explain:** calculate exact patient-specific SHAP evidence for the model's predicted class.
 3. **Stage 3 — Simulate:** compare a baseline profile with manually edited what-if scenarios. These comparisons are non-causal.
 4. **Stage 4 — Connect:** assemble the temporary patient knowledge graph using class-2 High/diabetes SHAP evidence.
-5. **Dashboard — Explore:** write fresh files to `artifacts_notebook/`, start Neo4j and the Flask dashboard through Docker Compose, and verify <http://127.0.0.1:5000>.
+5. **Dashboard — Explore:** write fresh files to `artifacts_notebook/`, then start Neo4j and the Flask dashboard from a host terminal and verify <http://127.0.0.1:5000>.
 
 Stage 2 and Stage 4 intentionally use different SHAP targets: Stage 2 explains the predicted class, while Stage 4 consistently describes class 2, **High (diabetes)**. The optional 3D twin is a visual aid and is not part of the analytical evidence.
 
@@ -65,21 +65,17 @@ Open <http://127.0.0.1:8888> and select `digital_twin_full_pipeline.ipynb`. Use 
 
 The notebook trains the model when no local model exists and creates the model and evidence files under `artifacts_notebook/`. Wait for all cells to finish. The trained `joblib` file is large and intentionally excluded from Git, so each fresh clone creates its own local copy from the tracked BRFSS dataset.
 
-Near the end of the notebook, the dashboard-launch cell:
+The final notebook cell verifies that the model and Stage 3/4 artifacts were created. JupyterLab itself runs inside a container and does not contain the Docker CLI, so the notebook does not try to start other containers.
 
-- verifies `docker compose` is available;
-- starts `neo4j` and waits for its health check;
-- builds `training3-dashboard:latest` only when the image does not exist;
-- restarts an existing dashboard container so it reloads the newly written artifacts;
-- waits up to approximately 30 seconds for port 5000 and prints dashboard logs if startup fails.
+After the notebook finishes, return to **Windows Command Prompt on the host**, in the cloned repository, and run:
 
-On success, the cell prints:
-
-```text
-Dashboard running (Docker): http://127.0.0.1:5000
+```bat
+docker compose up -d --build dashboard
+docker compose ps
+curl.exe --fail --retry 30 --retry-delay 2 --retry-connrefused --head http://127.0.0.1:5000/
 ```
 
-Open <http://127.0.0.1:5000> in a browser. The notebook deliberately leaves the containers running after execution.
+Open <http://127.0.0.1:5000> after the request returns HTTP 200. Compose starts Neo4j automatically and waits for its health check before starting the dashboard.
 
 ### 4. Stop the services when finished
 
@@ -99,10 +95,10 @@ To execute the complete notebook non-interactively:
 docker compose --profile training run --rm train-notebook
 ```
 
-To start an already prepared dashboard directly:
+After the notebook command completes, start the dashboard from the same host terminal:
 
 ```bat
-docker compose up -d dashboard
+docker compose up -d --build dashboard
 docker compose ps
 curl.exe --fail --retry 30 --retry-delay 2 --retry-connrefused --head http://127.0.0.1:5000/
 ```
@@ -170,7 +166,7 @@ Run the Stage 3 benchmark inside the dashboard container:
 docker compose exec -T dashboard python benchmarks/benchmark_stage3.py
 ```
 
-The notebook contract tests verify the canonical filename, clean saved state, Docker-managed dashboard lifecycle, artifact paths, and Stage 4 evidence semantics.
+The notebook contract tests verify the canonical filename, clean saved state, artifact-readiness handoff to host Compose, artifact paths, and Stage 4 evidence semantics.
 
 ## Model limitations
 
@@ -193,7 +189,7 @@ docker info
 docker compose version
 ```
 
-The notebook dashboard cell prints `Docker not available — install Docker Desktop and re-run this cell` and exits cleanly when Compose cannot be invoked.
+Run these commands in Windows Command Prompt or PowerShell, not in a notebook cell. If `docker` is not found there, Docker Desktop is not installed or its command-line tools are not on `PATH`. Install or restart Docker Desktop, open a new terminal, and repeat the checks.
 
 ### The dashboard does not open
 
@@ -212,7 +208,7 @@ Flask loads the twin and knowledge graph when its process starts. Restart the se
 docker compose restart dashboard
 ```
 
-The notebook launch cell performs this restart automatically when the container is already running.
+If the dashboard was already running while the notebook generated new artifacts, run the restart command above so Flask reloads them.
 
 ### No trained model is found
 
@@ -266,7 +262,7 @@ Exact predictions and SHAP results use a bounded in-memory LRU cache. Generated 
 | Path | Purpose |
 | --- | --- |
 | `digital_twin_full_pipeline.ipynb` | Canonical Stage 1–4 training, explanation, simulation, graph, and Docker dashboard workflow |
-| `test_full_pipeline_notebook.py` | Notebook structure, privacy, artifact, and dashboard-launch contract tests |
+| `test_full_pipeline_notebook.py` | Notebook structure, privacy, artifact, and host-startup handoff contract tests |
 | `docker-compose.yml` | Neo4j, dashboard, Jupyter, notebook execution, and SMPL services |
 | `app.py` | Flask routes and the interactive four-stage workflow |
 | `stage3.py` | Model loading, prediction, exact SHAP, scenarios, and caching |
