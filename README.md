@@ -49,15 +49,21 @@ Do not continue until `docker info` displays a **Server** section. A missing `do
 
 ### 3. Open the training notebook
 
-Build and start JupyterLab:
+For the first run, build the image and start JupyterLab:
 
 ```bat
 docker compose up -d --build jupyter
 ```
 
+For later runs, when the Jupyter image already exists, start it without rebuilding:
+
+```bat
+docker compose up -d jupyter
+```
+
 Open <http://127.0.0.1:8888> and select `digital_twin_full_pipeline.ipynb`. Use **Restart Kernel and Run All Cells**.
 
-The notebook creates the local model and evidence files under `artifacts_notebook/`. The trained `joblib` file is large and intentionally excluded from Git.
+The notebook trains the model when no local model exists and creates the model and evidence files under `artifacts_notebook/`. Wait for all cells to finish. The trained `joblib` file is large and intentionally excluded from Git, so each fresh clone creates its own local copy from the tracked BRFSS dataset.
 
 Near the end of the notebook, the dashboard-launch cell:
 
