@@ -2,7 +2,7 @@
 
 Neo4j stores only reusable domains, feature definitions, value/category
 definitions, and model evaluation metadata. Patient observations, predictions,
-SHAP contributions, and Digital Twin nodes are assembled in memory for the
+and SHAP contributions are assembled in memory for the
 current request and are never persisted.
 """
 from __future__ import annotations
@@ -264,7 +264,7 @@ class PatientKnowledgeGraph:
                 # Narrow migration from the earlier BMI causal demo. Those nodes
                 # are not learned by this project's data or model.
                 session.run(
-                    "MATCH (node) WHERE node:BmiCategory OR "
+                    "MATCH (node) WHERE node:DigitalTwin OR node:BmiCategory OR "
                     "(node:HealthConcept AND node.name IN ['Insulin Resistance', 'Increased T2DM Risk']) "
                     "DETACH DELETE node"
                 ).consume()
@@ -384,7 +384,6 @@ class PatientKnowledgeGraph:
         profile: dict[str, float],
         prediction: dict[str, Any],
         contributions: list[dict[str, Any]],
-        twin: dict[str, Any],
         model_name: str,
     ) -> dict[str, Any]:
         """Join Neo4j definitions with live model outputs without patient writes."""
@@ -394,20 +393,21 @@ class PatientKnowledgeGraph:
             self._ensure_model(model_name)
             definitions = self._load_definitions()
             nodes, edges = self._build_graph(
-                profile, prediction, contributions, twin, model_name, definitions
+                profile, prediction, contributions, model_name, definitions
             )
             return {
                 "connected": True,
                 "message": "Reusable definitions loaded and cached from Neo4j; this patient graph is temporary and was not stored.",
                 "warning": self._model_warning(),
+                "shap_target": {"class_id": 2, "label": "High (diabetes)"},
                 "attributes": self._attributes(profile, contributions, definitions),
                 "nodes": nodes,
                 "edges": edges,
                 "legend": [
                     {"key": "profile", "label": "Profile meaning", "color": "#1769aa"},
-                    {"key": "supports", "label": "Supports prediction", "color": "#087f5b"},
-                    {"key": "opposes", "label": "Opposes prediction", "color": "#c92a3a"},
-                    {"key": "twin", "label": "Digital Twin", "color": "#6f42c1"},
+                    {"key": "positive_shap", "label": "Positive SHAP increases High estimate", "color": "#c92a3a"},
+                    {"key": "negative_shap", "label": "Negative SHAP decreases High estimate", "color": "#087f5b"},
+                    {"key": "neutral_shap", "label": "Neutral SHAP for High estimate", "color": "#7b8794"},
                 ],
             }
         except Exception as exc:
@@ -426,7 +426,7 @@ class PatientKnowledgeGraph:
                 for item in ATTRIBUTE_DEFINITIONS
             }
             nodes, edges = self._build_graph(
-                profile, prediction, contributions, twin, model_name, definitions
+                profile, prediction, contributions, model_name, definitions
             )
             return {
                 "connected": False,
@@ -435,14 +435,15 @@ class PatientKnowledgeGraph:
                     f"The patient graph remains temporary and was not stored. ({exc})"
                 ),
                 "warning": self._model_warning(),
+                "shap_target": {"class_id": 2, "label": "High (diabetes)"},
                 "attributes": fallback_attributes,
                 "nodes": nodes,
                 "edges": edges,
                 "legend": [
                     {"key": "profile", "label": "Profile meaning", "color": "#1769aa"},
-                    {"key": "supports", "label": "Supports prediction", "color": "#087f5b"},
-                    {"key": "opposes", "label": "Opposes prediction", "color": "#c92a3a"},
-                    {"key": "twin", "label": "Digital Twin", "color": "#6f42c1"},
+                    {"key": "positive_shap", "label": "Positive SHAP increases High estimate", "color": "#c92a3a"},
+                    {"key": "negative_shap", "label": "Negative SHAP decreases High estimate", "color": "#087f5b"},
+                    {"key": "neutral_shap", "label": "Neutral SHAP for High estimate", "color": "#7b8794"},
                 ],
             }
 
@@ -502,7 +503,6 @@ class PatientKnowledgeGraph:
         profile: dict[str, float],
         prediction: dict[str, Any],
         contributions: list[dict[str, Any]],
-        twin: dict[str, Any],
         model_name: str,
         definitions: dict[str, dict[str, Any]],
     ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -557,7 +557,7 @@ class PatientKnowledgeGraph:
             state = decode_feature(feature, value)
             importance = self.importance.get(feature, {})
             contribution = float(contribution_by_feature[feature]["shap_value"])
-            direction = "supports" if contribution > 0 else "opposes" if contribution < 0 else "neutral"
+            direction = "positive" if contribution > 0 else "negative" if contribution < 0 else "neutral"
             observation_id = f"observation-{_safe_id(feature)}"
             definition_id = f"attribute-{_safe_id(feature)}"
             state_id = f"state-{_safe_id(feature)}"
@@ -585,10 +585,11 @@ class PatientKnowledgeGraph:
             )
             add_node(
                 contribution_id, f"{feature} SHAP {contribution:+.3f}", "ShapContribution", ["explanation"],
-                summary=f"{feature} {direction} the predicted class in this model output.",
+                summary=f"{feature} has a {direction} SHAP contribution for class 2 - High (diabetes).",
                 parent=domain_id,
                 feature=feature, shap_value=contribution, direction=direction,
-                meaning="Model support, not medical causation.",
+                explained_class_id=2, explained_class_label="High (diabetes)",
+                meaning="Effect on the model's High/diabetes estimate, not medical causation.",
             )
             add_edge("patient-current", observation_id, "HAS_OBSERVATION", "has observation", "profile")
             add_edge(observation_id, definition_id, "INSTANCE_OF", "instance of", "profile")
@@ -621,12 +622,17 @@ class PatientKnowledgeGraph:
 
         for feature in FEATURES:
             contribution = float(contribution_by_feature[feature]["shap_value"])
-            relationship = "SUPPORTS_PREDICTION" if contribution > 0 else "OPPOSES_PREDICTION" if contribution < 0 else "NEUTRAL_FOR_PREDICTION"
-            group = "supports" if contribution > 0 else "opposes" if contribution < 0 else "neutral"
+            relationship = (
+                "INCREASES_MODEL_HIGH_RISK_ESTIMATE" if contribution > 0
+                else "DECREASES_MODEL_HIGH_RISK_ESTIMATE" if contribution < 0
+                else "NEUTRAL_FOR_MODEL_HIGH_RISK_ESTIMATE"
+            )
+            group = "positive_shap" if contribution > 0 else "negative_shap" if contribution < 0 else "neutral_shap"
             add_edge(
-                f"contribution-{_safe_id(feature)}", prediction_id, relationship,
-                "supports" if contribution > 0 else "opposes" if contribution < 0 else "neutral",
+                f"contribution-{_safe_id(feature)}", probability_ids[2], relationship,
+                "increases High estimate" if contribution > 0 else "decreases High estimate" if contribution < 0 else "neutral for High estimate",
                 group, weight=abs(contribution), shap_value=contribution,
+                explained_class_id=2,
             )
 
         report = self.metrics.get("classification_report", {})
@@ -648,18 +654,6 @@ class PatientKnowledgeGraph:
         add_edge(prediction_id, "model-current", "GENERATED_BY", "generated by", "prediction")
         add_edge("model-current", "model-evaluation", "EVALUATED_BY", "evaluated by", "prediction")
 
-        add_node(
-            "digital-twin-current", "Current 3D Digital Twin", "DigitalTwin", ["twin"],
-            summary="3D representation linked to this patient snapshot.",
-            bmi=twin["bmi"], beta0=twin["beta0"], risk_percent=twin["risk_percent"],
-            risk_band=twin["band"], color=twin["color"],
-        )
-        add_edge("digital-twin-current", "patient-current", "REPRESENTS", "represents", "twin")
-        add_edge("digital-twin-current", "observation-bmi", "SHAPED_BY", "shaped by", "twin")
-        add_edge(
-            "digital-twin-current", probability_ids.get(2, "probability-2"),
-            "COLORED_BY", "colored by", "twin",
-        )
         return nodes, edges
 
     def close(self) -> None:

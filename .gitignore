@@ -2,6 +2,9 @@
 .venv-stage3/
 __pycache__/
 .ipynb_checkpoints/
+.ua/
+.understand-anything/
+.tmp-cytoscape/
 dist/
 delete/
 file delete/
@@ -12,3 +15,5 @@ patient.csv
 
 .env*
 artifacts_notebook/twin_cache/
+artifacts_notebook/knowledge_graph.json
+artifacts_notebook/stage3_case_study.json

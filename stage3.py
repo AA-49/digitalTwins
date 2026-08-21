@@ -104,13 +104,15 @@ class DiabetesDigitalTwin:
 
     @lru_cache(maxsize=ANALYSIS_CACHE_SIZE)
     def _explain_cached(
-        self, key: tuple[float, ...]
+        self, key: tuple[float, ...], class_id: int
     ) -> tuple[tuple[str, float, float], ...]:
         import shap
 
         patient = self._frame_from_key(key)
-        predicted_class, class_ids, _probabilities = self._predict_cached(key)
-        class_index = class_ids.index(predicted_class)
+        class_ids = tuple(int(value) for value in self.model.classes_)
+        if class_id not in class_ids:
+            raise ValueError(f"Model does not expose class {class_id}.")
+        class_index = class_ids.index(class_id)
 
         # TreeExplainer construction is expensive and its calls are serialized so
         # a single lazy instance can be reused safely by Flask request threads.
@@ -138,15 +140,21 @@ class DiabetesDigitalTwin:
         )
 
     def explain(
-        self, values: dict[str, float], max_factors: int | None = 5
+        self,
+        values: dict[str, float],
+        max_factors: int | None = 5,
+        class_id: int | None = None,
     ) -> list[dict[str, Any]]:
-        """Return SHAP factors for the class predicted for this one patient.
+        """Return SHAP factors for a requested class or the predicted class.
 
         SHAP output conventions differ between versions, so this supports both
         list-per-class and three-dimensional ndarray formats.
         """
+        key = self._profile_key(values)
+        if class_id is None:
+            class_id = self._predict_cached(key)[0]
         factors = pd.DataFrame(
-            self._explain_cached(self._profile_key(values)),
+            self._explain_cached(key, int(class_id)),
             columns=["feature", "value", "shap_value"],
         )
         factors["absolute_shap_value"] = factors["shap_value"].abs()
