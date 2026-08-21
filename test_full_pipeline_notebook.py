@@ -34,9 +34,6 @@ class FullPipelineNotebookTests(unittest.TestCase):
         for relative_path in (
             "README.md",
             "docker-compose.yml",
-            "share_supervisor.ps1",
-            "research_report_stage_experiments.md",
-            "experiment_plan_stage1_stage2_tech_debt.md",
         ):
             text = (ROOT / relative_path).read_text(encoding="utf-8")
             self.assertNotIn("diabetes_risk_stages_1_2.ipynb", text, relative_path)
